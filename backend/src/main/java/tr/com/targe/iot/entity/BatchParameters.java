@@ -1,3 +1,4 @@
+package tr.com.targe.iot.entity;
 import jakarta.persistence.*;
 
 @Entity

@@ -22,7 +22,7 @@ public class Schedule {
 
     @ManyToOne
     @JoinColumn(name = "command_id", nullable = false)
-    private BatchCommand command;
+    private BatchCommands command;
 
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
@@ -107,11 +107,11 @@ public class Schedule {
         this.device = device;
     }
 
-    public BatchCommand getCommand() {
+    public BatchCommands getCommand() {
         return command;
     }
 
-    public void setCommand(BatchCommand command) {
+    public void setCommand(BatchCommands command) {
         this.command = command;
     }
 
