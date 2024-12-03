@@ -48,6 +48,14 @@ public class SensorValuePlan {
     @ManyToMany(mappedBy = "sensorValuePlans")
     private List<Device> devices;
 
+    @ManyToMany(mappedBy = "sensorValuePlans")
+    private List<RestRequest> restRequests;
+
+    @ManyToMany(mappedBy = "sensorValuePlans")
+    private List<BatchCommands> batchCommands;
+
+    
+
     // Getters and Setters
     public Long getPlanId() {
         return planId;

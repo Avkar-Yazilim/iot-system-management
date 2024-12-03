@@ -1,6 +1,7 @@
 package tr.com.targe.iot.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Rest_Request")
@@ -39,6 +40,14 @@ public class RestRequest {
     @Column(name = "rest_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private RestStatus restStatus;
+
+    @ManyToMany
+    @JoinTable(
+            name = "Rest_Request_Sensor_Value_Plan",
+            joinColumns = @JoinColumn(name = "request_id"),
+            inverseJoinColumns = @JoinColumn(name = "plan_id")
+    )
+    private List<SensorValuePlan> sensorValuePlans;
 
     // Enums for Method and RestStatus
     public enum Method {

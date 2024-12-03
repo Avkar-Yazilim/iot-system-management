@@ -1,6 +1,7 @@
 package tr.com.targe.iot.entity;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "Batch_Commands")
@@ -25,6 +26,15 @@ public class BatchCommands {
 
     @Column(name = "priority", length = 25, nullable = false)
     private String priority;
+
+    @ManyToMany
+    @JoinTable(
+            name = "Batch_Commands_Sensor_Value_Plan",
+            joinColumns = @JoinColumn(name = "command_id"),
+            inverseJoinColumns = @JoinColumn(name = "plan_id")
+    )
+
+    private List<SensorValuePlan> sensorValuePlans;
 
     // Getters and Setters
     public Integer getCommandId() {
