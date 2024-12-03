@@ -16,7 +16,7 @@ public class DeviceLog {
     @JoinColumn(name = "device_id", nullable = false)
     private Device device;
 
-    @Column(name = "message", nullable = false)
+    @Column(name = "message", length = 255, nullable = false)
     private String message;
 
     @Column(name = "timestamp")
