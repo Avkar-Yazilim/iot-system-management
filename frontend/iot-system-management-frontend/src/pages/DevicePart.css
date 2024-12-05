@@ -1,0 +1,77 @@
+.device-menu {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #95C081;
+    padding: 20px;
+    max-width: 100vh;
+    width: 500px;
+    margin: 0 auto;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 2px solid #255310;
+  }
+  
+  .device-menu .System-info {
+    text-align: center;
+    margin-top: -600px;
+    
+  }
+  
+  .device-menu .System-info h1 {
+    font-size: 25px;
+    color: #255310;
+  }
+  
+  .device-menu .device-menu-navigation ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;   
+    margin-top: -600px;
+    margin-bottom: 400px; 
+  }
+  
+  .device-menu .device-menu-navigation li {
+    margin: 15px 0;
+    text-align: center;    
+  }
+  
+  .device-menu .device-menu-navigation a {
+    text-decoration: none;
+    color: #000000;
+    font-size: 20px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #eaf2ff;
+    width: 75%;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .device-menu .device-menu-navigation a:hover {
+    background-color: #d4e4ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .device-menu .log-footer {
+    margin-top: 150px; /* Footer'ı en alta taşı */
+    text-align: center; /* Ortala */
+  }
+  
+  .device-menu .log-history-btn {
+    font-size: 20px; /* Buton yazı boyutu */
+    color: white; /* Beyaz yazı rengi */
+    background-color: #255310; /* Arka plan rengi */
+    border: none; /* Çerçevesiz */
+    border-radius: 5px; /* Yuvarlatılmış köşeler */
+    padding: 15px 80px; /* İç dolgu */
+    cursor: pointer; /* İşaretçi */
+    transition: background-color 0.3s ease; /* Hover geçiş efekti */
+  }
+  
+  .device-menu .log-history-btn:hover {
+    background-color: #1b410a; /* Hover efekti için daha koyu yeşil */
+  }
+  
