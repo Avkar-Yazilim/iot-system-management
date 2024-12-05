@@ -1,5 +1,5 @@
 {
-  "name": "iot-system-management-frontend",
+  "name": "ikincireact",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-calendar": "^5.1.0",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.4.0",
+    "react-router-dom": "^7.0.2",
+    "tailwindcss": "^3.4.16"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
