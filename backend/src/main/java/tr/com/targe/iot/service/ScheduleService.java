@@ -24,8 +24,8 @@ public class ScheduleService {
         this.scheduleRepository = scheduleRepository;
     }
 
-    // Create or Update a Schedule
-    public Schedule saveOrUpdateSchedule(Schedule schedule) {
+    // Create schedule
+    public Schedule createSchedule(Schedule schedule) {
         schedule.setCreatedAt(LocalDateTime.now());   // Set the creation date
         schedule.setStatus(Status.ACTIVE);            // Set the status as ACTIVE  
         return scheduleRepository.save(schedule);
@@ -63,7 +63,7 @@ public class ScheduleService {
 
     //Delete a schedule by marking it as INACTIVE
     @Transactional
-    public void deleteScheduleById(Long id, String deletedBy) {
+    public void deleteSchedule(Long id, String deletedBy) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID"));
         schedule.setStatus(Status.INACTIVE);
         schedule.setDeletedAt(LocalDateTime.now());

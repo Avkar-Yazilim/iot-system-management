@@ -24,7 +24,7 @@ public class ScheduleDateController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ScheduleDate> getScheduleDateById(@PathVariable Integer id) {
+    public ResponseEntity<ScheduleDate> getScheduleDateById(@PathVariable Long id) {
         Optional<ScheduleDate> scheduleDate = scheduleDateService.getScheduleDateById(id);
         return scheduleDate.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -36,7 +36,7 @@ public class ScheduleDateController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ScheduleDate> updateScheduleDate(@PathVariable Integer id, @RequestBody ScheduleDate updatedScheduleDate) {
+    public ResponseEntity<ScheduleDate> updateScheduleDate(@PathVariable Long id, @RequestBody ScheduleDate updatedScheduleDate) {
         ScheduleDate scheduleDate = scheduleDateService.updateScheduleDate(id, updatedScheduleDate);
         if (scheduleDate != null) {
             return ResponseEntity.ok(scheduleDate);
@@ -45,7 +45,7 @@ public class ScheduleDateController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteScheduleDate(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteScheduleDate(@PathVariable Long id) {
         scheduleDateService.deleteScheduleDate(id);
         return ResponseEntity.noContent().build(); 
     }
