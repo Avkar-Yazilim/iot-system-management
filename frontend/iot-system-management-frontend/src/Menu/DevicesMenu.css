@@ -1,57 +1,108 @@
 #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  width: 150px;
+  height: 150px;
+  /* login logosu */
+  margin-bottom: 1rem;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 1em #9b9b9baa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 1em #7e7e7eaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  .logo {
-    width: 150px;
-    height: 150px;
-    /* login logosu */
-    margin-bottom: 1rem;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
+
+  to {
+    transform: rotate(360deg);
   }
-  
-  .logo:hover {
-    filter: drop-shadow(0 0 1em #9b9b9baa);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
   }
-  
-  .logo.react:hover {
-    filter: drop-shadow(0 0 1em #7e7e7eaa);
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  /* Yüksekliği tam ekran yap */
+}
+
+.menu-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .menu-container {
+    flex-direction: row;
   }
-  
-  @keyframes logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-  
-    to {
-      transform: rotate(360deg);
-    }
+}
+
+.main-menu {
+  flex: 0 0 450px;
+  /* Genişliği 450px olarak ayarla */
+  background-color: #95C081;
+  padding: 20px;
+  border-right: 2px solid #255310;
+  box-sizing: border-box;
+}
+
+.content {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .content {
+    flex-direction: row;
   }
-  
-  @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-      animation: logo-spin infinite 20s linear;
-    }
-  }
-  
-  .card {
-    padding: 2em;
-  }
-  
-  .read-the-docs {
-    color: #888;
-  }
-  
-  body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%; /* Yüksekliği tam ekran yap */
-  }
-  
-  
-  
+}
+
+.device-menu {
+  flex: 0 0 auto;
+  /* İçeriğe göre genişlik ayarla */
+  margin-right: 20px;
+}
+
+.device-list {
+  flex: 1;
+  /* Kalan alanı al */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+}

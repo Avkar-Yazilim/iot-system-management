@@ -7,12 +7,12 @@ import "./DevicesMenu.css";
 
 
 const DevicesMenu = () => {
-  
+
   return (
     <div className="menu-container">
       <MainMenu />
-      <DevicePart/>
-      <DeviceList/>      
+      <DevicePart />
+      <DeviceList />
     </div>
   );
 };
