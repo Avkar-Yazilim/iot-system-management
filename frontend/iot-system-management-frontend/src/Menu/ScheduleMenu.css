@@ -55,42 +55,18 @@ html {
   /* Yüksekliği tam ekran yap */
 }
 
-.menu-container {
-  position: absolute;
-  /* Konumlandırmayı mutlak yap */
-  top: 0;
-  /* Üstten sıfırlama */
-  left: 0;
-  /* Soldan sıfırlama */
-  display: flex;
-  /* Yan yana düzenleme */
-  justify-content: flex-start;
-  /* Elemanları sola hizala */
-  align-items: flex-start;
-  /* Yukarıdan hizala */
-  padding: 0;
-  /* İç dolgu yok */
-  background-color: #f9f9f9;
-  /* Sayfa arka plan rengi */
-  height: 100vh;
-  /* Tam ekran yüksekliği */
-  box-sizing: border-box;
-  /* Kenar boşluklarını içeriğe dahil et */
-  margin: 0;
-  /* Dış boşluğu kaldır */
-}
-
-.menu-container {
-  display: flex;
-  /* Arrange items side by side */
-  height: 100vh;
-  /* Full screen height */
-  width: 100vw;
-  /* Full screen width */
-  background-color: #f9f9f9;
-  /* Page background color */
-  box-sizing: border-box;
-  /* Include padding and border in the element's total width and height */
+.schedule-menu-container {
+  position: absolute; /* Konumlandırmayı mutlak yap */
+  top: 0; /* Üstten sıfırlama */
+  left: 0; /* Soldan sıfırlama */
+  display: flex; /* Yan yana düzenleme */
+  justify-content: flex-start; /* Elemanları sola hizala */
+  align-items: flex-start; /* Yukarıdan hizala */
+  padding: 0; /* İç dolgu yok */
+  background-color: #f9f9f9; /* Sayfa arka plan rengi */
+  height: 100vh; /* Tam ekran yüksekliği */
+  box-sizing: border-box; /* Kenar boşluklarını içeriğe dahil et */
+  margin: 0; /* Dış boşluğu kaldır */
 }
 
 .schedule-page-container {
