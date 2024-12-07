@@ -24,7 +24,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Schedule> getScheduleById(@PathVariable Integer id) {
+    public ResponseEntity<Schedule> getScheduleById(@PathVariable Long id) {
         Optional<Schedule> schedule = scheduleService.getScheduleById(id);
         return schedule.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -36,7 +36,7 @@ public class ScheduleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Schedule> updateSchedule(@PathVariable Integer id, @RequestBody Schedule updatedSchedule) {
+    public ResponseEntity<Schedule> updateSchedule(@PathVariable Long id, @RequestBody Schedule updatedSchedule) {
         Schedule schedule = scheduleService.updateSchedule(id, updatedSchedule);
         if (schedule != null) {
             return ResponseEntity.ok(schedule);
@@ -45,8 +45,8 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Integer id) {
-        scheduleService.deleteSchedule(id);
+    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id,@PathVariable String deletedBy) {
+        scheduleService.deleteSchedule(id,deletedBy);
         return ResponseEntity.noContent().build(); 
     }
 }
