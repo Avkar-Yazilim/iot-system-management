@@ -53,7 +53,7 @@
     height: 100%; /* Yüksekliği tam ekran yap */
   }
   
-  .menu-container {
+  .reports-menu-container {
     position: absolute; /* Konumlandırmayı mutlak yap */
     top: 0; /* Üstten sıfırlama */
     left: 0; /* Soldan sıfırlama */

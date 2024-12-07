@@ -4,7 +4,7 @@ import "./SettingsMenu.css";
 
 const SettingsMenu = () => {
   return (
-    <div className="menu-container">
+    <div className="settings-menu-container">
       <MainMenu />
     </div>
   );

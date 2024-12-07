@@ -4,7 +4,7 @@ import "./ReportsMenu.css";
 
 const ReportsMenu = () => {
   return (
-    <div className="menu-container">
+    <div className="reports-menu-container">
       <MainMenu />
     </div>
   );
