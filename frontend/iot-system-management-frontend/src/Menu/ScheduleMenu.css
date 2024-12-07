@@ -66,4 +66,17 @@
     box-sizing: border-box; /* Kenar boşluklarını içeriğe dahil et */
     margin: 0; /* Dış boşluğu kaldır */
   }
-  
+
+.menu-container {
+  display: flex; /* Arrange items side by side */
+  height: 100vh; /* Full screen height */
+  width: 100vw; /* Full screen width */
+  background-color: #f9f9f9; /* Page background color */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.schedule-page-container {
+  flex: 1; /* Take up remaining space */
+  display: flex;
+  flex-direction: column;
+}

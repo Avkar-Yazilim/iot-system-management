@@ -7,7 +7,9 @@ const ScheduleMenu = () => {
   return (
     <div className="menu-container">
       <MainMenu />
-      <SchedulePage />
+      <div className="schedule-page-container">
+        <SchedulePage />
+      </div>
     </div>
   );
 };

@@ -56,10 +56,11 @@ html {
 }
 
 .menu-container {
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  box-sizing: border-box;
+  display: flex; /* Arrange items side by side */
+  height: 100vh; /* Full screen height */
+  width: 100vw; /* Full screen width */
+  background-color: #f9f9f9; /* Page background color */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 @media (min-width: 768px) {
@@ -106,3 +107,12 @@ html {
   box-sizing: border-box;
   width: 100%;
 }
+.device-page-container {
+  flex: 1; /* Take up remaining space */
+  display: flex;
+  flex-direction: column;
+  margin: 0; /* Remove any margins */
+  padding: 0; /* Remove any padding */
+}
+
+

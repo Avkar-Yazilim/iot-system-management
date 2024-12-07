@@ -10,9 +10,11 @@ const DevicesMenu = () => {
 
   return (
     <div className="menu-container">
-      <MainMenu />
-      <DevicePart />
-      <DeviceList />
+      <MainMenu />      
+      <DevicePart />      
+      <div className="device-page-container">
+        <DeviceList />
+      </div>
     </div>
   );
 };
