@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid #255310;
+  border: 0.5px solid #255310;
   box-sizing: border-box;
 }
 
@@ -69,8 +69,8 @@
   color: white;
   background-color: #255310;
   border: none;
-  border-radius: 5px;
-  padding: 15px 100px;
+  border-radius: 15px;
+  padding: 15px 50px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-bottom: 20px;

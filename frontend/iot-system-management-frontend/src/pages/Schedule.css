@@ -1,49 +1,71 @@
 .schedule {
-  background-color: #ffffff; /* Beyaz arka plan */
+  background-color: #ffffff;
+  /* Beyaz arka plan */
   padding: 20px;
-  border: 1px solid #d1d9e6; /* Kenar çizgisi */
-  border-radius: 8px; /* Yuvarlak köşeler */
-  width: 100vh; /* Genişlik */
-  height: 100vh; /* Yükseklik */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Gölge */
-  display: flex; /* Flexbox düzenini etkinleştir */
-  flex-direction: column; /* İçerikleri dikey hizala */
-  align-items: center; /* Yatay ortalama */
-  justify-content: center; /* Dikey ortalama */
+  border: 1px solid #d1d9e6;
+  /* Kenar çizgisi */
+  border-radius: 8px;
+  /* Yuvarlak köşeler */
+  width: 100vh;
+  /* Genişlik */
+  height: 100vh;
+  /* Yükseklik */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* Gölge */
+  display: flex;
+  /* Flexbox düzenini etkinleştir */
+  flex-direction: column;
+  /* İçerikleri dikey hizala */
+  align-items: center;
+  /* Yatay ortalama */
+  justify-content: center;
+  /* Dikey ortalama */
 }
 
 .top-buttons {
-  position: absolute; /* Sayfa içinde özgürce yerleşmesi için */
-  top: 10px; /* Üstten 10px mesafe */
-  right: 10px; /* Sağdan 10px mesafe */
+  position: absolute;
+  /* Sayfa içinde özgürce yerleşmesi için */
+  top: 10px;
+  /* Üstten 10px mesafe */
+  right: 10px;
+  /* Sağdan 10px mesafe */
   display: flex;
-  gap: 15px; /* Butonlar arasındaki boşluk */
+  gap: 15px;
+  /* Butonlar arasındaki boşluk */
 }
 
 .top-button {
   background-color: transparent;
   border: none;
-  font-size: 1.5rem; /* Buton ikon boyutu */
-  color: #333333; /* Buton rengi */
+  font-size: 1.5rem;
+  /* Buton ikon boyutu */
+  color: #333333;
+  /* Buton rengi */
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .top-button:hover {
-  color: #95c081; /* Hoverda buton rengi değişir */
+  color: #95c081;
+  /* Hoverda buton rengi değişir */
 }
 
 .calendar-wrapper {
-  display: flex; /* Takvimi ortalamak için flex düzeni */
-  align-items: center; /* Dikey ortalama */
-  justify-content: center; /* Yatay ortalama */
-  width: 100%; /* Kapsayıcı genişliği */  
+  display: flex;
+  /* Takvimi ortalamak için flex düzeni */
+  align-items: center;
+  /* Dikey ortalama */
+  justify-content: center;
+  /* Yatay ortalama */
+  width: 100%;
+  /* Kapsayıcı genişliği */
 }
 
 h2 {
   font-size: 20px;
   margin-bottom: 10px;
-  margin-left: 120px; /* Başlığı biraz sola kaydır */
+  margin-left: 120px;
+  /* Başlığı biraz sola kaydır */
 }
 
 .selected-date h3 {
@@ -53,13 +75,17 @@ h2 {
 }
 
 .calendar-header-wrapper {
-  display: flex; /* Takvimin ve başlığın yan yana yerleştirilmesi */
-  flex-direction: column; /* Başlık ve takvim dikeyde hizalanacak */
-  align-items: flex-start; /* Başlık ve takvimi sola hizala */
-  width: 100%; /* Genişlik: Kapsayıcı kadar */
+  display: flex;
+  /* Takvimin ve başlığın yan yana yerleştirilmesi */
+  flex-direction: column;
+  /* Başlık ve takvim dikeyde hizalanacak */
+  align-items: flex-start;
+  /* Başlık ve takvimi sola hizala */
+  width: 100%;
+  /* Genişlik: Kapsayıcı kadar */
 }
 
-.calendar-header-wrapper h2{
+.calendar-header-wrapper h2 {
   margin-top: -200px;
 }
 
@@ -69,37 +95,52 @@ h2 {
   margin-top: 15px;
   gap: 15px;
 }
+
 /* Takvim kapsayıcı boyutunu artır */
 .react-calendar {
-  width: 100%; /* Genişlik: kapsayıcıya tam otur */
-  max-width: 700px; /* Maksimum genişlik */
-  font-size: 1.5rem; /* Yazı boyutunu büyüt */
+  width: 100%;
+  /* Genişlik: kapsayıcıya tam otur */
+  max-width: 700px;
+  /* Maksimum genişlik */
+  font-size: 1.5rem;
+  /* Yazı boyutunu büyüt */
+  border-radius: 10px;
+  color: #33412c;
 }
 
 .react-calendar__tile {
-  height: 40px; /* Hücre yüksekliği */
-  display: flex; /* Ortala */
-  align-items: center; /* Dikey ortalama */
-  justify-content: center; /* Yatay ortalama */
+  height: 40px;
+  /* Hücre yüksekliği */
+  display: flex;
+  /* Ortala */
+  align-items: center;
+  /* Dikey ortalama */
+  justify-content: center;
+  /* Yatay ortalama */
 }
 
 .react-calendar__navigation {
-  height: 60px; /* Navigasyon çubuğu yüksekliği */
-  font-size: 1.6rem; /* Yazı boyutu */
+  height: 60px;
+  /* Navigasyon çubuğu yüksekliği */
+  font-size: 1.6rem;
+  /* Yazı boyutu */
 }
 
 /* Günlerin aralarındaki boşluk */
 .react-calendar__month-view__days {
-  gap: 10px; /* Hücreler arasındaki boşluk */
+  gap: 10px;
+  /* Hücreler arasındaki boşluk */
 }
 
 /* Ay başlığı ve okların görünümü */
 .react-calendar__navigation button {
   font-size: 1.4rem;
-  padding: 10px; /* Daha büyük düğmeler */
+  padding: 10px;
+  /* Daha büyük düğmeler */
 }
 
 /* Haftalık gün isimlerini büyüt */
 .react-calendar__month-view__weekdays {
-  font-size: 1.2rem; /* Gün isimleri (Mon, Tue vs.) */
+  font-size: 1.2rem;
+  /* Gün isimleri (Mon, Tue vs.) */
 }
