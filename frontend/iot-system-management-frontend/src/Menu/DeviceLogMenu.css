@@ -1,0 +1,67 @@
+#root {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .logo {
+    width: 150px;
+    height: 150px;
+    /* login logosu */
+    margin-bottom: 1rem;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+  }
+  
+  .logo:hover {
+    filter: drop-shadow(0 0 1em #9b9b9baa);
+  }
+  
+  .logo.react:hover {
+    filter: drop-shadow(0 0 1em #7e7e7eaa);
+  }
+  
+  @keyframes logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+  
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    a:nth-of-type(2) .logo {
+      animation: logo-spin infinite 20s linear;
+    }
+  }
+  
+  .card {
+    padding: 2em;
+  }
+  
+  .read-the-docs {
+    color: #888;
+  }
+  
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* Yüksekliği tam ekran yap */
+  }
+  
+  .device-main-menu-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .menu-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px; /* İki bileşen arasındaki boşluk */
+  }
+  

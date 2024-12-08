@@ -31,7 +31,7 @@
 .logs-search {
     flex: 0 0 300px; /* Fixed width for the search bar */
     max-width: 600px;
-    margin-left: auto; /* Push the search bar to the right */
+    display: flex;
 }
 
 .logs-search-input {

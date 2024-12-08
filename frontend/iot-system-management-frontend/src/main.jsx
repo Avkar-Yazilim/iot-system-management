@@ -7,7 +7,7 @@ import ScheduleMenu from './Menu/ScheduleMenu';
 import DevicesMenu from './Menu/DevicesMenu';
 import ReportsMenu from './Menu/ReportsMenu';
 import SettingsMenu from './Menu/SettingsMenu';
-import DeviceLogs from './pages/DeviceLogs'; // DeviceLogs bileşenini içe aktarın
+import DeviceLogMenu from './Menu/DeviceLogMenu'; // DeviceLogs bileşenini içe aktarın
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -20,7 +20,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/devices" element={<DevicesMenu />} />
         <Route path="/reports" element={<ReportsMenu />} />
         <Route path="/settings" element={<SettingsMenu />} />
-        <Route path="/devicelogs" element={<DeviceLogs />} /> 
+        <Route path="/devicelogs" element={<DeviceLogMenu />} /> 
       </Routes>
     </Router>
   </React.StrictMode>
