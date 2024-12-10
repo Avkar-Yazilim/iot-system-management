@@ -1,0 +1,91 @@
+import { useForm } from 'react-hook-form'
+
+export default function Login({ onLogin }) {
+  const { register, handleSubmit, formState: { errors } } = useForm()
+
+  const onSubmit = (data) => {
+    // Örnek giriş kontrolü
+    if (data.email && data.password) {
+      console.log('Giriş bilgileri:', data)
+      onLogin()
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="w-full max-w-md">
+        <div className="bg-white px-8 py-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+            Tarla App'e Hoş Geldiniz
+          </h2>
+          
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                E-posta
+              </label>
+              <input
+                id="email"
+                type="email"
+                {...register('email', { 
+                  required: 'E-posta gereklidir',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Geçersiz e-posta adresi'
+                  }
+                })}
+                className="input mt-1"
+                placeholder="ornek@email.com"
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Şifre
+              </label>
+              <input
+                id="password"
+                type="password"
+                {...register('password', { 
+                  required: 'Şifre gereklidir',
+                  minLength: {
+                    value: 6,
+                    message: 'Şifre en az 6 karakter olmalıdır'
+                  }
+                })}
+                className="input mt-1"
+                placeholder="********"
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              )}
+            </div>
+
+            <div>
+              <button type="submit" className="btn btn-primary w-full">
+                Giriş Yap
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6">
+            <button 
+              onClick={() => console.log('Google ile giriş')} 
+              className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            >
+              <img 
+                src="https://www.google.com/favicon.ico" 
+                alt="Google" 
+                className="h-5 w-5 mr-2"
+              />
+              Google ile Devam Et
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+} 
