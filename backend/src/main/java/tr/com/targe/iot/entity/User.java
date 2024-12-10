@@ -25,16 +25,16 @@ public class User {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt = LocalDateTime.now();
 
-    @Column(name = "create_by", nullable = false)
+    @Column(name = "create_by", nullable = false, updatable = false)
     private String createBy;
 
     @Column(name = "update_at")
