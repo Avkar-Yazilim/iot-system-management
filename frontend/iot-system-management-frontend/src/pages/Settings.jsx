@@ -9,8 +9,8 @@ export default function Settings() {
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      name: 'Ahmet Yılmaz',
-      email: 'ahmet@example.com',
+      name: 'Ahmet Yazıcı',
+      email: 'ahmet@yazici.com',
       phone: '+90 555 123 4567',
     }
   })

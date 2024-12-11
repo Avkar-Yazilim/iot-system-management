@@ -7,10 +7,19 @@ const mockDevices = [
   { id: 3, name: 'Sıcaklık Sensörü 1', type: 'Sensör', serialNumber: 'TS001', isOnline: true },
 ]
 
+const mockLogs = [
+  { id: 1, deviceId: 1, action: "Sulama Başlatıldı", value: "5 dakika", timestamp: "2024-03-20 14:30", status: "success" },
+  { id: 2, deviceId: 1, action: "Sulama Tamamlandı", value: "5 dakika", timestamp: "2024-03-20 14:35", status: "success" },
+  { id: 3, deviceId: 2, action: "Nem Ölçümü", value: "%65", timestamp: "2024-03-20 14:40", status: "warning" },
+  { id: 4, deviceId: 3, action: "Sıcaklık Ölçümü", value: "24°C", timestamp: "2024-03-20 14:45", status: "info" },
+  { id: 5, deviceId: 2, action: "Bağlantı Hatası", value: "Timeout", timestamp: "2024-03-20 14:50", status: "error" },
+]
+
 export default function Devices() {
   const [devices, setDevices] = useState(mockDevices)
   const [showAddModal, setShowAddModal] = useState(false)
   const [newDevice, setNewDevice] = useState({ name: '', type: '', serialNumber: '' })
+  const [selectedDevice, setSelectedDevice] = useState(null)
 
   const handleAddDevice = (e) => {
     e.preventDefault()
@@ -26,6 +35,16 @@ export default function Devices() {
 
   const handleDeleteDevice = (id) => {
     setDevices(devices.filter(device => device.id !== id))
+  }
+
+  const getStatusColor = (status) => {
+    const colors = {
+      success: 'text-green-600 bg-green-100',
+      warning: 'text-yellow-600 bg-yellow-100',
+      error: 'text-red-600 bg-red-100',
+      info: 'text-blue-600 bg-blue-100'
+    }
+    return colors[status] || colors.info
   }
 
   return (
@@ -78,10 +97,11 @@ export default function Devices() {
               <div className="mt-6 flex space-x-3">
                 <button
                   type="button"
+                  onClick={() => setSelectedDevice(device.id === selectedDevice ? null : device.id)}
                   className="btn flex-1 inline-flex justify-center items-center border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                 >
                   <InformationCircleIcon className="h-5 w-5 mr-2 text-gray-400" />
-                  Detaylar
+                  {device.id === selectedDevice ? 'Logları Gizle' : 'Logları Göster'}
                 </button>
                 <button
                   type="button"
@@ -96,6 +116,48 @@ export default function Devices() {
           </div>
         ))}
       </div>
+
+      {/* Cihaz Logları Bölümü */}
+      {selectedDevice && (
+        <div className="mt-8">
+          <div className="bg-white shadow rounded-lg overflow-hidden">
+            <div className="px-6 py-5 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">
+                {devices.find(d => d.id === selectedDevice)?.name} - Cihaz Logları
+              </h3>
+            </div>
+            <div className="px-6 py-5">
+              <div className="flow-root">
+                <ul className="-my-5 divide-y divide-gray-200">
+                  {mockLogs
+                    .filter(log => log.deviceId === selectedDevice)
+                    .map(log => (
+                      <li key={log.id} className="py-5">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-gray-900 truncate">
+                              {log.action}
+                            </p>
+                            <div className="mt-1 flex items-center">
+                              <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(log.status)}`}>
+                                {log.value}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="ml-4 flex-shrink-0">
+                            <span className="text-sm text-gray-500">
+                              {log.timestamp}
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Add Device Modal */}
       {showAddModal && (

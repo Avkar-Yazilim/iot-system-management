@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import logo from '../assets/logo.png'
 
 const navigation = [
   { name: 'Ana Sayfa', to: '/', icon: 'home' },
@@ -66,16 +67,7 @@ export default function Dashboard({ onLogout }) {
         transition-transform duration-300 ease-in-out
       `}>
         <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
-          <div className="absolute top-0 right-0 -mr-12 pt-2">
-            <button
-              type="button"
-              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <span className="text-white">{icons.close}</span>
-            </button>
-          </div>
-          <SidebarContent currentPath={location.pathname} onLogout={onLogout} />
+          <SidebarContent currentPath={location.pathname} onLogout={onLogout} setSidebarOpen={setSidebarOpen} />
         </div>
       </div>
 
@@ -83,7 +75,7 @@ export default function Dashboard({ onLogout }) {
       <div className="hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-64">
           <div className="flex flex-col flex-grow border-r border-gray-200 pt-5 pb-4 bg-white overflow-y-auto">
-            <SidebarContent currentPath={location.pathname} onLogout={onLogout} />
+            <SidebarContent currentPath={location.pathname} onLogout={onLogout} setSidebarOpen={setSidebarOpen} />
           </div>
         </div>
       </div>
@@ -111,11 +103,22 @@ export default function Dashboard({ onLogout }) {
   )
 }
 
-function SidebarContent({ currentPath, onLogout }) {
+function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
   return (
     <div className="flex-1 flex flex-col">
-      <div className="flex items-center flex-shrink-0 px-4">
+      <div className="flex flex-col items-center flex-shrink-0 px-4 pb-5 relative">
+        <button
+          className="lg:hidden absolute right-0 top-0 p-2 text-gray-500 hover:text-gray-700"
+          onClick={() => setSidebarOpen(false)}
+        >
+          {icons.close}
+        </button>
         <h1 className="text-xl font-semibold text-gray-900">Tarla App</h1>
+        <img
+          src={logo}
+          alt="Tarla App Logo"
+          className="mt-4 w-32 h-32 object-contain"
+        />
       </div>
       <nav className="mt-8 flex-1 px-2 space-y-1">
         {navigation.map((item) => {
