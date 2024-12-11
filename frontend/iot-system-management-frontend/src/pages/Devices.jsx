@@ -94,6 +94,13 @@ export default function Devices() {
     setEditingDevice(null)
   }
 
+  const handleDeleteGroup = (groupId) => {
+    setDevices(devices.map(device => 
+      device.groupId === groupId ? { ...device, groupId: null } : device
+    ))
+    setGroups(groups.filter(group => group.id !== groupId))
+  }
+
   return (
     <div>
       <div className="sm:flex sm:items-center">
@@ -137,12 +144,22 @@ export default function Devices() {
           {groups.map((group) => (
             <div key={group.id} className="bg-white shadow rounded-lg overflow-hidden">
               <div className="px-4 py-5 border-b border-gray-200 sm:px-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  {group.name}
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {group.description}
-                </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      {group.name}
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {group.description}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteGroup(group.id)}
+                    className="inline-flex items-center p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full"
+                  >
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                </div>
               </div>
               <div className="p-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {getDevicesByGroup(group.id).map((device) => (
