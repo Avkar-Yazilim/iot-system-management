@@ -4,6 +4,7 @@ import tr.com.targe.iot.entity.DeviceGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-public class DeviceGroup {
-    
+@Repository
+public interface DeviceGroupRepository extends JpaRepository<DeviceGroup, Long> {
+    // Gerekirse özel sorgular buraya eklenebilir
 }

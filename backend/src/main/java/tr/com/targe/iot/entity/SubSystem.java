@@ -43,6 +43,9 @@ public class SubSystem {
     @ManyToMany(mappedBy = "subSystems")
     private List<User> users;
 
+    @OneToMany(mappedBy = "subSystem")
+    private List<Device> devices;
+    
     // Getters and Setters
 
     public Long getSystemId() {

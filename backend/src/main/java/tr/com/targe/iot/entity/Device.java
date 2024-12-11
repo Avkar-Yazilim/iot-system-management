@@ -23,8 +23,9 @@ public class Device {
     @Column(name = "device_type", length = 20, nullable = false)
     private String deviceType;
 
+    @Enumerated(EnumType.STRING) // Enum'un String olarak saklanmasını sağlar
     @Column(name = "device_status", length = 25, nullable = false)
-    private String deviceStatus = "offline";
+    private DeviceStatus deviceStatus = DeviceStatus.INACTIVE;
 
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt = LocalDateTime.now();
@@ -50,6 +51,13 @@ public class Device {
     @ManyToMany(mappedBy = "devices")
     private List<DeviceGroup> deviceGroups;
 
+
+    public enum DeviceStatus {
+        ACTIVE,
+        INACTIVE,
+        OFFLINE,
+        MAINTENANCE
+    }
     @ManyToMany
     @JoinTable(
         name = "Device_Sensor_Value_Plan",
@@ -92,11 +100,11 @@ public class Device {
         this.deviceType = deviceType;
     }
 
-    public String getDeviceStatus() {
+    public DeviceStatus getDeviceStatus() {
         return deviceStatus;
     }
 
-    public void setDeviceStatus(String deviceStatus) {
+    public void setDeviceStatus(DeviceStatus deviceStatus) {
         this.deviceStatus = deviceStatus;
     }
 

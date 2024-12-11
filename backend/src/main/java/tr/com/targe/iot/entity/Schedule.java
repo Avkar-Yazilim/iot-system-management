@@ -1,6 +1,5 @@
 package tr.com.targe.iot.entity;
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,19 +13,19 @@ public class Schedule {
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private DeviceGroup group;
+    private DeviceGroup group_id;
 
     @ManyToOne
     @JoinColumn(name = "device_id")
-    private Device device;
+    private Device device_id;
 
     @ManyToOne
     @JoinColumn(name = "command_id", nullable = false)
-    private BatchCommands command;
+    private BatchCommands command_id;
 
     @ManyToOne
     @JoinColumn(name = "request_id", nullable = false)
-    private RestRequest request;
+    private RestRequest request_id;
 
     @Column(name = "event_title", nullable = false)
     private String eventTitle;
@@ -45,7 +44,7 @@ public class Schedule {
     private LocalDateTime startTime;
 
     @Column(name = "until_date")
-    private LocalDate untilDate;
+    private LocalDateTime untilDate;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -92,35 +91,35 @@ public class Schedule {
     }
 
     public DeviceGroup getGroup() {
-        return group;
+        return group_id;
     }
 
-    public void setGroup(DeviceGroup group) {
-        this.group = group;
+    public void setGroup(DeviceGroup group_id) {
+        this.group_id = group_id;
     }
 
     public Device getDevice() {
-        return device;
+        return device_id;
     }
 
-    public void setDevice(Device device) {
-        this.device = device;
+    public void setDevice(Device device_id) {
+        this.device_id = device_id;
     }
 
     public BatchCommands getCommand() {
-        return command;
+        return command_id;
     }
 
-    public void setCommand(BatchCommands command) {
-        this.command = command;
+    public void setCommand(BatchCommands command_id) {
+        this.command_id = command_id;
     }
 
     public RestRequest getRequest() {
-        return request;
+        return request_id;
     }
 
-    public void setRequest(RestRequest request) {
-        this.request = request;
+    public void setRequest(RestRequest request_id) {
+        this.request_id = request_id;
     }
 
     public String getEventTitle() {
@@ -163,11 +162,11 @@ public class Schedule {
         this.startTime = startTime;
     }
 
-    public LocalDate getUntilDate() {
+    public LocalDateTime getUntilDate() {
         return untilDate;
     }
 
-    public void setUntilDate(LocalDate untilDate) {
+    public void setUntilDate(LocalDateTime untilDate) {
         this.untilDate = untilDate;
     }
 

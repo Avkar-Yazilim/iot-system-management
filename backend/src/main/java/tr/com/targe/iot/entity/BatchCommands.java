@@ -1,6 +1,7 @@
 package tr.com.targe.iot.entity;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -35,6 +36,24 @@ public class BatchCommands {
     )
 
     private List<SensorValuePlan> sensorValuePlans;
+
+    @Column(name = "create_at", nullable = false)
+    private LocalDateTime createAt;
+
+    @Column(name = "create_by", nullable = false)
+    private String createBy;
+
+    @Column(name = "update_at")
+    private LocalDateTime updateAt;
+
+    @Column(name = "update_by")
+    private String updateBy;
+
+    @Column(name = "delete_at")
+    private LocalDateTime deleteAt;
+
+    @Column(name = "delete_by")
+    private String deleteBy;
 
     // Getters and Setters
     public Integer getCommandId() {
@@ -84,4 +103,22 @@ public class BatchCommands {
     public void setPriority(String priority) {
         this.priority = priority;
     }
+
+    public LocalDateTime getCreateAt() { return createAt; }
+    public void setCreateAt(LocalDateTime createAt) { this.createAt = createAt; }
+    
+    public String getCreateBy() { return createBy; }
+    public void setCreateBy(String createBy) { this.createBy = createBy; }
+    
+    public LocalDateTime getUpdateAt() { return updateAt; }
+    public void setUpdateAt(LocalDateTime updateAt) { this.updateAt = updateAt; }
+    
+    public String getUpdateBy() { return updateBy; }
+    public void setUpdateBy(String updateBy) { this.updateBy = updateBy; }
+    
+    public LocalDateTime getDeleteAt() { return deleteAt; }
+    public void setDeleteAt(LocalDateTime deleteAt) { this.deleteAt = deleteAt; }
+    
+    public String getDeleteBy() { return deleteBy; }
+    public void setDeleteBy(String deleteBy) { this.deleteBy = deleteBy; }
 }

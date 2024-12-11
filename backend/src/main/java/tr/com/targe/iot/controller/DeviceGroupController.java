@@ -31,8 +31,10 @@ public class DeviceGroupController {
     }
 
     @PostMapping
-    public ResponseEntity<DeviceGroup> createDeviceGroup(@RequestBody DeviceGroup deviceGroup) {
-        DeviceGroup createdDeviceGroup = deviceGroupService.createDeviceGroup(deviceGroup);
+    public ResponseEntity<DeviceGroup> createDeviceGroup(
+            @RequestBody DeviceGroup deviceGroup,
+            @RequestParam String createBy) {
+        DeviceGroup createdDeviceGroup = deviceGroupService.createDeviceGroup(deviceGroup, createBy);
         return ResponseEntity.ok(createdDeviceGroup);
     }
 
@@ -43,8 +45,10 @@ public class DeviceGroupController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDeviceGroup(@PathVariable Long id) {
-        deviceGroupService.deleteDeviceGroup(id);
+    public ResponseEntity<Void> deleteDeviceGroup(
+            @PathVariable Long id,
+            @RequestParam String deletedBy) {
+        deviceGroupService.deleteDeviceGroup(id, deletedBy);
         return ResponseEntity.noContent().build();
     }
 }

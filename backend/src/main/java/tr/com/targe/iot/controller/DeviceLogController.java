@@ -30,8 +30,10 @@ public class DeviceLogController {
     }
 
     @PostMapping
-    public ResponseEntity<DeviceLog> createDeviceLog(@RequestBody DeviceLog deviceLog) {
-        DeviceLog createdDeviceLog = deviceLogService.createDeviceLog(deviceLog);
+    public ResponseEntity<DeviceLog> createDeviceLog(
+            @RequestBody DeviceLog deviceLog,
+            @RequestParam String createBy) {
+        DeviceLog createdDeviceLog = deviceLogService.createDeviceLog(deviceLog, createBy);
         return ResponseEntity.status(201).body(createdDeviceLog);
     }
 

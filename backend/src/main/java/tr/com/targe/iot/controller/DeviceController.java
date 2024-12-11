@@ -31,9 +31,11 @@ public class DeviceController {
     }
 
     @PostMapping
-    public ResponseEntity<Device> createDevice(@RequestBody Device device) {
-        Device createdDevice = deviceService.createDevice(device);
-        return ResponseEntity.status(201).body(createdDevice); 
+    public ResponseEntity<Device> createDevice(
+            @RequestBody Device device,
+            @RequestParam String createBy) {
+        Device createdDevice = deviceService.createDevice(device, createBy);
+        return ResponseEntity.status(201).body(createdDevice);
     }
 
     @PutMapping("/{id}")
@@ -46,8 +48,8 @@ public class DeviceController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDevice(@PathVariable Long id) {
-        deviceService.deleteDevice(id);
-        return ResponseEntity.noContent().build(); 
+    public ResponseEntity<Void> deleteDevice(@PathVariable Long id, @RequestParam String deletedBy) {
+        deviceService.deleteDevice(id, deletedBy);
+        return ResponseEntity.noContent().build();
     }
 }

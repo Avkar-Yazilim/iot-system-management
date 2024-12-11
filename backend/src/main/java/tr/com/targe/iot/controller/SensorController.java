@@ -30,9 +30,11 @@ public class SensorController {
     }
 
     @PostMapping
-    public ResponseEntity<Sensor> createSensor(@RequestBody Sensor sensor) {
-        Sensor createdSensor = sensorService.createSensor(sensor);
-        return ResponseEntity.status(201).body(createdSensor); 
+    public ResponseEntity<Sensor> createSensor(
+            @RequestBody Sensor sensor,
+            @RequestParam String createBy) {
+        Sensor createdSensor = sensorService.createSensor(sensor, createBy);
+        return ResponseEntity.status(201).body(createdSensor);
     }
 
     @PutMapping("/{id}")

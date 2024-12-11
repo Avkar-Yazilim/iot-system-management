@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.com.targe.iot.entity.Schedule;
 import tr.com.targe.iot.entity.Schedule.Status;
 import tr.com.targe.iot.repository.ScheduleRepository;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +25,8 @@ public class ScheduleService {
 
     // Create schedule
     public Schedule createSchedule(Schedule schedule) {
-        schedule.setCreatedAt(LocalDateTime.now());   // Set the creation date
-        schedule.setStatus(Status.ACTIVE);            // Set the status as ACTIVE  
+        schedule.setCreatedAt(LocalDateTime.now());
+        schedule.setCreatedBy(null);
         return scheduleRepository.save(schedule);
     }
 
@@ -41,7 +40,7 @@ public class ScheduleService {
         return scheduleRepository.findAll();
     }
 
-
+    
     //update an existing schedule
     @Transactional
     public Schedule updateSchedule(Long scheduleId, Schedule updatedSchedule) {
@@ -76,7 +75,7 @@ public class ScheduleService {
     
     //Find schedules by status
     public List<Schedule> getSchedulesByStatus(Status status) {
-        return scheduleRepository.findSchedulesByStatus(status);
+        return scheduleRepository.findByStatus(status);
     }
 
     //Activate a schedule

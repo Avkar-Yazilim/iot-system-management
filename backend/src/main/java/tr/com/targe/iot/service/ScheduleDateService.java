@@ -22,7 +22,7 @@ public class ScheduleDateService {
     @Transactional
     public void createScheduleDatesForSchedule(Schedule schedule) {
         LocalDateTime startTime = schedule.getStartTime();
-        LocalDateTime untilDate = schedule.getUntilDate().atStartOfDay();
+        LocalDateTime untilDate = schedule.getUntilDate();
         
         // Recurrence türüne göre uygun tarihleri hesapla
         while (startTime.isBefore(untilDate) || startTime.isEqual(untilDate)) {

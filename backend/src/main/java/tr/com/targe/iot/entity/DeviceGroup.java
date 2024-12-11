@@ -17,8 +17,8 @@ public class DeviceGroup {
     @JoinColumn(name = "system_id", nullable = false)
     private SubSystem subSystem;
 
-    @Column(name = "device_name", nullable = false)
-    private String deviceName;
+    @Column(name = "group_name", nullable = false)
+    private String groupName;
 
     @Column(name = "device_type", nullable = false)
     private String deviceType;
@@ -73,12 +73,12 @@ public class DeviceGroup {
         this.subSystem = subSystem;
     }
 
-    public String getDeviceName() {
-        return deviceName;
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public String getDeviceType() {

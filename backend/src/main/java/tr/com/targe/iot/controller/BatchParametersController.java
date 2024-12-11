@@ -25,20 +25,22 @@ public class BatchParametersController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BatchParameters> getBatchParameterById(@PathVariable Integer id) {
+    public ResponseEntity<BatchParameters> getBatchParameterById(@PathVariable Long id) {
         Optional<BatchParameters> parameter = batchParametersService.getBatchParameterById(id);
         return parameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<BatchParameters> createBatchParameter(@RequestBody BatchParameters batchParameter) {
-        BatchParameters createdParameter = batchParametersService.createBatchParameter(batchParameter);
-        return ResponseEntity.status(201).body(createdParameter); 
+    public ResponseEntity<BatchParameters> createBatchParameter(
+            @RequestBody BatchParameters batchParameter,
+            @RequestParam String createBy) {
+        BatchParameters createdParameter = batchParametersService.createBatchParameter(batchParameter, createBy);
+        return ResponseEntity.status(201).body(createdParameter);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<BatchParameters> updateBatchParameter(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestBody BatchParameters updatedParameter) {
         BatchParameters parameter = batchParametersService.updateBatchParameter(id, updatedParameter);
         if (parameter != null) {
@@ -48,8 +50,10 @@ public class BatchParametersController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBatchParameter(@PathVariable Integer id) {
-        batchParametersService.deleteBatchParameter(id);
-        return ResponseEntity.noContent().build(); 
+    public ResponseEntity<Void> deleteBatchParameter(
+            @PathVariable Long id,
+            @RequestParam String deletedBy) {
+        batchParametersService.deleteBatchParameter(id, deletedBy);
+        return ResponseEntity.noContent().build();
     }
 }
