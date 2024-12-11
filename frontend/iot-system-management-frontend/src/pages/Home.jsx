@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 const mockSensorData = {
   temperature: {
@@ -31,6 +32,22 @@ const mockSensorData = {
   },
 }
 
+// Son 7 günün tarihlerini oluştur
+const last7Days = Array.from({ length: 7 }, (_, i) => {
+  const date = new Date()
+  date.setDate(date.getDate() - (6 - i))
+  return date.toLocaleDateString('tr-TR', { weekday: 'short', day: 'numeric' })
+})
+
+// Grafik verilerini hazırla
+const chartData = last7Days.map((date, index) => ({
+  date,
+  "Sıcaklık (°C)": mockSensorData.temperature.history[index],
+  "Nem (%)": mockSensorData.humidity.history[index],
+  "Toprak Nemi (%)": mockSensorData.soilMoisture.history[index],
+  "Işık (lux)": mockSensorData.light.history[index],
+}))
+
 const SensorCard = ({ title, data, icon }) => {
   const getStatusColor = () => {
     if (data.current < data.min) return 'text-blue-600'
@@ -59,20 +76,6 @@ const SensorCard = ({ title, data, icon }) => {
               </dd>
             </dl>
           </div>
-        </div>
-        <div className="mt-4">
-          <div className="flex space-x-1">
-            {data.history.map((value, i) => (
-              <div
-                key={i}
-                className="flex-1 bg-primary-100 rounded"
-                style={{
-                  height: `${(value / data.max) * 50}px`,
-                }}
-              />
-            ))}
-          </div>
-          <div className="mt-1 text-xs text-gray-500">Son 7 ölçüm</div>
         </div>
       </div>
     </div>
@@ -160,6 +163,7 @@ export default function Home() {
         />
       </div>
 
+      {/* Sistem Durumu */}
       <div className="mt-8">
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-medium text-gray-900">Sistem Durumu</h2>
@@ -191,6 +195,29 @@ export default function Home() {
                 <div className="text-sm text-gray-500">Bağlı</div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Haftalık Veri Grafiği */}
+      <div className="mt-8">
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-6">Haftalık Sensör Verileri</h2>
+          <div className="h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
+                <Tooltip />
+                <Legend />
+                <Line yAxisId="left" type="monotone" dataKey="Sıcaklık (°C)" stroke="#ef4444" />
+                <Line yAxisId="left" type="monotone" dataKey="Nem (%)" stroke="#3b82f6" />
+                <Line yAxisId="left" type="monotone" dataKey="Toprak Nemi (%)" stroke="#22c55e" />
+                <Line yAxisId="right" type="monotone" dataKey="Işık (lux)" stroke="#f59e0b" />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>

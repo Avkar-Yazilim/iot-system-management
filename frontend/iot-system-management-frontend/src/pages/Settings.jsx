@@ -131,7 +131,7 @@ export default function Settings() {
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
-                onClick={() => window.location.href = 'mailto:support@tarlaapp.com'}
+                onClick={() => window.location.href = 'mailto:vtysiotsystem.management@gmail.com'}
                 className="btn border border-gray-300"
               >
                 Bize Ulaşın
