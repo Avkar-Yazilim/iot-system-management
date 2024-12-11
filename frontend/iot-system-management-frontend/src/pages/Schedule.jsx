@@ -30,9 +30,121 @@ const mockEvents = [
   },
 ]
 
+const RepeatPanel = ({ onClose, onSave }) => {
+  const [frequency, setFrequency] = useState(1)
+  const [selectedDay, setSelectedDay] = useState(null)
+  const [endDate, setEndDate] = useState("")
+
+  const days = [
+    { short: "P", long: "Pazartesi" },
+    { short: "S", long: "Salı" },
+    { short: "Ç", long: "Çarşamba" },
+    { short: "P", long: "Perşembe" },
+    { short: "C", long: "Cuma" },
+    { short: "C", long: "Cumartesi" },
+    { short: "P", long: "Pazar" }
+  ]
+
+  const handleSave = () => {
+    if (!selectedDay) {
+      alert("Lütfen bir gün seçin")
+      return
+    }
+    if (!endDate) {
+      alert("Lütfen bitiş tarihi seçin")
+      return
+    }
+    onSave({ frequency, selectedDay, endDate })
+  }
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+      <div className="bg-white rounded-lg p-6 w-96">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Yineleme</h2>
+        
+        {/* Yineleme Sıklığı */}
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-gray-700">Yineleme Sıklığı:</label>
+          <input 
+            type="number" 
+            min="1" 
+            value={frequency}
+            onChange={(e) => setFrequency(parseInt(e.target.value))}
+            className="border rounded p-2 w-16 text-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+          <span className="text-sm font-medium text-gray-700">hafta</span>
+        </div>
+
+        {/* Gün Seçimi */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Gün Seçimi:</label>
+          <div className="flex gap-2">
+            {days.map((day, index) => (
+              <button 
+                key={index}
+                type="button"
+                title={day.long}
+                onClick={() => setSelectedDay(index)}
+                className={`
+                  border rounded-full w-8 h-8 text-center text-sm
+                  transition-colors duration-200
+                  ${selectedDay === index 
+                    ? 'bg-blue-500 text-white border-blue-500' 
+                    : 'hover:bg-blue-100 text-gray-700'
+                  }
+                `}
+              >
+                {day.short}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Bitiş Ayarları */}
+        <div className="mt-4">
+          <label className="flex items-center gap-2">
+            <input 
+              type="radio" 
+              name="endType" 
+              defaultChecked 
+              className="text-blue-500 focus:ring-blue-500"
+            />
+            <span className="text-sm font-medium text-gray-700">Şu tarihte:</span>
+          </label>
+          <input 
+            type="date" 
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border rounded p-2 mt-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        {/* Butonlar */}
+        <div className="flex justify-end gap-2 mt-6">
+          <button 
+            type="button"
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 hover:underline px-4 py-2 text-sm font-medium"
+          >
+            İptal
+          </button>
+          <button 
+            type="button"
+            onClick={handleSave}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm font-medium transition-colors duration-200"
+          >
+            Bitti
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Schedule() {
   const [events, setEvents] = useState(mockEvents)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showRepeatPanel, setShowRepeatPanel] = useState(false)
   const [newEvent, setNewEvent] = useState({
     title: '',
     deviceId: '',
@@ -40,7 +152,7 @@ export default function Schedule() {
     end: '',
     notes: '',
     repeat: false,
-    repeatCount: 1,
+    repeatConfig: null
   })
 
   const handleAddEvent = (e) => {
@@ -56,22 +168,40 @@ export default function Schedule() {
       backgroundColor: '#22c55e',
     }
 
-    if (newEvent.repeat) {
-      // Tekrarlanan etkinlikleri oluştur
-      for (let i = 0; i < newEvent.repeatCount; i++) {
-        const startDate = new Date(newEvent.start)
-        const endDate = new Date(newEvent.end)
-        
-        // Her tekrar için tarihi bir gün ileri al
-        startDate.setDate(startDate.getDate() + i)
-        endDate.setDate(endDate.getDate() + i)
+    if (newEvent.repeat && newEvent.repeatConfig) {
+      const { frequency, selectedDay, endDate } = newEvent.repeatConfig
+      const startDateTime = new Date(newEvent.start)
+      const endDateTime = new Date(newEvent.end)
+      const duration = endDateTime.getTime() - startDateTime.getTime() // Etkinlik süresi (ms)
+      const endDateLimit = new Date(endDate)
+      endDateLimit.setHours(23, 59, 59, 999) // Bitiş gününün sonuna kadar
+
+      // İlk tarihi, seçilen güne ayarla
+      let currentDate = new Date(startDateTime)
+      while (currentDate.getDay() !== selectedDay) {
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+
+      // Seçilen günden başlayarak, bitiş tarihine kadar tekrarla
+      while (currentDate <= endDateLimit) {
+        const eventStart = new Date(currentDate)
+        eventStart.setHours(
+          startDateTime.getHours(),
+          startDateTime.getMinutes(),
+          startDateTime.getSeconds()
+        )
+
+        const eventEnd = new Date(eventStart.getTime() + duration)
 
         newEvents.push({
           ...baseEvent,
-          id: events.length + 1 + i,
-          start: startDate.toISOString(),
-          end: endDate.toISOString(),
+          id: events.length + 1 + newEvents.length,
+          start: eventStart.toISOString(),
+          end: eventEnd.toISOString(),
         })
+
+        // Sonraki tekrar için tarihi güncelle (frequency * 7 gün)
+        currentDate.setDate(currentDate.getDate() + (frequency * 7))
       }
     } else {
       newEvents = [baseEvent]
@@ -85,9 +215,17 @@ export default function Schedule() {
       end: '',
       notes: '',
       repeat: false,
-      repeatCount: 1,
+      repeatConfig: null
     })
     setShowAddModal(false)
+  }
+
+  const handleRepeatSave = (config) => {
+    setNewEvent(prev => ({
+      ...prev,
+      repeatConfig: config
+    }))
+    setShowRepeatPanel(false)
   }
 
   return (
@@ -220,36 +358,23 @@ export default function Schedule() {
                         rows={3}
                       />
                     </div>
-                    <div className="flex items-center space-x-6">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="repeat"
-                            checked={newEvent.repeat}
-                            onChange={(e) => setNewEvent({ ...newEvent, repeat: e.target.checked })}
-                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                          />
-                          <label htmlFor="repeat" className="ml-2 text-sm text-gray-700">
-                            Tekrarla
-                          </label>
-                        </div>
-                        {newEvent.repeat && (
-                          <div className="flex items-center">
-                            <label htmlFor="repeatCount" className="text-sm text-gray-700 mr-2">
-                              Tekrar Sayısı:
-                            </label>
-                            <input
-                              type="number"
-                              id="repeatCount"
-                              min="1"
-                              max="30"
-                              value={newEvent.repeatCount}
-                              onChange={(e) => setNewEvent({ ...newEvent, repeatCount: parseInt(e.target.value) })}
-                              className="w-20 input"
-                            />
-                          </div>
-                        )}
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="repeat"
+                          checked={newEvent.repeat}
+                          onChange={(e) => {
+                            setNewEvent({ ...newEvent, repeat: e.target.checked })
+                            if (e.target.checked) {
+                              setShowRepeatPanel(true)
+                            }
+                          }}
+                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="repeat" className="ml-2 text-sm text-gray-700">
+                          Tekrarla
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -273,6 +398,17 @@ export default function Schedule() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Yineleme Paneli */}
+      {showRepeatPanel && (
+        <RepeatPanel 
+          onClose={() => {
+            setShowRepeatPanel(false)
+            setNewEvent(prev => ({ ...prev, repeat: false }))
+          }}
+          onSave={handleRepeatSave}
+        />
       )}
     </div>
   )
