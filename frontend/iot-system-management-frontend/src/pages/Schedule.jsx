@@ -40,20 +40,44 @@ export default function Schedule() {
     end: '',
     notes: '',
     repeat: false,
-    notification: false,
+    repeatCount: 1,
   })
 
   const handleAddEvent = (e) => {
     e.preventDefault()
     const selectedDevice = mockDevices.find(d => d.id === parseInt(newEvent.deviceId))
-    const event = {
+    
+    let newEvents = []
+    const baseEvent = {
       id: events.length + 1,
       ...newEvent,
       deviceId: parseInt(newEvent.deviceId),
       title: `${selectedDevice.name} - ${newEvent.title}`,
       backgroundColor: '#22c55e',
     }
-    setEvents([...events, event])
+
+    if (newEvent.repeat) {
+      // Tekrarlanan etkinlikleri oluştur
+      for (let i = 0; i < newEvent.repeatCount; i++) {
+        const startDate = new Date(newEvent.start)
+        const endDate = new Date(newEvent.end)
+        
+        // Her tekrar için tarihi bir gün ileri al
+        startDate.setDate(startDate.getDate() + i)
+        endDate.setDate(endDate.getDate() + i)
+
+        newEvents.push({
+          ...baseEvent,
+          id: events.length + 1 + i,
+          start: startDate.toISOString(),
+          end: endDate.toISOString(),
+        })
+      }
+    } else {
+      newEvents = [baseEvent]
+    }
+
+    setEvents([...events, ...newEvents])
     setNewEvent({
       title: '',
       deviceId: '',
@@ -61,7 +85,7 @@ export default function Schedule() {
       end: '',
       notes: '',
       repeat: false,
-      notification: false,
+      repeatCount: 1,
     })
     setShowAddModal(false)
   }
@@ -197,29 +221,35 @@ export default function Schedule() {
                       />
                     </div>
                     <div className="flex items-center space-x-6">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="repeat"
-                          checked={newEvent.repeat}
-                          onChange={(e) => setNewEvent({ ...newEvent, repeat: e.target.checked })}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor="repeat" className="ml-2 text-sm text-gray-700">
-                          Tekrarla
-                        </label>
-                      </div>
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="notification"
-                          checked={newEvent.notification}
-                          onChange={(e) => setNewEvent({ ...newEvent, notification: e.target.checked })}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor="notification" className="ml-2 text-sm text-gray-700">
-                          Bildirim
-                        </label>
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="repeat"
+                            checked={newEvent.repeat}
+                            onChange={(e) => setNewEvent({ ...newEvent, repeat: e.target.checked })}
+                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                          />
+                          <label htmlFor="repeat" className="ml-2 text-sm text-gray-700">
+                            Tekrarla
+                          </label>
+                        </div>
+                        {newEvent.repeat && (
+                          <div className="flex items-center">
+                            <label htmlFor="repeatCount" className="text-sm text-gray-700 mr-2">
+                              Tekrar Sayısı:
+                            </label>
+                            <input
+                              type="number"
+                              id="repeatCount"
+                              min="1"
+                              max="30"
+                              value={newEvent.repeatCount}
+                              onChange={(e) => setNewEvent({ ...newEvent, repeatCount: parseInt(e.target.value) })}
+                              className="w-20 input"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
