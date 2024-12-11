@@ -1,15 +1,26 @@
 import { useForm } from 'react-hook-form'
+import { useState } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Login({ onLogin }) {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit: submitForm, formState: { errors } } = useForm()
+  const [captchaValue, setCaptchaValue] = useState(null);
 
   const onSubmit = (data) => {
-    // Örnek giriş kontrolü
+    if (!captchaValue) {
+      alert('Lütfen robot olmadığınızı doğrulayın');
+      return;
+    }
+    
     if (data.email && data.password) {
       console.log('Giriş bilgileri:', data)
       onLogin()
     }
   }
+
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value);
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -19,7 +30,7 @@ export default function Login({ onLogin }) {
             Tarla App'e Hoş Geldiniz
           </h2>
           
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={submitForm(onSubmit)} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 E-posta
@@ -53,7 +64,7 @@ export default function Login({ onLogin }) {
                   required: 'Şifre gereklidir',
                   minLength: {
                     value: 6,
-                    message: 'Şifre en az 6 karakter olmalıdır'
+                    message: 'Şifre en az 6 karakter olmal��dır'
                   }
                 })}
                 className="input mt-1"
@@ -64,8 +75,19 @@ export default function Login({ onLogin }) {
               )}
             </div>
 
+            <div className="flex justify-center">
+              <ReCAPTCHA
+                sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                onChange={handleCaptchaChange}
+              />
+            </div>
+
             <div>
-              <button type="submit" className="btn btn-primary w-full">
+              <button
+                type="submit"
+                disabled={!captchaValue}
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              >
                 Giriş Yap
               </button>
             </div>
