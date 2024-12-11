@@ -119,7 +119,7 @@ export default function Home() {
         <div className="sm:flex-auto">
           <h1 className="text-2xl font-semibold text-gray-900">Sensör Verileri</h1>
           <p className="mt-2 text-sm text-gray-700">
-            Tarlanızdaki sensörlerin anlık ve geçmiş verileri
+            Sisteminizdeki sensörlerin anlık ve geçmiş verileri
           </p>
         </div>
       </div>
@@ -130,7 +130,8 @@ export default function Home() {
           data={sensorData.temperature}
           icon={
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
             </svg>
           }
         />
@@ -148,7 +149,9 @@ export default function Home() {
           data={sensorData.soilMoisture}
           icon={
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3.0001V3.0001C16.9706 3.0001 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3.0001 12 3.0001V3.0001Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8" />
             </svg>
           }
         />
