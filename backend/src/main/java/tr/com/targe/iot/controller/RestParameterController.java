@@ -24,7 +24,7 @@ public class RestParameterController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestParameter> getRestParameterById(@PathVariable Integer id) {
+    public ResponseEntity<RestParameter> getRestParameterById(@PathVariable Long id) {
         Optional<RestParameter> restParameter = restParameterService.getRestParameterById(id);
         return restParameter.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -36,7 +36,7 @@ public class RestParameterController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RestParameter> updateRestParameter(@PathVariable Integer id, @RequestBody RestParameter updatedRestParameter) {
+    public ResponseEntity<RestParameter> updateRestParameter(@PathVariable Long id, @RequestBody RestParameter updatedRestParameter) {
         RestParameter restParameter = restParameterService.updateRestParameter(id, updatedRestParameter);
         if (restParameter != null) {
             return ResponseEntity.ok(restParameter);
@@ -45,8 +45,7 @@ public class RestParameterController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRestParameter(@PathVariable Integer id) {
-        restParameterService.deleteRestParameter(id);
+    public ResponseEntity<Void> deleteRestParameter(@PathVariable Long id) {
         return ResponseEntity.noContent().build(); 
     }
 }

@@ -24,7 +24,7 @@ public class RestRequestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestRequest> getRestRequestById(@PathVariable Integer id) {
+    public ResponseEntity<RestRequest> getRestRequestById(@PathVariable Long id) {
         Optional<RestRequest> restRequest = restRequestService.getRestRequestById(id);
         return restRequest.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -36,7 +36,7 @@ public class RestRequestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RestRequest> updateRestRequest(@PathVariable Integer id, @RequestBody RestRequest updatedRestRequest) {
+    public ResponseEntity<RestRequest> updateRestRequest(@PathVariable Long id, @RequestBody RestRequest updatedRestRequest) {
         RestRequest restRequest = restRequestService.updateRestRequest(id, updatedRestRequest);
         if (restRequest != null) {
             return ResponseEntity.ok(restRequest);
@@ -45,7 +45,7 @@ public class RestRequestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRestRequest(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteRestRequest(@PathVariable Long id) {
         restRequestService.deleteRestRequest(id);
         return ResponseEntity.noContent().build(); 
     }

@@ -36,8 +36,8 @@ public class SensorValuePlanController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SensorValuePlan> updateSensorValuePlan(@PathVariable Long id, @RequestBody SensorValuePlan updatedPlan) {
-        SensorValuePlan plan = sensorValuePlanService.updateSensorValuePlan(id, updatedPlan);
+    public ResponseEntity<SensorValuePlan> updateSensorValuePlan(@PathVariable Long id, @RequestBody SensorValuePlan updatedPlan, @RequestHeader("updateBy") String updateBy) {
+        SensorValuePlan plan = sensorValuePlanService.updateSensorValuePlan(id, updatedPlan, updateBy);
         if (plan != null) {
             return ResponseEntity.ok(plan);
         }
@@ -45,8 +45,8 @@ public class SensorValuePlanController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSensorValuePlan(@PathVariable Long id) {
-        sensorValuePlanService.deleteSensorValuePlan(id);
+    public ResponseEntity<Void> deleteSensorValuePlan(@PathVariable Long id, @RequestHeader("deleteBy") String deleteBy) {
+        sensorValuePlanService.deleteSensorValuePlan(id, deleteBy);
         return ResponseEntity.noContent().build(); 
     }
 }
