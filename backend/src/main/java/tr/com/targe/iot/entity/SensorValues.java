@@ -34,8 +34,8 @@ public class SensorValues {
         return sensorDataId;
     }
 
-    public void setSensorId(Long sensorId) {
-        this.sensorDataId = sensorId;
+    public void setSensorDataId(Long sensorDataId) {  // Fix method name
+        this.sensorDataId = sensorDataId;
     }
 
     public Sensor getSensor() {

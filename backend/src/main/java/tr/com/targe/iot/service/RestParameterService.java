@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.com.targe.iot.repository.RestParameterRepository;
 import tr.com.targe.iot.entity.RestParameter;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Optional;
 

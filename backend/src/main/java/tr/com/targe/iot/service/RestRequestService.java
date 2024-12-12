@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.com.targe.iot.repository.RestRequestRepository;
 import tr.com.targe.iot.entity.RestRequest;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public class RestRequestService {
         return restRequestRepository.findAll();
     }
 
-    public Optional<RestRequest> getRestRequestById(Integer id) {
+    public Optional<RestRequest> getRestRequestById(Long id) {
         return restRequestRepository.findById(id);
     }
 
@@ -33,16 +33,18 @@ public class RestRequestService {
         return restRequestRepository.save(request);
     }
 
-    public RestRequest updateRestRequest(Integer id, RestRequest updatedRequest) {
+    public RestRequest updateRestRequest(Long id, RestRequest updatedRequest) {
         return restRequestRepository.findById(id)
             .map(existing -> {
-                // Update fields as needed
                 return restRequestRepository.save(existing);
             })
             .orElse(null);
+
     }
 
-    public void deleteRestRequest(Integer id) {
-        restRequestRepository.deleteById(id);
+    public void deleteRestRequest(Long id) {
+        restRequestRepository.findById(id).ifPresent(request -> {
+            restRequestRepository.save(request);
+        });
     }
 }

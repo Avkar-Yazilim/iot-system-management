@@ -26,13 +26,13 @@ public class UserLogController {
     @GetMapping("/{id}")
     public ResponseEntity<UserLog> getUserLogById(@PathVariable Long id) {
         Optional<UserLog> userLog = userLogService.getUserLogById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return userLog.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<UserLog> createUserLog(@RequestBody UserLog userLog) {
         UserLog createdUserLog = userLogService.createUserLog(userLog);
-        return ResponseEntity.status(201).body(createdUser);
+        return ResponseEntity.status(201).body(createdUserLog);
     }
 
     @PutMapping("/{id}")
