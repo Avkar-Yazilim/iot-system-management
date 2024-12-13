@@ -6,11 +6,10 @@
       "previewLimit": 50,
       "server": "localhost",
       "port": 5432,
-      "askForPassword": true,
       "driver": "PostgreSQL",
-      "name": "iot_db",
+      "name": "iot",
       "group": "Servers",
-      "database": "iot_management_system",
+      "database": "iot_system_management",
       "username": "postgres"
     }
   ]

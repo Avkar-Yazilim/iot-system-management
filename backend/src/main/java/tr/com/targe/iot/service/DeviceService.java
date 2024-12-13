@@ -1,76 +1,79 @@
 package tr.com.targe.iot.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tr.com.targe.iot.repository.DeviceRepository;
 import tr.com.targe.iot.entity.Device;
-import tr.com.targe.iot.entity.Device.DeviceStatus;
+import tr.com.targe.iot.repository.DeviceRepository;
+import tr.com.targe.iot.mapper.DeviceMapper;
+import tr.com.targe.iot.DTO.DeviceDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DeviceService {
 
     private final DeviceRepository deviceRepository;
+    private final DeviceMapper deviceMapper;
 
-    @Autowired
-    public DeviceService(DeviceRepository deviceRepository) {
-        this.deviceRepository = deviceRepository;
+    public List<DeviceDTO> getAllDevices() {
+        return deviceRepository.findAll().stream()
+                .map(deviceMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<Device> getAllDevices() {
-        return deviceRepository.findAll();
+    public DeviceDTO getDeviceById(Long id) {
+        Device device = deviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
+        return deviceMapper.toDTO(device);
     }
 
-    public Optional<Device> getDeviceById(Long id) {
-        return deviceRepository.findById(id);
-    }
-
-    public Device createDevice(Device device, String createBy) {
-        if (device == null) {
-            throw new IllegalArgumentException("Device cannot be null");
-        }
-        if (createBy == null || createBy.trim().isEmpty()) {
-            throw new IllegalArgumentException("CreateBy cannot be null or empty");
-        }
-
+    public DeviceDTO createDevice(DeviceDTO deviceDTO) {
+        Device device = deviceMapper.toEntity(deviceDTO);
         device.setCreateAt(LocalDateTime.now());
-        device.setCreateBy(createBy);
-        device.setDeviceStatus(DeviceStatus.INACTIVE);
-        return deviceRepository.save(device);
+        Device savedDevice = deviceRepository.save(device);
+        return deviceMapper.toDTO(savedDevice);
     }
 
-    public Device updateDevice(Long id, Device updatedDevice) {
+    public DeviceDTO updateDevice(Long id, DeviceDTO deviceDTO) {
+        Device existingDevice = deviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
+        updateDeviceFields(existingDevice, deviceDTO);
+        Device updatedDevice = deviceRepository.save(existingDevice);
+        return deviceMapper.toDTO(updatedDevice);
+    }
+
+    public void deleteDevice(Long id) {
+        Device device = deviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
+        device.setDeleteAt(LocalDateTime.now());
+        device.setDeviceStatus("INACTIVE");
+        deviceRepository.save(device);
+    }
+
+
+    public DeviceDTO updateDeviceStatus(Long id, String status) {
+        Device device = deviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
+        device.setDeviceStatus(status);
+        device.setUpdateAt(LocalDateTime.now());
+        Device updatedDevice = deviceRepository.save(device);
+        return deviceMapper.toDTO(updatedDevice);
+    }
+
+    private void updateDeviceFields(Device existingDevice, DeviceDTO newDeviceDTO) {
+        existingDevice.setDeviceName(newDeviceDTO.getDeviceName());
+        existingDevice.setDeviceType(newDeviceDTO.getDeviceType());
+        existingDevice.setDeviceStatus(newDeviceDTO.getDeviceStatus());
+        existingDevice.setUpdateAt(LocalDateTime.now());
+        existingDevice.setUpdateBy(newDeviceDTO.getUpdateBy());
+        existingDevice.setVersion(newDeviceDTO.getVersion());
+    }
+
+    public Device findDeviceById(Long id) {
         return deviceRepository.findById(id)
-            .map(existingDevice -> {
-                existingDevice.setDeviceName(updatedDevice.getDeviceName());
-                existingDevice.setDeviceType(updatedDevice.getDeviceType());
-                existingDevice.setSubSystem(updatedDevice.getSubSystem());
-                existingDevice.setVersion(updatedDevice.getVersion());
-                existingDevice.setDeviceStatus(updatedDevice.getDeviceStatus());
-                existingDevice.setUpdateAt(LocalDateTime.now());
-                existingDevice.setUpdateBy(updatedDevice.getUpdateBy());
-                return deviceRepository.save(existingDevice);
-            })
-            .orElse(null);
-    }
-
-    public void deleteDevice(Long id, String deletedBy) {
-        deviceRepository.findById(id).ifPresent(device -> {
-            device.setDeleteAt(LocalDateTime.now());
-            device.setDeleteBy(deletedBy);
-            deviceRepository.save(device);
-        });
-    }
-
-    public void updateDeviceStatus(Long id, DeviceStatus status, String updatedBy) {
-        deviceRepository.findById(id).ifPresent(device -> {
-            device.setDeviceStatus(status);
-            device.setUpdateAt(LocalDateTime.now());
-            device.setUpdateBy(updatedBy);
-            deviceRepository.save(device);
-        });
+                .orElseThrow(() -> new RuntimeException("Device not found"));
     }
 }

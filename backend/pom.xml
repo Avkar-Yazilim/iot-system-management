@@ -5,8 +5,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.2.1</version>
+		<relativePath/>
 	</parent>
 	<groupId>tr.com.targe</groupId>
 	<artifactId>iot</artifactId>
@@ -24,12 +24,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
     		<groupId>org.springframework.boot</groupId>
     		<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
@@ -39,12 +33,8 @@
     		<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
 
-		<dependency>
-    		<groupId>org.springframework.boot</groupId>
-    		<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+
 		
-	
     	<dependency>
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -55,6 +45,25 @@
         	<artifactId>postgresql</artifactId>
         	<scope>runtime</scope>
     	</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -65,7 +74,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	
-
 </project>

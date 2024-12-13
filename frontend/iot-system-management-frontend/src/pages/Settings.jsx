@@ -1,24 +1,28 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function Settings() {
   const [notifications, setNotifications] = useState({
     push: true,
     email: false,
-  })
+  });
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
-      name: 'Ahmet Yazıcı',
-      email: 'ahmet@yazici.com',
-      phone: '+90 555 123 4567',
-    }
-  })
+      name: "Ahmet Yazıcı",
+      email: "ahmet@yazici.com",
+      phone: "+90 555 123 4567",
+    },
+  });
 
   const onSubmit = (data) => {
-    console.log(data)
-    console.log(notifications)
-  }
+    console.log(data);
+    console.log(notifications);
+  };
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
@@ -31,62 +35,80 @@ export default function Settings() {
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-8">
           {/* Profil Bilgileri */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900">Profil Bilgileri</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              Profil Bilgileri
+            </h3>
             <div className="mt-6 space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Ad Soyad
                 </label>
                 <input
                   type="text"
                   id="name"
-                  {...register('name', { required: 'Ad soyad gereklidir' })}
+                  {...register("name", { required: "Ad soyad gereklidir" })}
                   className="input mt-1"
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.name.message}
+                  </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   E-posta
                 </label>
                 <input
                   type="email"
                   id="email"
-                  {...register('email', {
-                    required: 'E-posta gereklidir',
+                  {...register("email", {
+                    required: "E-posta gereklidir",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Geçersiz e-posta adresi',
+                      message: "Geçersiz e-posta adresi",
                     },
                   })}
                   className="input mt-1"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.email.message}
+                  </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Telefon
                 </label>
                 <input
                   type="tel"
                   id="phone"
-                  {...register('phone', {
-                    required: 'Telefon numarası gereklidir',
+                  {...register("phone", {
+                    required: "Telefon numarası gereklidir",
                     pattern: {
-                      value: /^(\+90|0)?\s*([0-9]{3})\s*([0-9]{3})\s*([0-9]{2})\s*([0-9]{2})$/,
-                      message: 'Geçersiz telefon numarası',
+                      value:
+                        /^(\+90|0)?\s*([0-9]{3})\s*([0-9]{3})\s*([0-9]{2})\s*([0-9]{2})$/,
+                      message: "Geçersiz telefon numarası",
                     },
                   })}
                   className="input mt-1"
                 />
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.phone.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -94,19 +116,30 @@ export default function Settings() {
 
           {/* Bildirim Ayarları */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900">Bildirim Ayarları</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              Bildirim Ayarları
+            </h3>
             <div className="mt-6 space-y-6">
               <div className="flex items-center">
                 <input
                   type="checkbox"
                   id="push"
                   checked={notifications.push}
-                  onChange={(e) => setNotifications({ ...notifications, push: e.target.checked })}
+                  onChange={(e) =>
+                    setNotifications({
+                      ...notifications,
+                      push: e.target.checked,
+                    })
+                  }
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
                 <label htmlFor="push" className="ml-3">
-                  <span className="text-sm font-medium text-gray-900">Push Bildirimleri</span>
-                  <p className="text-sm text-gray-500">Anlık bildirimler alın</p>
+                  <span className="text-sm font-medium text-gray-900">
+                    Push Bildirimleri
+                  </span>
+                  <p className="text-sm text-gray-500">
+                    Anlık bildirimler alın
+                  </p>
                 </label>
               </div>
 
@@ -115,12 +148,21 @@ export default function Settings() {
                   type="checkbox"
                   id="email-notifications"
                   checked={notifications.email}
-                  onChange={(e) => setNotifications({ ...notifications, email: e.target.checked })}
+                  onChange={(e) =>
+                    setNotifications({
+                      ...notifications,
+                      email: e.target.checked,
+                    })
+                  }
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
                 <label htmlFor="email-notifications" className="ml-3">
-                  <span className="text-sm font-medium text-gray-900">E-posta Bildirimleri</span>
-                  <p className="text-sm text-gray-500">Günlük özet e-postaları alın</p>
+                  <span className="text-sm font-medium text-gray-900">
+                    E-posta Bildirimleri
+                  </span>
+                  <p className="text-sm text-gray-500">
+                    Günlük özet e-postaları alın
+                  </p>
                 </label>
               </div>
             </div>
@@ -131,15 +173,15 @@ export default function Settings() {
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
-                onClick={() => window.location.href = 'mailto:vtysiotsystem.management@gmail.com'}
+                onClick={() =>
+                  (window.location.href =
+                    "mailto:vtysiotsystem.management@gmail.com")
+                }
                 className="btn border border-gray-300"
               >
                 Bize Ulaşın
               </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-              >
+              <button type="submit" className="btn btn-primary">
                 Değişiklikleri Kaydet
               </button>
             </div>
@@ -147,5 +189,5 @@ export default function Settings() {
         </form>
       </div>
     </div>
-  )
-} 
+  );
+}

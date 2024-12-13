@@ -28,27 +28,5 @@ public class DeviceLogController {
         Optional<DeviceLog> deviceLog = deviceLogService.getDeviceLogById(id);
         return deviceLog.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-    @PostMapping
-    public ResponseEntity<DeviceLog> createDeviceLog(
-            @RequestBody DeviceLog deviceLog,
-            @RequestParam String createBy) {
-        DeviceLog createdDeviceLog = deviceLogService.createDeviceLog(deviceLog, createBy);
-        return ResponseEntity.status(201).body(createdDeviceLog);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<DeviceLog> updateDeviceLog(@PathVariable Long id, @RequestBody DeviceLog updatedDeviceLog) {
-        DeviceLog deviceLog = deviceLogService.updateDeviceLog(id, updatedDeviceLog);
-        if (deviceLog != null) {
-            return ResponseEntity.ok(deviceLog);
-        }
-        return ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDeviceLog(@PathVariable Long id) {
-        deviceLogService.deleteDeviceLog(id);
-        return ResponseEntity.noContent().build();
-    }
+    
 }
