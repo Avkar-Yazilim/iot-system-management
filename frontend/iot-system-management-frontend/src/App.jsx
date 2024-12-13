@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
@@ -9,7 +9,13 @@ import Settings from './pages/Settings'
 import Logs from './pages/Logs'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isAuthenticated') === 'true'
+  })
+
+  useEffect(() => {
+    localStorage.setItem('isAuthenticated', isAuthenticated)
+  }, [isAuthenticated])
 
   const handleLogin = () => {
     setIsAuthenticated(true)
@@ -17,18 +23,29 @@ function App() {
 
   const handleLogout = () => {
     setIsAuthenticated(false)
+    localStorage.removeItem('isAuthenticated')
   }
 
   return (
     <Router>
       <Routes>
         <Route 
+          path="/" 
+          element={
+            !isAuthenticated ? (
+              <Navigate to="/login" />
+            ) : (
+              <Navigate to="/home" />
+            )
+          } 
+        />
+        <Route 
           path="/login" 
           element={
             !isAuthenticated ? (
               <Login onLogin={handleLogin} />
             ) : (
-              <Navigate to="/" />
+              <Navigate to="/home" />
             )
           } 
         />
@@ -42,7 +59,7 @@ function App() {
             )
           }
         >
-          <Route index element={<Home />} />
+          <Route path="home" element={<Home />} />
           <Route path="devices" element={<Devices />} />
           <Route path="schedule" element={<Schedule />} />
           <Route path="logs" element={<Logs />} />
