@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import tr.com.targe.iot.entity.SubSystem;
+
 
 @Getter
 @Setter 
@@ -19,7 +21,7 @@ public class Device {
 
     @ManyToOne
     @JoinColumn(name = "system_id")
-    private Long systemId;
+    private SubSystem subSystem;     
 
     @Column(name = "device_name", length = 20, nullable = false)
     private String deviceName;

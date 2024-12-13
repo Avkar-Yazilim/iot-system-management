@@ -20,9 +20,6 @@ public class DeviceMapper {
         dto.setUpdateAt(device.getUpdateAt());
         dto.setUpdateBy(device.getUpdateBy());
         dto.setVersion(device.getVersion());
-        dto.setSystemId(device.getSystemId());
-        
-       
         
         return dto;
     }
@@ -38,7 +35,6 @@ public class DeviceMapper {
         device.setCreateBy(dto.getCreateBy());
         device.setUpdateBy(dto.getUpdateBy());
         device.setVersion(dto.getVersion());
-        device.setSystemId(dto.getSystemId());
         
         return device;
     }
