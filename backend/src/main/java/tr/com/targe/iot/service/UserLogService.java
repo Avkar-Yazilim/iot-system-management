@@ -27,7 +27,7 @@ public class UserLogService {
         return logs.stream().map(log -> {
             if (log.getUser() != null) {
                 // User entity'sinden username'i al
-                User user = userRepository.findById(log.getUser().getId()).orElse(null);
+                User user = userRepository.findById(log.getUser().getUserId()).orElse(null);
                 if (user != null) {
                     log.setUsername(user.getUsername());
                 }
@@ -40,7 +40,7 @@ public class UserLogService {
         Optional<UserLog> userLog = userLogRepository.findById(id);
         userLog.ifPresent(log -> {
             if (log.getUser() != null) {
-                User user = userRepository.findById(log.getUser().getId()).orElse(null);
+                User user = userRepository.findById(log.getUser().getUserId()).orElse(null);
                 if (user != null) {
                     log.setUsername(user.getUsername());
                 }

@@ -6,21 +6,17 @@ import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Collection;
-import java.util.Collections;
 
 @Getter
 @Setter
 @Entity
 @Data
 @Table(name = "users")
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -28,10 +24,13 @@ public class User implements UserDetails {
     @Column(name = "password_hash")
     private String passwordHash;
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)   
+    private String email;
+
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @Column(name = "user_authorization")
@@ -46,40 +45,24 @@ public class User implements UserDetails {
     @Column(name = "update_at")
     private LocalDateTime updateAt;
 
-    @Column(name = "updated_by")
+    @Column(name = "update_by")
     private String updateBy;
 
     @ManyToMany
-    @JoinTable(name = "user_subsystem", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "subsystem_id"))
+    @JoinTable(name = "sub_system_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "system_id"))
     private List<SubSystem> subSystems;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-    }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public String getPassword() {
+    public String getPasswordHash() {
         return passwordHash;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 }

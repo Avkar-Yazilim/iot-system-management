@@ -1,184 +1,185 @@
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { settingsService } from "../services/settingsService";
 
 export default function Settings() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-  } = useForm({
-    defaultValues: {
-      name: "Ahmet Yazıcı",
-      email: "ahmet@yazici.com",
-    },
-  });
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      const data = await settingsService.getAllUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error("Kullanıcılar yüklenirken hata oluştu:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+  };
+
+  const handleUpdateUser = async (userId, updatedData) => {
+    try {
+      await settingsService.updateUser(userId, updatedData);
+      setEditingUser(null);
+      loadUsers(); // Listeyi yenile
+      alert("Kullanıcı başarıyla güncellendi!");
+    } catch (error) {
+      console.error("Güncelleme sırasında hata oluştu:", error);
+      alert("Güncelleme sırasında bir hata oluştu!");
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (window.confirm("Bu kullanıcıyı silmek istediğinizden emin misiniz?")) {
+      try {
+        await settingsService.deleteUser(userId);
+        loadUsers(); // Listeyi yenile
+        alert("Kullanıcı başarıyla silindi!");
+      } catch (error) {
+        console.error("Silme işlemi sırasında hata oluştu:", error);
+        alert("Silme işlemi sırasında bir hata oluştu!");
+      }
+    }
+  };
+
+  if (loading) {
+    return <div>Yükleniyor...</div>;
+  }
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-semibold text-gray-900">Ayarlar</h1>
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Kullanıcı Yönetimi
+        </h1>
         <p className="mt-2 text-sm text-gray-700">
-          Hesap ayarlarınızı buradan yönetebilirsiniz.
+          Sistem kullanıcılarını buradan yönetebilirsiniz.
         </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-8">
-          {/* Profil Bilgileri */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900">
-              Profil Bilgileri
-            </h3>
-            <div className="mt-6 space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Ad Soyad
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  {...register("name", { required: "Ad soyad gereklidir" })}
-                  className="input mt-1"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  E-posta
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  {...register("email", {
-                    required: "E-posta gereklidir",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Geçersiz e-posta adresi",
-                    },
-                  })}
-                  className="input mt-1"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Şifre Güncelleme */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900">
-              Şifre Güncelleme
-            </h3>
-            <div className="mt-6 space-y-6">
-              <div>
-                <label
-                  htmlFor="currentPassword"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Mevcut Şifre
-                </label>
-                <input
-                  type="password"
-                  id="currentPassword"
-                  {...register("currentPassword", { 
-                    required: "Mevcut şifrenizi girmelisiniz" 
-                  })}
-                  className="input mt-1"
-                />
-                {errors.currentPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.currentPassword.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="newPassword"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Yeni Şifre
-                </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  {...register("newPassword", {
-                    required: "Yeni şifre gereklidir",
-                    minLength: {
-                      value: 8,
-                      message: "Şifre en az 8 karakter olmalıdır"
-                    }
-                  })}
-                  className="input mt-1"
-                />
-                {errors.newPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.newPassword.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Yeni Şifre (Tekrar)
-                </label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  {...register("confirmPassword", {
-                    required: "Şifrenizi tekrar girmelisiniz",
-                    validate: (value) => 
-                      value === watch("newPassword") || "Şifreler eşleşmiyor"
-                  })}
-                  className="input mt-1"
-                />
-                {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
+        <div className="mt-8 flex flex-col">
+          <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+              <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                <table className="min-w-full divide-y divide-gray-300">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Kullanıcı Adı
+                      </th>
+                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        E-posta
+                      </th>
+                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Ad
+                      </th>
+                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Soyad
+                      </th>
+                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Yetki
+                      </th>
+                      <th className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                        <span className="sr-only">İşlemler</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {users.map((user) => (
+                      <tr key={user.userId}>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {editingUser?.userId === user.userId ? (
+                            <input
+                              type="text"
+                              className="input"
+                              defaultValue={user.username}
+                              onChange={(e) =>
+                                setEditingUser({
+                                  ...editingUser,
+                                  username: e.target.value,
+                                })
+                              }
+                            />
+                          ) : (
+                            user.username
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {editingUser?.userId === user.userId ? (
+                            <input
+                              type="email"
+                              className="input"
+                              defaultValue={user.email}
+                              onChange={(e) =>
+                                setEditingUser({
+                                  ...editingUser,
+                                  email: e.target.value,
+                                })
+                              }
+                            />
+                          ) : (
+                            user.email
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {user.firstName || "-"}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {user.lastName || "-"}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {user.userAuthorization}
+                        </td>
+                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                          {editingUser?.userId === user.userId ? (
+                            <div className="space-x-2">
+                              <button
+                                onClick={() =>
+                                  handleUpdateUser(user.userId, editingUser)
+                                }
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                Kaydet
+                              </button>
+                              <button
+                                onClick={() => setEditingUser(null)}
+                                className="text-gray-600 hover:text-gray-900"
+                              >
+                                İptal
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="space-x-2">
+                              <button
+                                onClick={() => handleEditUser(user)}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                Düzenle
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(user.userId)}
+                                className="text-red-600 hover:text-red-900"
+                              >
+                                Sil
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
-
-          {/* Kaydet Butonu */}
-          <div className="pt-6">
-            <div className="flex justify-end space-x-4">
-              <button
-                type="button"
-                onClick={() =>
-                  (window.location.href =
-                    "mailto:vtysiotsystem.management@gmail.com")
-                }
-                className="btn border border-gray-300"
-              >
-                Bize Ulaşın
-              </button>
-              <button type="submit" className="btn btn-primary">
-                Değişiklikleri Kaydet
-              </button>
-            </div>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );
