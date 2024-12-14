@@ -40,8 +40,27 @@ public class DeviceController {
     }
 
     @PostMapping
-    public ResponseEntity<DeviceDTO> createDevice(@RequestBody DeviceDTO deviceDTO) {
-        return new ResponseEntity<>(deviceService.createDevice(deviceDTO), HttpStatus.CREATED);
+    public ResponseEntity<?> createDevice(@RequestBody DeviceDTO deviceDTO) {
+        try {
+            System.out.println("Received DTO: " + deviceDTO);
+            
+            if (deviceDTO.getDeviceName() == null || deviceDTO.getDeviceType() == null) {
+                return ResponseEntity.badRequest()
+                    .body("Device name and type are required");
+            }
+            
+            DeviceDTO createdDevice = deviceService.createDevice(deviceDTO);
+            return ResponseEntity.ok(createdDevice);
+            
+        } catch (Exception e) {
+            String errorMessage = "Error creating device: " + e.getMessage();
+            System.err.println(errorMessage);
+            System.err.println("Full error: " + e);
+            
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorMessage);
+        }
     }
 
     @PutMapping("/{id}")
