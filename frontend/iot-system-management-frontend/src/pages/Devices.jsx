@@ -56,18 +56,14 @@ export default function Devices() {
   };
 
   const handleDeleteDevice = async (deviceId) => {
-    // Kullanıcıdan silme işlemini onaylamasını iste
-    if (window.confirm("Bu cihazı silmek istediğinizden emin misiniz?")) {
-      try {
-        await deviceService.deleteDevice(deviceId);
-        setDevices(devices.filter((d) => d.deviceId !== deviceId));
-        alert("Cihaz başarıyla silindi");
-      } catch (err) {
-        setError(
-          "Cihaz silinirken hata oluştu: " + (err.message || "Bilinmeyen hata")
-        );
-        console.error("Delete error:", err);
-      }
+    try {
+      const currentUser = localStorage.getItem('username');
+      await deviceService.deleteDevice(deviceId, currentUser);
+      fetchDevices();
+      alert("Cihaz başarıyla silindi");
+    } catch (error) {
+      setError("Cihaz silinirken bir hata oluştu");
+      console.error("Delete error:", error);
     }
   };
 
