@@ -1,15 +1,16 @@
 package tr.com.targe.iot.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import tr.com.targe.iot.entity.Device;
-import tr.com.targe.iot.repository.DeviceRepository;
-import tr.com.targe.iot.mapper.DeviceMapper;
-import tr.com.targe.iot.DTO.DeviceDTO;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import tr.com.targe.iot.DTO.DeviceDTO;
+import tr.com.targe.iot.entity.Device;
+import tr.com.targe.iot.mapper.DeviceMapper;
+import tr.com.targe.iot.repository.DeviceRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class DeviceService {
 
 
     public List<DeviceDTO> getAllDevices() {
-        return deviceRepository.findByDeleteAtIsNullAndDeletedAtIsNull().stream()
+        return deviceRepository.findByDeleteByIsNullAndDeleteAtIsNull().stream()
                 .map(deviceMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -52,9 +53,8 @@ public class DeviceService {
     public void deleteDevice(Long id, String username) {
         Device device = deviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cihaz bulunamadı"));
-        
-        device.setDeletedAt(LocalDateTime.now());
-        device.setDeletedBy(username);
+        device.setDeleteBy("ADMIN");
+        device.setDeleteAt(LocalDateTime.now());
         deviceRepository.save(device);
     }
 
