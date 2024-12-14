@@ -3,7 +3,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -41,22 +40,46 @@ public class BatchCommands {
 
     private List<SensorValuePlan> sensorValuePlans;
 
-    @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
+        // Getters and Setters
 
-    @Column(name = "create_by", nullable = false)
-    private String createBy;
+        public Long getCommandId() {
+            return commandId;
+        }
+    
+        public void setCommandId(Long commandId) {
+            this.commandId = commandId;
+        }
+    
+        public String getCommand() {
+            return command;
+        }
+    
+        public void setCommand(String command) {
+            this.command = command;
+        }
+    
+        public Timestamp getTimestamp() {
+            return timestamp;
+        }
 
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
+        public void setTimestamp(Timestamp timestamp) {
+            this.timestamp = timestamp;
+        }
+    
+        public String getCommandStatus() {
+            return commandStatus;
+        }
+    
+        public void setCommandStatus(String commandStatus) {
+            this.commandStatus = commandStatus;
+        }
 
-    @Column(name = "update_by")
-    private String updateBy;
+        public Integer getPriority() {
+            return priority;
+        }
 
-    @Column(name = "delete_at")
-    private LocalDateTime deleteAt;
-
-    @Column(name = "delete_by")
-    private String deleteBy;
+        public void setPriority(Integer priority) {
+            this.priority = priority;
+        }
 
 }

@@ -30,30 +30,6 @@ public class BatchCommandsController {
         return command.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<BatchCommands> createBatchCommand(
-            @RequestBody BatchCommands batchCommand,
-            @RequestParam String createBy) {
-        BatchCommands createdCommand = batchCommandsService.createBatchCommand(batchCommand, createBy);
-        return ResponseEntity.status(201).body(createdCommand);
-    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BatchCommands> updateBatchCommand(
-            @PathVariable Long id,
-            @RequestBody BatchCommands updatedCommand) {
-        BatchCommands command = batchCommandsService.updateBatchCommand(id, updatedCommand);
-        if (command != null) {
-            return ResponseEntity.ok(command);
-        }
-        return ResponseEntity.notFound().build();
-    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBatchCommand(
-            @PathVariable Long id,
-            @RequestParam String deletedBy) {
-        batchCommandsService.deleteBatchCommand(id, deletedBy);
-        return ResponseEntity.noContent().build();
-    }
 }

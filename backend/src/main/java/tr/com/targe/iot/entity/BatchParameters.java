@@ -1,6 +1,5 @@
 package tr.com.targe.iot.entity;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,22 +24,5 @@ public class BatchParameters {
     @JoinColumn(name = "command_id", referencedColumnName = "command_id", nullable = false)
     private BatchCommands batchCommand;
 
-    @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
-
-    @Column(name = "create_by", nullable = false)
-    private String createBy;
-
-    @Column(name = "update_at")
-    private LocalDateTime updateAt;
-
-    @Column(name = "update_by")
-    private String updateBy;
-
-    @Column(name = "delete_at")
-    private LocalDateTime deleteAt;
-
-    @Column(name = "delete_by")
-    private String deleteBy;
 
 }
