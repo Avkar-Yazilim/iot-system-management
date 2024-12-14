@@ -16,6 +16,9 @@ public class DeviceLog {
     @JoinColumn(name = "device_id", nullable = false)
     private Device device;
 
+    @Column(name = "device_id", nullable = false, insertable = false, updatable = false)
+    private Long deviceId;
+
     @Column(name = "message", length = 255, nullable = false)
     private String message;
 
@@ -31,15 +34,6 @@ public class DeviceLog {
     public void setLogId(Long logId) {
         this.logId = logId;
     }
-
-    public Device getDevice() {
-        return device;
-    }
-
-    public void setDevice(Device device) {
-        this.device = device;
-    }
-
     public String getMessage() {
         return message;
     }
@@ -54,5 +48,21 @@ public class DeviceLog {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
+    }
+    
+    public Long getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
     }
 }

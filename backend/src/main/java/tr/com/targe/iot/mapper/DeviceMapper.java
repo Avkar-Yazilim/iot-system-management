@@ -15,12 +15,12 @@ public class DeviceMapper {
         dto.setDeviceName(device.getDeviceName());
         dto.setDeviceType(device.getDeviceType());
         dto.setDeviceStatus(device.getDeviceStatus());
-        dto.setCreateAt(device.getCreateAt());
-        dto.setCreateBy(device.getCreateBy());
-        dto.setUpdateAt(device.getUpdateAt());
-        dto.setUpdateBy(device.getUpdateBy());
+        dto.setSystemId(device.getSystemId());
         dto.setVersion(device.getVersion());
-        
+        dto.setCreateBy(device.getCreateBy());
+        dto.setCreateAt(device.getCreateAt());
+        dto.setUpdateBy(device.getUpdateBy());
+        dto.setUpdateAt(device.getUpdateAt());
         return dto;
     }
     
@@ -32,10 +32,12 @@ public class DeviceMapper {
         device.setDeviceName(dto.getDeviceName());
         device.setDeviceType(dto.getDeviceType());
         device.setDeviceStatus(dto.getDeviceStatus());
-        device.setCreateBy(dto.getCreateBy());
-        device.setUpdateBy(dto.getUpdateBy());
+        device.setSystemId(dto.getSystemId());
         device.setVersion(dto.getVersion());
-        
+        device.setCreateBy(dto.getCreateBy());
+        device.setCreateAt(dto.getCreateAt());
+        device.setUpdateAt(dto.getUpdateAt());
+        device.setUpdateBy(dto.getUpdateBy());
         return device;
     }
 } 

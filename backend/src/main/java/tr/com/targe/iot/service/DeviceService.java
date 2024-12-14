@@ -18,6 +18,7 @@ public class DeviceService {
     private final DeviceRepository deviceRepository;
     private final DeviceMapper deviceMapper;
 
+
     public List<DeviceDTO> getAllDevices() {
         return deviceRepository.findAll().stream()
                 .map(deviceMapper::toDTO)
@@ -33,8 +34,11 @@ public class DeviceService {
     public DeviceDTO createDevice(DeviceDTO deviceDTO) {
         Device device = deviceMapper.toEntity(deviceDTO);
         device.setCreateAt(LocalDateTime.now());
+        device.setCreateBy("ADMİN");
+        device.setSystemId(deviceDTO.getSystemId());
+        device.setVersion(deviceDTO.getVersion());
         Device savedDevice = deviceRepository.save(device);
-        return deviceMapper.toDTO(savedDevice);
+        return deviceMapper.toDTO(savedDevice); 
     }
 
     public DeviceDTO updateDevice(Long id, DeviceDTO deviceDTO) {
@@ -68,7 +72,7 @@ public class DeviceService {
         existingDevice.setDeviceType(newDeviceDTO.getDeviceType());
         existingDevice.setDeviceStatus(newDeviceDTO.getDeviceStatus());
         existingDevice.setUpdateAt(LocalDateTime.now());
-        existingDevice.setUpdateBy(newDeviceDTO.getUpdateBy());
+        existingDevice.setUpdateBy("admin");
         existingDevice.setVersion(newDeviceDTO.getVersion());
     }
 

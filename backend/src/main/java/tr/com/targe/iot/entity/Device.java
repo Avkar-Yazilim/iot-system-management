@@ -1,11 +1,12 @@
 package tr.com.targe.iot.entity;
 
 import jakarta.persistence.*;
+import tr.com.targe.iot.entity.SubSystem;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import tr.com.targe.iot.entity.SubSystem;
+
 
 
 @Getter
@@ -22,6 +23,9 @@ public class Device {
     @ManyToOne
     @JoinColumn(name = "system_id")
     private SubSystem subSystem;     
+
+    @Column(name = "system_id", nullable = false, insertable = false,updatable = false)
+    private Long systemId;
 
     @Column(name = "device_name", length = 20, nullable = false)
     private String deviceName;
@@ -63,4 +67,12 @@ public class Device {
         inverseJoinColumns = @JoinColumn(name = "plan_id")
     )
     private List<SensorValuePlan> sensorValuePlans;
+
+    public void setSystemId(Long systemId) {
+        this.systemId = systemId;
+    }
+
+    public Long getSystemId() {
+        return systemId;
+    }
 }

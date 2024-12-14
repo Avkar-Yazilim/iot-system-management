@@ -8,10 +8,10 @@ export default function Devices() {
   const [showNewDeviceModal, setShowNewDeviceModal] = useState(false);
 
   const [formData, setFormData] = useState({
-    deviceName: '',
-    deviceType: '',
-    serialNumber: '',
-    group: ''
+    deviceName: "",
+    deviceType: "",
+    serialNumber: "",
+    group: "",
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -64,59 +64,65 @@ export default function Devices() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Input değiştiğinde o alan için olan hatayı temizle
     if (formErrors[name]) {
-      setFormErrors(prev => ({
+      setFormErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
 
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.deviceName.trim()) {
-      errors.deviceName = 'Cihaz adı boş bırakılamaz';
+      errors.deviceName = "Cihaz adı boş bırakılamaz";
     }
-    
+
     if (!formData.deviceType) {
-      errors.deviceType = 'Cihaz tipi seçilmelidir';
+      errors.deviceType = "Cihaz tipi seçilmelidir";
     }
-    
+
     if (!formData.serialNumber.trim()) {
-      errors.serialNumber = 'Seri numarası boş bırakılamaz';
+      errors.serialNumber = "Seri numarası boş bırakılamaz";
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     try {
       // Form gönderme işlemleri burada yapılacak
-      console.log('Form data:', formData);
+      console.log("Form data:", formData);
       setShowNewDeviceModal(false);
       // Form başarıyla gönderildikten sonra formu temizle
       setFormData({
-        deviceName: '',
-        deviceType: '',
-        serialNumber: '',
-        group: ''
+        deviceName: "",
+        deviceType: "",
+        serialNumber: "",
+        group: "",
       });
     } catch (err) {
-      setError('Cihaz eklenirken bir hata oluştu');
+      setError("Cihaz eklenirken bir hata oluştu");
     }
+  };
+
+  const handleShowLogs = (deviceId) => {
+    navigate(`/device-logs/${deviceId}`);
+    // veya
+    // navigate('/device-logs', { state: { deviceId: deviceId } });
   };
 
   return (
@@ -179,20 +185,23 @@ export default function Devices() {
                     <span>{device.createBy}</span>
                   </div>
                   <div className="flex">
-                    <span className="text-gray-600 w-32">Oluşturma Tarihi:</span>
-                    <span>{new Date(device.createAt).toLocaleDateString("tr-TR")}</span>
+                    <span className="text-gray-600 w-32">
+                      Oluşturma Tarihi:
+                    </span>
+                    <span>
+                      {new Date(device.createAt).toLocaleDateString("tr-TR")}
+                    </span>
                   </div>
                 </div>
-                
+
                 <div className="flex space-x-2 mt-4">
                   <button
+                    onClick={() => handleShowLogs(device.deviceId)}
                     className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300"
                   >
                     Logları Göster
                   </button>
-                  <button
-                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300"
-                  >
+                  <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300">
                     Düzenle
                   </button>
                   <button
@@ -222,37 +231,49 @@ export default function Devices() {
                 <label className="block text-gray-700 mb-2">
                   Cihaz Adı <span className="text-red-500">*</span>
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="deviceName"
                   value={formData.deviceName}
                   onChange={handleInputChange}
                   className={`w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 
-                    ${formErrors.deviceName ? 'border-red-500' : 'border-gray-300'}`}
+                    ${
+                      formErrors.deviceName
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   placeholder="Cihaz adını giriniz"
                 />
                 {formErrors.deviceName && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceName}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.deviceName}
+                  </p>
                 )}
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 mb-2">
                   Cihaz Tipi <span className="text-red-500">*</span>
                 </label>
-                <select 
+                <select
                   name="deviceType"
                   value={formData.deviceType}
                   onChange={handleInputChange}
                   className={`w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500
-                    ${formErrors.deviceType ? 'border-red-500' : 'border-gray-300'}`}
+                    ${
+                      formErrors.deviceType
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                 >
                   <option value="">Seçiniz</option>
                   <option value="sensor">Sensör</option>
                   <option value="detector">Dedektör</option>
                 </select>
                 {formErrors.deviceType && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceType}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.deviceType}
+                  </p>
                 )}
               </div>
 
@@ -260,23 +281,29 @@ export default function Devices() {
                 <label className="block text-gray-700 mb-2">
                   Seri Numarası <span className="text-red-500">*</span>
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="serialNumber"
                   value={formData.serialNumber}
                   onChange={handleInputChange}
                   className={`w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500
-                    ${formErrors.serialNumber ? 'border-red-500' : 'border-gray-300'}`}
+                    ${
+                      formErrors.serialNumber
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
                   placeholder="Seri numarasını giriniz"
                 />
                 {formErrors.serialNumber && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.serialNumber}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.serialNumber}
+                  </p>
                 )}
               </div>
 
               <div>
                 <label className="block text-gray-700 mb-2">Grup</label>
-                <select 
+                <select
                   name="group"
                   value={formData.group}
                   onChange={handleInputChange}
@@ -294,10 +321,10 @@ export default function Devices() {
                   onClick={() => {
                     setShowNewDeviceModal(false);
                     setFormData({
-                      deviceName: '',
-                      deviceType: '',
-                      serialNumber: '',
-                      group: ''
+                      deviceName: "",
+                      deviceType: "",
+                      serialNumber: "",
+                      group: "",
                     });
                     setFormErrors({});
                   }}

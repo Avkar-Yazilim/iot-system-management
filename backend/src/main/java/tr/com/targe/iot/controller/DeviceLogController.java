@@ -1,32 +1,26 @@
 package tr.com.targe.iot.controller;
 
-import tr.com.targe.iot.entity.DeviceLog;
+import tr.com.targe.iot.DTO.DeviceLogDTO;
 import tr.com.targe.iot.service.DeviceLogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import lombok.RequiredArgsConstructor;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/device-logs")
+@RequestMapping("/api/logs")
+@CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor 
 public class DeviceLogController {
 
     private final DeviceLogService deviceLogService;
 
-    public DeviceLogController(DeviceLogService deviceLogService) {
-        this.deviceLogService = deviceLogService;
-    }
-
     @GetMapping
-    public List<DeviceLog> getAllDeviceLogs() {
-        return deviceLogService.getAllDeviceLogs();
+    public ResponseEntity<List<DeviceLogDTO>> getAllDeviceLogs() {
+        List<DeviceLogDTO> deviceLogs = deviceLogService.getAllDeviceLogs();
+        return ResponseEntity.ok(deviceLogs);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DeviceLog> getDeviceLogById(@PathVariable Long id) {
-        Optional<DeviceLog> deviceLog = deviceLogService.getDeviceLogById(id);
-        return deviceLog.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-    
+
 }
+
