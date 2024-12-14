@@ -34,7 +34,7 @@ public class Device {
     private SubSystem subSystem;     
 
     @Column(name = "system_id", nullable = false, insertable = false,updatable = false)
-    private Long systemId;
+    private Long systemId = 1L;
 
     @Column(name = "device_name", length = 20, nullable = false)
     private String deviceName;
@@ -43,13 +43,13 @@ public class Device {
     private String deviceType;
 
     @Column(name = "device_status", length = 25, nullable = false)
-    private String deviceStatus = "INACTIVE";
+    private String deviceStatus = "inactive";
 
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt = LocalDateTime.now();
 
     @Column(name = "create_by", length = 25, nullable = false)
-    private String createBy;
+    private String createBy = "admin";
 
     @Column(name = "update_at")
     private LocalDateTime updateAt;
@@ -64,7 +64,7 @@ public class Device {
     private String deleteBy;
 
     @Column(name = "version", length = 25, nullable = false)
-    private String version;
+    private String version = "1.0";
 
     @ManyToMany(mappedBy = "devices")
     private List<DeviceGroup> deviceGroups;

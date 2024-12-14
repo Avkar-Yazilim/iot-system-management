@@ -11,9 +11,7 @@ export default function Devices() {
 
   const [formData, setFormData] = useState({
     deviceName: "",
-    deviceType: "",
-    serialNumber: "",
-    group: "",
+    deviceType: ""
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -93,34 +91,26 @@ export default function Devices() {
       errors.deviceType = "Cihaz tipi seçilmelidir";
     }
 
-    if (!formData.serialNumber.trim()) {
-      errors.serialNumber = "Seri numarası boş bırakılamaz";
-    }
-
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    try {
-      // Form gönderme işlemleri burada yapılacak
-      console.log("Form data:", formData);
-      setShowNewDeviceModal(false);
-      // Form başarıyla gönderildikten sonra formu temizle
-      setFormData({
-        deviceName: "",
-        deviceType: "",
-        serialNumber: "",
-        group: "",
-      });
-    } catch (err) {
-      setError("Cihaz eklenirken bir hata oluştu");
+    
+    try {        
+        const newDevice = await deviceService.createDevice({
+            deviceName: formData.deviceName,
+            deviceType: formData.deviceType
+        });
+        
+        setShowNewDeviceModal(false);
+        setFormData({ deviceName: "", deviceType: "" });
+        fetchDevices();
+        
+    } catch (error) {
+        console.error("Gönderilen veri:", formData);
+        console.error("Hata detayı:", error.response?.data);
     }
   };
 
@@ -247,19 +237,9 @@ export default function Devices() {
                   name="deviceName"
                   value={formData.deviceName}
                   onChange={handleInputChange}
-                  className={`w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500 
-                    ${
-                      formErrors.deviceName
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
+                  className="w-full border rounded-md p-2"
                   placeholder="Cihaz adını giriniz"
                 />
-                {formErrors.deviceName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formErrors.deviceName}
-                  </p>
-                )}
               </div>
 
               <div>
@@ -270,59 +250,11 @@ export default function Devices() {
                   name="deviceType"
                   value={formData.deviceType}
                   onChange={handleInputChange}
-                  className={`w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500
-                    ${
-                      formErrors.deviceType
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
+                  className="w-full border rounded-md p-2"
                 >
                   <option value="">Seçiniz</option>
                   <option value="sensor">Sensör</option>
                   <option value="detector">Dedektör</option>
-                </select>
-                {formErrors.deviceType && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formErrors.deviceType}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-gray-700 mb-2">
-                  Seri Numarası <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="serialNumber"
-                  value={formData.serialNumber}
-                  onChange={handleInputChange}
-                  className={`w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500
-                    ${
-                      formErrors.serialNumber
-                        ? "border-red-500"
-                        : "border-gray-300"
-                    }`}
-                  placeholder="Seri numarasını giriniz"
-                />
-                {formErrors.serialNumber && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formErrors.serialNumber}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-gray-700 mb-2">Grup</label>
-                <select
-                  name="group"
-                  value={formData.group}
-                  onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                >
-                  <option value="">Grup Seçiniz</option>
-                  <option value="group1">Grup 1</option>
-                  <option value="group2">Grup 2</option>
                 </select>
               </div>
 
@@ -334,8 +266,6 @@ export default function Devices() {
                     setFormData({
                       deviceName: "",
                       deviceType: "",
-                      serialNumber: "",
-                      group: "",
                     });
                     setFormErrors({});
                   }}

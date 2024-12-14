@@ -33,13 +33,29 @@ public class DeviceService {
     }
 
     public DeviceDTO createDevice(DeviceDTO deviceDTO) {
-        Device device = deviceMapper.toEntity(deviceDTO);
-        device.setCreateAt(LocalDateTime.now());
-        device.setCreateBy("ADMİN");
-        device.setSystemId(deviceDTO.getSystemId());
-        device.setVersion(deviceDTO.getVersion());
-        Device savedDevice = deviceRepository.save(device);
-        return deviceMapper.toDTO(savedDevice); 
+        try {
+            // Gelen veriyi kontrol et
+            System.out.println("Creating device with data: " + deviceDTO);
+            
+            Device device = deviceMapper.toEntity(deviceDTO);
+            
+            // Default değerleri set et
+            device.setDeviceStatus("inactive");
+            device.setCreateAt(LocalDateTime.now());
+            device.setCreateBy("admin");
+            device.setSystemId(1L);
+            device.setVersion("1.0");
+            
+            // Kaydet ve dönüştür
+            Device savedDevice = deviceRepository.save(device);
+            System.out.println("Saved device: " + savedDevice);
+            
+            return deviceMapper.toDTO(savedDevice);
+            
+        } catch (Exception e) {
+            System.err.println("Service error: " + e.getMessage());
+            throw new RuntimeException("Device creation failed: " + e.getMessage());
+        }
     }
 
     public DeviceDTO updateDevice(Long id, DeviceDTO deviceDTO) {
@@ -53,7 +69,7 @@ public class DeviceService {
     public void deleteDevice(Long id, String username) {
         Device device = deviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cihaz bulunamadı"));
-        device.setDeleteBy("ADMIN");
+        device.setDeleteBy("admin");
         device.setDeleteAt(LocalDateTime.now());
         deviceRepository.save(device);
     }
@@ -62,7 +78,7 @@ public class DeviceService {
     public DeviceDTO updateDeviceStatus(Long id, String status) {
         Device device = deviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
-        device.setDeviceStatus(status);
+        device.setDeviceStatus("ACTIVE");
         device.setUpdateAt(LocalDateTime.now());
         Device updatedDevice = deviceRepository.save(device);
         return deviceMapper.toDTO(updatedDevice);
@@ -71,7 +87,7 @@ public class DeviceService {
     private void updateDeviceFields(Device existingDevice, DeviceDTO newDeviceDTO) {
         existingDevice.setDeviceName(newDeviceDTO.getDeviceName());
         existingDevice.setDeviceType(newDeviceDTO.getDeviceType());
-        existingDevice.setDeviceStatus(newDeviceDTO.getDeviceStatus());
+        existingDevice.setDeviceStatus("ACTIVE");
         existingDevice.setUpdateAt(LocalDateTime.now());
         existingDevice.setUpdateBy("admin");
         existingDevice.setVersion(newDeviceDTO.getVersion());

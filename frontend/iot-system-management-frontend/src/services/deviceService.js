@@ -26,10 +26,14 @@ const deviceService = {
 
   createDevice: async (deviceData) => {
     try {
+      console.log("POST isteği gönderiliyor:", deviceData);
       const response = await axios.post(`${BASE_URL}/devices`, deviceData);
+      console.log("Backend response:", response);
+      console.log("Response data:", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error creating device:", error);
+      console.error("POST hatası:", error);
+      console.error("Response detayı:", error.response);
       throw error;
     }
   },
