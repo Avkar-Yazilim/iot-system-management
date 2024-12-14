@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user-log")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserLogController {
 
     private final UserLogService userLogService;

@@ -1,53 +1,87 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { SearchIcon } from '@heroicons/react/outline'
-
-const mockLogs = [
-  {
-    id: 1,
-    device: 'Sulama Sistemi 1',
-    action: 'Sulama Başlatıldı',
-    status: 'success',
-    timestamp: '2023-12-10 10:00:00',
-  },
-  {
-    id: 2,
-    device: 'Nem Sensörü 1',
-    action: 'Nem Ölçümü',
-    status: 'info',
-    timestamp: '2023-12-10 09:45:00',
-  },
-  {
-    id: 3,
-    device: 'Sulama Sistemi 1',
-    action: 'Sulama Durduruldu',
-    status: 'warning',
-    timestamp: '2023-12-10 08:30:00',
-  },
-]
-
-const statusStyles = {
-  success: 'bg-green-100 text-green-800',
-  warning: 'bg-yellow-100 text-yellow-800',
-  error: 'bg-red-100 text-red-800',
-  info: 'bg-blue-100 text-blue-800',
-}
+import userLogService from '../services/userLogService'
 
 export default function Logs() {
-  const [logs] = useState(mockLogs)
+  const [logs, setLogs] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const filteredLogs = logs.filter(log => 
-    log.device.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    log.action.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  useEffect(() => {
+    fetchLogs()
+  }, [])
+
+  const fetchLogs = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Loglar yükleniyor...');
+      const data = await userLogService.getAllUserLogs();
+      console.log('Gelen log verileri:', data);
+      
+      if (!Array.isArray(data)) {
+        console.error('Beklenmeyen veri formatı:', data);
+        setError('Veri formatı hatalı');
+        setLogs([]);
+        return;
+      }
+      
+      setLogs(data);
+    } catch (err) {
+      console.error('Log yükleme hatası:', err);
+      setError(err.message || 'Loglar yüklenirken beklenmeyen bir hata oluştu');
+      setLogs([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredLogs = logs.filter(log => {
+    if (!log) return false;
+    return (log.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            log.action?.toLowerCase().includes(searchQuery.toLowerCase()))
+  });
+
+  console.log('Filtered Logs:', filteredLogs); // Filtrelenmiş logları kontrol et
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full p-8">
+        <div className="text-gray-600">Sistem kayıtları yükleniyor...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center h-full p-8">
+        <div className="text-red-500 mb-4">{error}</div>
+        <button 
+          onClick={fetchLogs}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Yeniden Dene
+        </button>
+      </div>
+    );
+  }
+
+  if (!logs.length) {
+    return (
+      <div className="flex justify-center items-center h-full p-8">
+        <div className="text-gray-600">Sistem kaydı bulunmamaktadır.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-2xl font-semibold text-gray-900">Geçmiş</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Kullanıcı Logları</h1>
           <p className="mt-2 text-sm text-gray-700">
-            Cihazlarınızın aktivite geçmişi
+            Sistemde kullanıcıların gerçekleştirdiği tüm işlemlerin kayıtları
           </p>
         </div>
       </div>
@@ -63,7 +97,7 @@ export default function Logs() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="input pl-10"
-            placeholder="Cihaz veya işlem ara..."
+            placeholder="Kullanıcı adı veya işlem ara..."
           />
         </div>
       </div>
@@ -80,25 +114,19 @@ export default function Logs() {
                       scope="col"
                       className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                     >
-                      Cihaz
+                      Kullanıcı
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      İşlem
+                      Yapılan İşlem
                     </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
-                      Durum
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                    >
-                      Zaman
+                      İşlem Tarihi
                     </th>
                   </tr>
                 </thead>
@@ -106,21 +134,13 @@ export default function Logs() {
                   {filteredLogs.map((log) => (
                     <tr key={log.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {log.device}
+                        {log.username || 'Bilinmeyen Kullanıcı'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {log.action}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm">
-                        <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${statusStyles[log.status]}`}>
-                          {log.status === 'success' && 'Başarılı'}
-                          {log.status === 'warning' && 'Uyarı'}
-                          {log.status === 'error' && 'Hata'}
-                          {log.status === 'info' && 'Bilgi'}
-                        </span>
-                      </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {log.timestamp}
+                        {log.timestamp ? new Date(log.timestamp).toLocaleString('tr-TR') : '-'}
                       </td>
                     </tr>
                   ))}

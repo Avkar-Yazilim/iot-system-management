@@ -22,6 +22,9 @@ public class UserLog {
     @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
+    @Transient
+    private String username;
+
     // Getters and Setters
 
     public Long getLogId() {
@@ -54,5 +57,13 @@ public class UserLog {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
