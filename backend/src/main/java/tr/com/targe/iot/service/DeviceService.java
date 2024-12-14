@@ -43,16 +43,12 @@ public class DeviceService {
         try {
             Device device = deviceMapper.toEntity(deviceDTO);
             device.setSystemId(1L);
-            device.setDeviceStatus("active");
+            device.setDeviceStatus("inactive");
             device.setCreateAt(LocalDateTime.now());
             device.setCreateBy("admin");
             device.setVersion("1.0");
             
-            System.out.println("Before save - systemId: " + device.getSystemId());
-            
             Device savedDevice = deviceRepository.save(device);
-            
-            System.out.println("After save - systemId: " + savedDevice.getSystemId());
             
             return deviceMapper.toDTO(savedDevice);
         } catch (Exception e) {
@@ -61,24 +57,22 @@ public class DeviceService {
     }
 
     public DeviceDTO updateDevice(Long id, DeviceDTO deviceDTO) {
-        try {
-            Device existingDevice = deviceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Device not found"));
-            
-            existingDevice.setDeviceName(deviceDTO.getDeviceName());
-            Device updatedDevice = deviceRepository.save(existingDevice);
-            
-            // Log kaydı
-            DeviceLog log = new DeviceLog();
-            log.setDevice(updatedDevice);
-            log.setMessage("Cihazın adı '" + deviceDTO.getDeviceName() + "' olarak değiştirildi");
-            log.setTimestamp(LocalDateTime.now());
-            deviceLogRepository.save(log);
-            
-            return deviceMapper.toDTO(updatedDevice);
-        } catch (Exception e) {
-            throw new RuntimeException("Device update failed: " + e.getMessage());
-        }
+        Device existingDevice = deviceRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Device not found"));
+        
+        updateDeviceFields(existingDevice, deviceDTO);
+        
+        existingDevice.setDeviceName(deviceDTO.getDeviceName());
+        Device updatedDevice = deviceRepository.save(existingDevice);
+        
+        // Log kaydı
+        DeviceLog log = new DeviceLog();
+        log.setDevice(updatedDevice);
+        log.setMessage("Cihazın adı '" + updatedDevice.getDeviceName() + "' olarak değiştirildi");
+        log.setTimestamp(LocalDateTime.now());
+        deviceLogRepository.save(log);
+        
+        return deviceMapper.toDTO(updatedDevice);
     }
 
     public void deleteDevice(Long id, String username) {
@@ -93,7 +87,6 @@ public class DeviceService {
     public DeviceDTO updateDeviceStatus(Long id, String status) {
         Device device = deviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
-        device.setDeviceStatus("ACTIVE");
         device.setUpdateAt(LocalDateTime.now());
         Device updatedDevice = deviceRepository.save(device);
         return deviceMapper.toDTO(updatedDevice);
@@ -102,7 +95,7 @@ public class DeviceService {
     private void updateDeviceFields(Device existingDevice, DeviceDTO newDeviceDTO) {
         existingDevice.setDeviceName(newDeviceDTO.getDeviceName());
         existingDevice.setDeviceType(newDeviceDTO.getDeviceType());
-        existingDevice.setDeviceStatus("ACTIVE");
+        existingDevice.setDeviceStatus("inactive");
         existingDevice.setUpdateAt(LocalDateTime.now());
         existingDevice.setUpdateBy("admin");
         existingDevice.setVersion(newDeviceDTO.getVersion());
