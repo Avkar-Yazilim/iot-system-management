@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { PlusIcon } from '@heroicons/react/outline'
+import { useNavigate } from 'react-router-dom';
 
 const mockDevices = [
   { id: 1, name: 'Sulama Sistemi 1', type: 'Sulama' },
@@ -142,6 +143,7 @@ const RepeatPanel = ({ onClose, onSave }) => {
 }
 
 export default function Schedule() {
+  const navigate = useNavigate();
   const [events, setEvents] = useState(mockEvents)
   const [showAddModal, setShowAddModal] = useState(false)
   const [showRepeatPanel, setShowRepeatPanel] = useState(false)
@@ -175,7 +177,6 @@ export default function Schedule() {
       const duration = endDateTime.getTime() - startDateTime.getTime() // Etkinlik süresi (ms)
       const endDateLimit = new Date(endDate)
       endDateLimit.setHours(23, 59, 59, 999) // Bitiş gününün sonuna kadar
-
       // İlk tarihi, seçilen güne ayarla
       let currentDate = new Date(startDateTime)
       while (currentDate.getDay() !== selectedDay) {
@@ -218,6 +219,7 @@ export default function Schedule() {
       repeatConfig: null
     })
     setShowAddModal(false)
+    navigate('/schedule')
   }
 
   const handleRepeatSave = (config) => {
@@ -240,7 +242,7 @@ export default function Schedule() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            onClick={() => setShowAddModal(true)}
+            onClick={() => { setShowAddModal(true); navigate('/schedule/newschedule'); }}
             className="btn btn-primary inline-flex items-center"
           >
             <PlusIcon className="h-5 w-5 mr-2" />
@@ -382,13 +384,14 @@ export default function Schedule() {
                 <div className="mt-6 sm:flex sm:flex-row-reverse">
                   <button
                     type="submit"
+                    onClick={handleAddEvent}
                     className="btn btn-primary w-full sm:w-auto sm:ml-3"
                   >
                     Ekle
                   </button>
                   <button
                     type="button"
-                    onClick={() => setShowAddModal(false)}
+                    onClick={() => {setShowAddModal(false); navigate('/schedule');}}
                     className="mt-3 sm:mt-0 w-full sm:w-auto btn border border-gray-300"
                   >
                     İptal

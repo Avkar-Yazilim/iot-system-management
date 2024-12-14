@@ -61,7 +61,7 @@ function App() {
         >
           <Route path="home" element={<Home />} />
           <Route path="devices" element={<Devices />} />
-          <Route path="schedule" element={<Schedule />} />
+          <Route path="schedule*" element={<Schedule />} />
           <Route path="logs" element={<Logs />} />
           <Route path="settings" element={<Settings />} />
         </Route>
