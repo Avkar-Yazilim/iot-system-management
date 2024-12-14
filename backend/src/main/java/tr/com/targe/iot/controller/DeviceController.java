@@ -64,8 +64,15 @@ public class DeviceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DeviceDTO> updateDevice(@PathVariable Long id, @RequestBody DeviceDTO deviceDTO) {
-        return ResponseEntity.ok(deviceService.updateDevice(id, deviceDTO));
+    public ResponseEntity<?> updateDevice(@PathVariable Long id, @RequestBody DeviceDTO deviceDTO) {
+        try {
+            deviceDTO.setDeviceId(id);
+            DeviceDTO updatedDevice = deviceService.updateDevice(id, deviceDTO);
+            return ResponseEntity.ok(updatedDevice);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating device: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

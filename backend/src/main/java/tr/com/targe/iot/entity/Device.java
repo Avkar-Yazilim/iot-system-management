@@ -45,7 +45,7 @@ public class Device {
     private String deviceType;
 
     @Column(name = "device_status", length = 25, nullable = false)
-    private String deviceStatus = "inactive";
+    private String deviceStatus;
 
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createAt = LocalDateTime.now();

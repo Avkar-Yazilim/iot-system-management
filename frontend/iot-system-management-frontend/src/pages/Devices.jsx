@@ -16,6 +16,9 @@ export default function Devices() {
 
   const [formErrors, setFormErrors] = useState({});
 
+  const [editingDeviceId, setEditingDeviceId] = useState(null);
+  const [editName, setEditName] = useState("");
+
   const fetchDevices = async () => {
     setLoading(true);
     setError(null);
@@ -119,6 +122,44 @@ export default function Devices() {
     setSelectedDeviceId(selectedDeviceId === deviceId ? null : deviceId);
   };
 
+  const handleEdit = (device) => {
+    if (editingDeviceId === device.deviceId) {
+        // Zaten düzenleme modundaysa, kaydet
+        handleSave(device);
+    } else {
+        // Düzenleme moduna geç
+        setEditingDeviceId(device.deviceId);
+        setEditName(device.deviceName);
+    }
+  };
+
+  const handleSave = async (device) => {
+    try {
+        if (!editName.trim()) {
+            alert("Cihaz adı boş olamaz!");
+            return;
+        }
+
+        await deviceService.updateDevice(device.deviceId, {
+            ...device,
+            deviceName: editName
+        });
+
+        setEditingDeviceId(null);
+        setEditName("");
+        fetchDevices();
+        
+    } catch (error) {
+        console.error("Güncelleme hatası:", error);
+        alert("Güncelleme sırasında bir hata oluştu!");
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingDeviceId(null);
+    setEditName("");
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -150,7 +191,23 @@ export default function Devices() {
                 <div className="bg-white rounded-lg shadow p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold">
-                      {device.deviceName}
+                      {editingDeviceId === device.deviceId ? (
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="form-control"
+                          style={{
+                            backgroundColor: '#e8f5e9',  // Hafif açık yeşil
+                border: '1px solid #c8e6c9', // Hafif yeşil border
+                padding: '5px',
+                borderRadius: '4px'
+                          }}
+                          autoFocus  // Otomatik fokus
+                        />
+                      ) : (
+                        device.deviceName
+                      )}
                     </h3>
                     <span
                       className={`h-3 w-3 rounded-full ${
@@ -197,7 +254,10 @@ export default function Devices() {
                         ? "Logları Gizle"
                         : "Logları Göster"}
                     </button>
-                    <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300">
+                    <button
+                      onClick={() => handleEdit(device)}
+                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300"
+                    >
                       Düzenle
                     </button>
                     <button
