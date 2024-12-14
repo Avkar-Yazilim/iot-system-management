@@ -44,12 +44,11 @@ const deviceService = {
     }
   },
 
-  deleteDevice: async (id) => {
+  deleteDevice: async (deviceId, username) => {
     try {
-      await axios.delete(`${BASE_URL}/devices/${id}`);
+      const response = await axios.delete(`${BASE_URL}/devices/${deviceId}?username=${username}`);
       return response.data;
     } catch (error) {
-      console.error("Error deleting device:", error);
       throw error;
     }
   },

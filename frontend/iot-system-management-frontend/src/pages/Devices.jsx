@@ -47,18 +47,11 @@ export default function Devices() {
   }, []);
 
   const handleUpdateDevice = async (id, deviceData) => {
-    // Kullanıcıdan silme işlemini onaylamasını iste
-    if (window.confirm("Bu cihazı silmek istediğinizden emin misiniz?")) {
-      try {
-        await deviceService.deleteDevice(deviceId);
-        setDevices(devices.filter((d) => d.deviceId !== deviceId));
-        alert("Cihaz başarıyla silindi");
-      } catch (err) {
-        setError(
-          "Cihaz silinirken hata oluştu: " + (err.message || "Bilinmeyen hata")
-        );
-        console.error("Delete error:", err);
-      }
+    try {
+      const updatedDevice = await deviceService.updateDevice(id, deviceData);
+      setDevices(devices.map((d) => (d.deviceId === id ? updatedDevice : d)));
+    } catch (err) {
+      setError("Cihaz güncellenirken hata oluştu");
     }
   };
 

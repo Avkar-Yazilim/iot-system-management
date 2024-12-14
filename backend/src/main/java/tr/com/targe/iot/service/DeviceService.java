@@ -20,7 +20,7 @@ public class DeviceService {
 
 
     public List<DeviceDTO> getAllDevices() {
-        return deviceRepository.findByDeleteAtIsNull().stream()
+        return deviceRepository.findByDeleteAtIsNullAndDeletedAtIsNull().stream()
                 .map(deviceMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -49,11 +49,12 @@ public class DeviceService {
         return deviceMapper.toDTO(updatedDevice);
     }
 
-    public void deleteDevice(Long id) {
+    public void deleteDevice(Long id, String username) {
         Device device = deviceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Device not found"));
-        device.setDeleteAt(LocalDateTime.now());
-        device.setDeviceStatus("INACTIVE");
+                .orElseThrow(() -> new RuntimeException("Cihaz bulunamadı"));
+        
+        device.setDeletedAt(LocalDateTime.now());
+        device.setDeletedBy(username);
         deviceRepository.save(device);
     }
 
