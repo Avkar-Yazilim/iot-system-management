@@ -2,34 +2,31 @@ package tr.com.targe.iot.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tr.com.targe.iot.entity.BatchCommands;
 import tr.com.targe.iot.service.BatchCommandsService;
-
+import org.springframework.http.HttpStatus;
+import tr.com.targe.iot.DTO.BatchCommandsDTO;
 import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/batch-commands")
+@CrossOrigin(origins = "http://localhost:5173")
 public class BatchCommandsController {
 
     private final BatchCommandsService batchCommandsService;
 
-    public BatchCommandsController(BatchCommandsService batchCommandsService) {
-        this.batchCommandsService = batchCommandsService;
+
+    @GetMapping("/{deviceId}")
+    public ResponseEntity<List<BatchCommandsDTO>> getBatchCommandById(@PathVariable Long deviceId) {
+        List<BatchCommandsDTO> command = batchCommandsService.getBatchCommandById(deviceId);
+        return ResponseEntity.ok(command);
     }
 
-    @GetMapping
-    public ResponseEntity<List<BatchCommands>> getAllBatchCommands() {
-        List<BatchCommands> commands = batchCommandsService.getAllBatchCommands();
-        return ResponseEntity.ok(commands);
+    @PostMapping
+    public ResponseEntity<BatchCommandsDTO> createBatchCommand(@RequestBody BatchCommandsDTO command) {
+        BatchCommandsDTO createdCommand = batchCommandsService.createBatchCommand(command);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdCommand);
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<BatchCommands> getBatchCommandById(@PathVariable Long id) {
-        Optional<BatchCommands> command = batchCommandsService.getBatchCommandById(id);
-        return command.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-
 
 }

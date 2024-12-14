@@ -33,7 +33,7 @@ public class DeviceMapper {
         device.setDeviceName(dto.getDeviceName());
         device.setDeviceType(dto.getDeviceType());
         device.setDeviceStatus(dto.getDeviceStatus());
-        device.setSystemId(1L);
+        device.setSystemId(dto.getSystemId());
         device.setVersion(dto.getVersion());
         device.setCreateBy(dto.getCreateBy());
         device.setCreateAt(dto.getCreateAt());

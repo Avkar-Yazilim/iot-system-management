@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import deviceService from "../services/deviceService";
 import DeviceLogs from "./DeviceLogs";
+import Batch from "./Batch";
 
 export default function Devices() {
   const [devices, setDevices] = useState([]);
@@ -8,10 +9,11 @@ export default function Devices() {
   const [error, setError] = useState(null);
   const [showNewDeviceModal, setShowNewDeviceModal] = useState(false);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
+  const [selectedCommandDeviceId, setSelectedCommandDeviceId] = useState(null);
 
   const [formData, setFormData] = useState({
     deviceName: "",
-    deviceType: ""
+    deviceType: "",
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -58,7 +60,7 @@ export default function Devices() {
 
   const handleDeleteDevice = async (deviceId) => {
     try {
-      const currentUser = localStorage.getItem('username');
+      const currentUser = localStorage.getItem("username");
       await deviceService.deleteDevice(deviceId, currentUser);
       fetchDevices();
       alert("Cihaz başarıyla silindi");
@@ -100,20 +102,19 @@ export default function Devices() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    try {        
-        const newDevice = await deviceService.createDevice({
-            deviceName: formData.deviceName,
-            deviceType: formData.deviceType
-        });
-        
-        setShowNewDeviceModal(false);
-        setFormData({ deviceName: "", deviceType: "" });
-        fetchDevices();
-        
+
+    try {
+      const newDevice = await deviceService.createDevice({
+        deviceName: formData.deviceName,
+        deviceType: formData.deviceType,
+      });
+
+      setShowNewDeviceModal(false);
+      setFormData({ deviceName: "", deviceType: "" });
+      fetchDevices();
     } catch (error) {
-        console.error("Gönderilen veri:", formData);
-        console.error("Hata detayı:", error.response?.data);
+      console.error("Gönderilen veri:", formData);
+      console.error("Hata detayı:", error.response?.data);
     }
   };
 
@@ -122,36 +123,41 @@ export default function Devices() {
     setSelectedDeviceId(selectedDeviceId === deviceId ? null : deviceId);
   };
 
+  const toggleCommands = (deviceId) => {
+    setSelectedCommandDeviceId(
+      selectedCommandDeviceId === deviceId ? null : deviceId
+    );
+  };
+
   const handleEdit = (device) => {
     if (editingDeviceId === device.deviceId) {
-        // Zaten düzenleme modundaysa, kaydet
-        handleSave(device);
+      // Zaten düzenleme modundaysa, kaydet
+      handleSave(device);
     } else {
-        // Düzenleme moduna geç
-        setEditingDeviceId(device.deviceId);
-        setEditName(device.deviceName);
+      // Düzenleme moduna geç
+      setEditingDeviceId(device.deviceId);
+      setEditName(device.deviceName);
     }
   };
 
   const handleSave = async (device) => {
     try {
-        if (!editName.trim()) {
-            alert("Cihaz adı boş olamaz!");
-            return;
-        }
+      if (!editName.trim()) {
+        alert("Cihaz adı boş olamaz!");
+        return;
+      }
 
-        await deviceService.updateDevice(device.deviceId, {
-            ...device,
-            deviceName: editName
-        });
+      await deviceService.updateDevice(device.deviceId, {
+        ...device,
+        deviceName: editName,
+      });
 
-        setEditingDeviceId(null);
-        setEditName("");
-        fetchDevices();
-        
+      setEditingDeviceId(null);
+      setEditName("");
+      fetchDevices();
     } catch (error) {
-        console.error("Güncelleme hatası:", error);
-        alert("Güncelleme sırasında bir hata oluştu!");
+      console.error("Güncelleme hatası:", error);
+      alert("Güncelleme sırasında bir hata oluştu!");
     }
   };
 
@@ -184,11 +190,11 @@ export default function Devices() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
           {devices && devices.length > 0 ? (
             devices.map((device) => (
-              <div key={device.deviceId} className="mb-4">
-                <div className="bg-white rounded-lg shadow p-4">
+              <div key={device.deviceId} className="mb-6">
+                <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold">
                       {editingDeviceId === device.deviceId ? (
@@ -198,12 +204,12 @@ export default function Devices() {
                           onChange={(e) => setEditName(e.target.value)}
                           className="form-control"
                           style={{
-                            backgroundColor: '#e8f5e9',  // Hafif açık yeşil
-                border: '1px solid #c8e6c9', // Hafif yeşil border
-                padding: '5px',
-                borderRadius: '4px'
+                            backgroundColor: "#e8f5e9", // Hafif açık yeşil
+                            border: "1px solid #c8e6c9", // Hafif yeşil border
+                            padding: "5px",
+                            borderRadius: "4px",
                           }}
-                          autoFocus  // Otomatik fokus
+                          autoFocus // Otomatik fokus
                         />
                       ) : (
                         device.deviceName
@@ -245,24 +251,34 @@ export default function Devices() {
                     </div>
                   </div>
 
-                  <div className="flex space-x-2 mt-4">
+                  <div className="flex flex-wrap gap-3 mt-6">
                     <button
                       onClick={() => toggleDeviceLogs(device.deviceId)}
-                      className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                      className="flex-1 px-4 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                     >
                       {selectedDeviceId === device.deviceId
                         ? "Logları Gizle"
                         : "Logları Göster"}
                     </button>
                     <button
+                      onClick={() => toggleCommands(device.deviceId)}
+                      className="flex-1 px-4 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                    >
+                      {selectedCommandDeviceId === device.deviceId
+                        ? "Komutları Gizle"
+                        : "Komutları Göster"}
+                    </button>
+                  </div>
+                  <div className="flex gap-3 mt-3">
+                    <button
                       onClick={() => handleEdit(device)}
-                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300"
+                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors"
                     >
                       Düzenle
                     </button>
                     <button
                       onClick={() => handleDeleteDevice(device.deviceId)}
-                      className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 px-4 rounded-md transition-colors duration-300"
+                      className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 px-4 rounded-lg transition-colors"
                     >
                       Sil
                     </button>
@@ -270,13 +286,24 @@ export default function Devices() {
                 </div>
 
                 {selectedDeviceId === device.deviceId && (
-                  <DeviceLogs deviceId={device.deviceId} />
+                  <div className="mt-4">
+                    <DeviceLogs deviceId={device.deviceId} />
+                  </div>
+                )}
+                {selectedCommandDeviceId === device.deviceId && (
+                  <div className="mt-4 -mx-6">
+                    <div className="bg-gray-100 p-6">
+                      <Batch deviceId={device.deviceId} />
+                    </div>
+                  </div>
                 )}
               </div>
             ))
           ) : (
             <div className="col-span-full text-center py-12">
-              <p className="text-gray-500">Henüz hiç cihaz bulunmuyor.</p>
+              <p className="text-gray-500 text-lg">
+                Henüz hiç cihaz bulunmuyor.
+              </p>
             </div>
           )}
         </div>

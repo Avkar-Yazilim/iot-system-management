@@ -1,6 +1,7 @@
 package tr.com.targe.iot.mapper;
 
 import org.springframework.stereotype.Component;
+
 import tr.com.targe.iot.DTO.SubSystemDTO;
 import tr.com.targe.iot.entity.SubSystem;
 

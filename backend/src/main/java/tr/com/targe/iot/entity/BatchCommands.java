@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import java.sql.Timestamp;
 import java.util.List;
+import java.time.LocalDateTime;
+    
 
 @Getter
 @Setter
@@ -28,8 +30,15 @@ public class BatchCommands {
     @Column(name = "feedback", length = 255, nullable = false)
     private String feedback;
 
-    @Column(name = "priority",nullable = false)
+    @Column(name = "priority", nullable = false)
     private Integer priority;
+
+    @ManyToOne
+    @JoinColumn(name = "device_id", nullable = false)
+    private Device device;
+
+    @Column(name = "device_id", nullable = false,updatable = false,insertable = false)
+    private Long deviceId;
 
     @ManyToMany
     @JoinTable(
@@ -40,46 +49,12 @@ public class BatchCommands {
 
     private List<SensorValuePlan> sensorValuePlans;
 
-        // Getters and Setters
+    public LocalDateTime getTimestamp() {
+        return timestamp.toLocalDateTime();
+    }
 
-        public Long getCommandId() {
-            return commandId;
-        }
-    
-        public void setCommandId(Long commandId) {
-            this.commandId = commandId;
-        }
-    
-        public String getCommand() {
-            return command;
-        }
-    
-        public void setCommand(String command) {
-            this.command = command;
-        }
-    
-        public Timestamp getTimestamp() {
-            return timestamp;
-        }
-
-        public void setTimestamp(Timestamp timestamp) {
-            this.timestamp = timestamp;
-        }
-    
-        public String getCommandStatus() {
-            return commandStatus;
-        }
-    
-        public void setCommandStatus(String commandStatus) {
-            this.commandStatus = commandStatus;
-        }
-
-        public Integer getPriority() {
-            return priority;
-        }
-
-        public void setPriority(Integer priority) {
-            this.priority = priority;
-        }
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = Timestamp.valueOf(timestamp);
+    }
 
 }

@@ -1,34 +1,77 @@
 package tr.com.targe.iot.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import tr.com.targe.iot.repository.BatchCommandsRepository;
 import tr.com.targe.iot.entity.BatchCommands;
+import tr.com.targe.iot.mapper.BatchCommandsMapper;
+import tr.com.targe.iot.DTO.BatchCommandsDTO;
+import tr.com.targe.iot.repository.DeviceRepository;
+import tr.com.targe.iot.entity.Device;
 
-
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class BatchCommandsService {
     
     private final BatchCommandsRepository batchCommandsRepository;
-
-    @Autowired
-    public BatchCommandsService(BatchCommandsRepository batchCommandsRepository) {
-        this.batchCommandsRepository = batchCommandsRepository;
-    }
-
+    private final BatchCommandsMapper batchCommandsMapper;
+    private final DeviceRepository deviceRepository;
+   
     public List<BatchCommands> getAllBatchCommands() {
         return batchCommandsRepository.findAll();
     }
 
-    public Optional<BatchCommands> getBatchCommandById(Long id) {
-        return batchCommandsRepository.findById(id);
+    public List<BatchCommandsDTO> getBatchCommandById(Long id) {
+        return batchCommandsRepository.findByDeviceId(id).stream()
+        .map(batchCommandsMapper::toDTO)
+        .collect(Collectors.toList());
     }
 
+    public BatchCommandsDTO createBatchCommand(BatchCommandsDTO batchCommandsDTO) {
+        if (batchCommandsDTO.getDeviceId() == null) {
+            throw new IllegalArgumentException("Device ID cannot be null");
+        }
+        
+        if (batchCommandsDTO.getCommand() == null || batchCommandsDTO.getCommand().trim().isEmpty()) {
+            throw new IllegalArgumentException("Command cannot be empty");
+        }
+        
+        if (batchCommandsDTO.getStatus() == null) {
+            batchCommandsDTO.setStatus("PENDING");
+        }
+        
+        if (batchCommandsDTO.getFeedback() == null) {
+            batchCommandsDTO.setFeedback("Initial command");
+        }
+        
+        if (batchCommandsDTO.getPriority() == null) {
+            batchCommandsDTO.setPriority(1);
+        }
+        
+        if (batchCommandsDTO.getPriority() < 1 || batchCommandsDTO.getPriority() > 5) {
+            throw new IllegalArgumentException("Priority must be between 1 and 5");
+        }
+        
+        if (batchCommandsDTO.getTimestamp() == null) {
+            batchCommandsDTO.setTimestamp(LocalDateTime.now());
+        }
+
+        Device device = deviceRepository.findById(batchCommandsDTO.getDeviceId())
+            .orElseThrow(() -> new RuntimeException("Device not found with id: " + batchCommandsDTO.getDeviceId()));
+
+        BatchCommands batchCommands = batchCommandsMapper.toEntity(batchCommandsDTO);
+        batchCommands.setDevice(device);
+        
+        BatchCommands savedCommand = batchCommandsRepository.save(batchCommands);
+        return batchCommandsMapper.toDTO(savedCommand);
+    }
 
 
 }
