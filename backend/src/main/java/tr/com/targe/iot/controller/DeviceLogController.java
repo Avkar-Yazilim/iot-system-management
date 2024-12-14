@@ -21,6 +21,10 @@ public class DeviceLogController {
         return ResponseEntity.ok(deviceLogs);
     }
 
-
+    @GetMapping("/{deviceId}")
+    public ResponseEntity<List<DeviceLogDTO>> getLogsByDevice(@PathVariable Long deviceId) {
+        List<DeviceLogDTO> deviceLogs = deviceLogService.getLogsByDevice(deviceId);
+        return ResponseEntity.ok(deviceLogs);
+    }
 }
 

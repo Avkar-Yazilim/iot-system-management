@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import deviceService from "../services/deviceService";
+import DeviceLogs from "./DeviceLogs";
 
 export default function Devices() {
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showNewDeviceModal, setShowNewDeviceModal] = useState(false);
+  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
 
   const [formData, setFormData] = useState({
     deviceName: "",
@@ -119,10 +121,9 @@ export default function Devices() {
     }
   };
 
-  const handleShowLogs = (deviceId) => {
-    navigate(`/device-logs/${deviceId}`);
-    // veya
-    // navigate('/device-logs', { state: { deviceId: deviceId } });
+  const toggleDeviceLogs = (deviceId) => {
+    console.log("Toggling logs for device:", deviceId); // Debug için
+    setSelectedDeviceId(selectedDeviceId === deviceId ? null : deviceId);
   };
 
   return (
@@ -152,65 +153,72 @@ export default function Devices() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {devices && devices.length > 0 ? (
             devices.map((device) => (
-              <div
-                key={device.deviceId}
-                className="bg-white rounded-lg shadow-md p-6"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold">{device.deviceName}</h3>
-                  <span
-                    className={`h-3 w-3 rounded-full ${
-                      device.deviceStatus === "active"
-                        ? "bg-green-500"
-                        : "bg-gray-400"
-                    }`}
-                  />
+              <div key={device.deviceId} className="mb-4">
+                <div className="bg-white rounded-lg shadow p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-semibold">
+                      {device.deviceName}
+                    </h3>
+                    <span
+                      className={`h-3 w-3 rounded-full ${
+                        device.deviceStatus === "active"
+                          ? "bg-green-500"
+                          : "bg-gray-400"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex">
+                      <span className="text-gray-600 w-32">Tür:</span>
+                      <span>{device.deviceType}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-600 w-32">Versiyon:</span>
+                      <span>{device.version}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-600 w-32">Sistem ID:</span>
+                      <span>{device.systemId}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-600 w-32">Oluşturan:</span>
+                      <span>{device.createBy}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="text-gray-600 w-32">
+                        Oluşturma Tarihi:
+                      </span>
+                      <span>
+                        {new Date(device.createAt).toLocaleDateString("tr-TR")}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-2 mt-4">
+                    <button
+                      onClick={() => toggleDeviceLogs(device.deviceId)}
+                      className="ml-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      {selectedDeviceId === device.deviceId
+                        ? "Logları Gizle"
+                        : "Logları Göster"}
+                    </button>
+                    <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300">
+                      Düzenle
+                    </button>
+                    <button
+                      onClick={() => handleDeleteDevice(device.deviceId)}
+                      className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 px-4 rounded-md transition-colors duration-300"
+                    >
+                      Sil
+                    </button>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex">
-                    <span className="text-gray-600 w-32">Tür:</span>
-                    <span>{device.deviceType}</span>
-                  </div>
-                  <div className="flex">
-                    <span className="text-gray-600 w-32">Versiyon:</span>
-                    <span>{device.version}</span>
-                  </div>
-                  <div className="flex">
-                    <span className="text-gray-600 w-32">Sistem ID:</span>
-                    <span>{device.systemId}</span>
-                  </div>
-                  <div className="flex">
-                    <span className="text-gray-600 w-32">Oluşturan:</span>
-                    <span>{device.createBy}</span>
-                  </div>
-                  <div className="flex">
-                    <span className="text-gray-600 w-32">
-                      Oluşturma Tarihi:
-                    </span>
-                    <span>
-                      {new Date(device.createAt).toLocaleDateString("tr-TR")}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex space-x-2 mt-4">
-                  <button
-                    onClick={() => handleShowLogs(device.deviceId)}
-                    className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300"
-                  >
-                    Logları Göster
-                  </button>
-                  <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-md transition-colors duration-300">
-                    Düzenle
-                  </button>
-                  <button
-                    onClick={() => handleDeleteDevice(device.deviceId)}
-                    className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 px-4 rounded-md transition-colors duration-300"
-                  >
-                    Sil
-                  </button>
-                </div>
+                {selectedDeviceId === device.deviceId && (
+                  <DeviceLogs deviceId={device.deviceId} />
+                )}
               </div>
             ))
           ) : (
