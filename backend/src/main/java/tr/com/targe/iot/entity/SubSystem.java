@@ -1,8 +1,18 @@
 package tr.com.targe.iot.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Sub_System")
@@ -43,8 +53,8 @@ public class SubSystem {
     @ManyToMany(mappedBy = "subSystems")
     private List<User> users;
 
-    @OneToMany(mappedBy = "subSystem")
-    private List<Device> devices;
+    @OneToMany(mappedBy = "subSystem", fetch = FetchType.LAZY)
+    private List<Device> devices = new ArrayList<>();
     
     // Getters and Setters
 
@@ -134,5 +144,13 @@ public class SubSystem {
 
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    public List<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
     }
 }

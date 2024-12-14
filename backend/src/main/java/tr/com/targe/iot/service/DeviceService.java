@@ -21,7 +21,9 @@ public class DeviceService {
 
 
     public List<DeviceDTO> getAllDevices() {
-        return deviceRepository.findByDeleteByIsNullAndDeleteAtIsNull().stream()
+        List<Device> devices = deviceRepository.findAllActive();
+        System.out.println("Found devices: " + devices); // Debug için
+        return devices.stream()
                 .map(deviceMapper::toDTO)
                 .collect(Collectors.toList());
     }
@@ -34,26 +36,21 @@ public class DeviceService {
 
     public DeviceDTO createDevice(DeviceDTO deviceDTO) {
         try {
-            // Gelen veriyi kontrol et
-            System.out.println("Creating device with data: " + deviceDTO);
-            
             Device device = deviceMapper.toEntity(deviceDTO);
-            
-            // Default değerleri set et
-            device.setDeviceStatus("inactive");
+            device.setSystemId(1L);
+            device.setDeviceStatus("active");
             device.setCreateAt(LocalDateTime.now());
             device.setCreateBy("admin");
-            device.setSystemId(1L);
             device.setVersion("1.0");
             
-            // Kaydet ve dönüştür
+            System.out.println("Before save - systemId: " + device.getSystemId());
+            
             Device savedDevice = deviceRepository.save(device);
-            System.out.println("Saved device: " + savedDevice);
+            
+            System.out.println("After save - systemId: " + savedDevice.getSystemId());
             
             return deviceMapper.toDTO(savedDevice);
-            
         } catch (Exception e) {
-            System.err.println("Service error: " + e.getMessage());
             throw new RuntimeException("Device creation failed: " + e.getMessage());
         }
     }

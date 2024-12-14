@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,12 +31,12 @@ public class Device {
     @Column(name = "device_id")
     private Long deviceId;
 
-    @ManyToOne
-    @JoinColumn(name = "system_id")
-    private SubSystem subSystem;     
-
-    @Column(name = "system_id", nullable = false, insertable = false,updatable = false)
+    @Column(name = "system_id")
     private Long systemId = 1L;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "system_id", insertable = false, updatable = false)
+    private SubSystem subSystem;
 
     @Column(name = "device_name", length = 20, nullable = false)
     private String deviceName;
@@ -76,6 +78,13 @@ public class Device {
         inverseJoinColumns = @JoinColumn(name = "plan_id")
     )
     private List<SensorValuePlan> sensorValuePlans;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.systemId == null) {
+            this.systemId = 1L;
+        }
+    }
 
     public void setSystemId(Long systemId) {
         this.systemId = systemId;
