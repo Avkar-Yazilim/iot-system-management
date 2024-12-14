@@ -20,7 +20,7 @@ public class DeviceService {
 
 
     public List<DeviceDTO> getAllDevices() {
-        return deviceRepository.findAll().stream()
+        return deviceRepository.findByDeleteAtIsNull().stream()
                 .map(deviceMapper::toDTO)
                 .collect(Collectors.toList());
     }

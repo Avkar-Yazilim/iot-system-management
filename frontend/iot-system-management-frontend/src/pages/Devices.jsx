@@ -55,12 +55,19 @@ export default function Devices() {
     }
   };
 
-  const handleDeleteDevice = async (id) => {
-    try {
-      await deviceService.deleteDevice(id);
-      setDevices(devices.filter((d) => d.deviceId !== id));
-    } catch (err) {
-      setError("Cihaz silinirken hata oluştu");
+  const handleDeleteDevice = async (deviceId) => {
+    // Kullanıcıdan silme işlemini onaylamasını iste
+    if (window.confirm("Bu cihazı silmek istediğinizden emin misiniz?")) {
+      try {
+        await deviceService.deleteDevice(deviceId);
+        setDevices(devices.filter((d) => d.deviceId !== deviceId));
+        alert("Cihaz başarıyla silindi");
+      } catch (err) {
+        setError(
+          "Cihaz silinirken hata oluştu: " + (err.message || "Bilinmeyen hata")
+        );
+        console.error("Delete error:", err);
+      }
     }
   };
 
