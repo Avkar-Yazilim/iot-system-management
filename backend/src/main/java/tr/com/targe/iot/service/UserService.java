@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -26,6 +26,8 @@ public class UserService {
 
     public User createUser(UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
+        user.setCreateAt(LocalDateTime.now());
+        user.setCreateBy("admin");
         return userRepository.save(user);
     }
     

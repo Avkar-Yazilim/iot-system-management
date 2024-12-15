@@ -5,6 +5,16 @@ export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [newUser, setNewUser] = useState({
+    username: '',
+    email: '',
+    passwordHash: '',
+    firstName: '',
+    lastName: '',
+    userAuthorization: 'user', 
+    systemId: 1
+  });
 
   useEffect(() => {
     loadUsers();
@@ -39,7 +49,8 @@ export default function Settings() {
         email: updatedData.email,
         firstName: updatedData.firstName,
         lastName: updatedData.lastName,
-        userAuthorization: updatedData.userAuthorization
+        userAuthorization: updatedData.userAuthorization,
+        ...(updatedData.passwordHash ? { passwordHash: updatedData.passwordHash } : {})
       };
 
       console.log('Gönderilecek güncel veriler:', dataToUpdate);
@@ -67,6 +78,27 @@ export default function Settings() {
     }
   };
 
+  const handleAddUser = async () => {
+    try {
+      await settingsService.createUser(newUser);
+      setShowAddUserModal(false);
+      setNewUser({
+        username: '',
+        email: '',
+        passwordHash: '',
+        firstName: '',
+        lastName: '',
+        userAuthorization: 'user',
+        systemId: 1
+      });
+      loadUsers();
+      alert("Kullanıcı başarıyla eklendi!");
+    } catch (error) {
+      console.error("Kullanıcı eklenirken hata oluştu:", error);
+      alert(`Kullanıcı eklenirken bir hata oluştu: ${error.response?.data?.message || error.message}`);
+    }
+  };
+
   if (loading) {
     return <div>Yükleniyor...</div>;
   }
@@ -74,12 +106,97 @@ export default function Settings() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Kullanıcı Yönetimi
-        </h1>
-        <p className="mt-2 text-sm text-gray-700">
-          Sistem kullanıcılarını buradan yönetebilirsiniz.
-        </p>
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Kullanıcı Yönetimi
+          </h1>
+          <button
+            onClick={() => setShowAddUserModal(true)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+          >
+            Yeni Kullanıcı Ekle
+          </button>
+        </div>
+
+        {showAddUserModal && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg w-96">
+              <h2 className="text-lg font-semibold mb-4">Yeni Kullanıcı Ekle</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    value={newUser.username}
+                    onChange={(e) => setNewUser({...newUser, username: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">E-posta</label>
+                  <input
+                    type="email"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Şifre</label>
+                  <input
+                    type="password"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    value={newUser.passwordHash}
+                    onChange={(e) => setNewUser({...newUser, passwordHash: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Ad</label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    value={newUser.firstName}
+                    onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Soyad</label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    value={newUser.lastName}
+                    onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Yetki</label>
+                  <select
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    value={newUser.userAuthorization}
+                    onChange={(e) => setNewUser({...newUser, userAuthorization: e.target.value})}
+                  >
+                    <option value="user">user</option>
+                    <option value="admin">admin</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowAddUserModal(false)}
+                  className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={handleAddUser}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                >
+                  Ekle
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="mt-8 flex flex-col">
           <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -99,6 +216,9 @@ export default function Settings() {
                       </th>
                       <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Soyad
+                      </th>
+                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Şifre
                       </th>
                       <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Yetki
@@ -177,6 +297,23 @@ export default function Settings() {
                             />
                           ) : (
                             user.lastName || "-"
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {editingUser?.userId === user.userId ? (
+                            <input
+                              type="password"
+                              className="input"
+                              placeholder="Yeni şifre"
+                              onChange={(e) =>
+                                setEditingUser({
+                                  ...editingUser,
+                                  passwordHash: e.target.value,
+                                })
+                              }
+                            />
+                          ) : (
+                            "••••••"
                           )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

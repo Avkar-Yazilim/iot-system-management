@@ -53,4 +53,22 @@ export const settingsService = {
       throw error;
     }
   },
+
+  createUser: async (userData) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/users`,
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json'
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

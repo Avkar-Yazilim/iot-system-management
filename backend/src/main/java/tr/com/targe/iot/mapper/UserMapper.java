@@ -16,19 +16,20 @@ public class UserMapper {
         dto.setUserAuthorization(user.getUserAuthorization());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
+        dto.setSystemId(user.getSystemId());
         return dto;
     }
 
     public User toEntity(UserDTO dto) {
         if (dto == null) return null;
         User entity = new User();
-        entity.setUserId(dto.getUserId());
         entity.setUsername(dto.getUsername());
         entity.setPasswordHash(dto.getPasswordHash());
         entity.setEmail(dto.getEmail());
         entity.setUserAuthorization(dto.getUserAuthorization());
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
+        entity.setSystemId(dto.getSystemId());
         return entity;
     }
 }

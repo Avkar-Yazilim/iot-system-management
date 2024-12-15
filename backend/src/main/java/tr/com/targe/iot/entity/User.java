@@ -54,6 +54,9 @@ public class User {
     @Column(name = "deleted_by")
     private String deletedBy;
 
+    @Column(name = "system_id", nullable = false, updatable = false)
+    private Long systemId;
+
     @ManyToMany
     @JoinTable(name = "sub_system_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "system_id"))
     private List<SubSystem> subSystems;
@@ -71,4 +74,11 @@ public class User {
         this.email = email;
     }
 
+    public Long getSystemId() {
+        return systemId;
+    }
+
+    public void setSystemId(Long systemId) {
+        this.systemId = systemId;
+    }   
 }
