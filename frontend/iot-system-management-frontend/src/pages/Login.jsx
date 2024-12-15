@@ -1,12 +1,18 @@
 import { useForm } from 'react-hook-form'
+import loginService from '../services/loginService'
+import { useState } from 'react'
 
 export default function Login({ onLogin }) {
   const { register, handleSubmit: submitForm, formState: { errors } } = useForm()
+  const [loginError, setLoginError] = useState('')
 
-  const onSubmit = (data) => {
-    if (data.email && data.password) {
-      console.log('Giriş bilgileri:', data)
+  const onSubmit = async (data) => {
+    try {
+      setLoginError('')
+      await loginService.login(data.email, data.password)
       onLogin()
+    } catch (error) {
+      setLoginError(error.message)
     }
   }
 
@@ -18,6 +24,12 @@ export default function Login({ onLogin }) {
             Tarla App'e Hoş Geldiniz
           </h2>
           
+          {loginError && (
+            <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+              {loginError}
+            </div>
+          )}
+
           <form onSubmit={submitForm(onSubmit)} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">

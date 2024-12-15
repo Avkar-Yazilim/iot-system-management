@@ -56,4 +56,14 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build(); 
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserDTO loginRequest) {
+        try {
+            UserDTO user = userService.login(loginRequest.getEmail(), loginRequest.getPasswordHash());
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
 }

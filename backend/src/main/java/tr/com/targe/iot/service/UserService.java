@@ -1,14 +1,16 @@
 package tr.com.targe.iot.service;
 
-import tr.com.targe.iot.DTO.UserDTO;
-import tr.com.targe.iot.entity.User;
-import tr.com.targe.iot.repository.UserRepository;
-import tr.com.targe.iot.mapper.UserMapper;
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+import tr.com.targe.iot.DTO.UserDTO;
+import tr.com.targe.iot.entity.User;
+import tr.com.targe.iot.mapper.UserMapper;
+import tr.com.targe.iot.repository.UserRepository;
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -51,6 +53,19 @@ public class UserService {
                 user.setDeleteBy("admin");
                 user.setDeleteAt(LocalDateTime.now());
         userRepository.save(user);
+    }
+
+    public UserDTO login(String email, String password) {
+        String cleanPassword = password.replace("\"", "");
+        
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+        
+        if (!user.getPasswordHash().equals(cleanPassword)) {
+            throw new RuntimeException("Hatalı şifre");
+        }
+        
+        return userMapper.toDTO(user);
     }
 
 }

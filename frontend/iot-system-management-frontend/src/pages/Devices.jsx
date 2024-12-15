@@ -234,20 +234,12 @@ export default function Devices() {
                       <span>{device.version}</span>
                     </div>
                     <div className="flex">
-                      <span className="text-gray-600 w-32">Sistem ID:</span>
-                      <span>{device.systemId}</span>
-                    </div>
-                    <div className="flex">
                       <span className="text-gray-600 w-32">Oluşturan:</span>
                       <span>{device.createBy}</span>
                     </div>
                     <div className="flex">
-                      <span className="text-gray-600 w-32">
-                        Oluşturma Tarihi:
-                      </span>
-                      <span>
-                        {new Date(device.createAt).toLocaleDateString("tr-TR")}
-                      </span>
+                      <span className="text-gray-600 w-32">Oluşturma Tarihi:</span>
+                      <span>{new Date(device.createAt).toLocaleDateString("tr-TR")}</span>
                     </div>
                   </div>
 
