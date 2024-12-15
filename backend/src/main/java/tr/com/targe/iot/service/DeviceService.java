@@ -42,7 +42,6 @@ public class DeviceService {
     public DeviceDTO createDevice(DeviceDTO deviceDTO) {
         try {
             Device device = deviceMapper.toEntity(deviceDTO);
-            device.setSystemId(1L);
             device.setDeviceStatus("inactive");
             device.setCreateAt(LocalDateTime.now());
             device.setCreateBy("admin");

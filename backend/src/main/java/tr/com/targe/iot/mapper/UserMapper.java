@@ -16,7 +16,6 @@ public class UserMapper {
         dto.setUserAuthorization(user.getUserAuthorization());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
-        dto.setSystemId(user.getSystemId());
         return dto;
     }
 
@@ -29,7 +28,6 @@ public class UserMapper {
         entity.setUserAuthorization(dto.getUserAuthorization());
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
-        entity.setSystemId(dto.getSystemId());
         return entity;
     }
 }

@@ -15,7 +15,6 @@ public class UserDTO {
     private String UserAuthorization;
     private String firstName;
     private String lastName;
-    private Long systemId;
 
 
     public String getUserAuthorization() {

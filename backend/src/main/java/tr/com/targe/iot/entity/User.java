@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -39,7 +38,7 @@ public class User {
     @Column(name = "create_at")
     private LocalDateTime createAt;
 
-    @Column(name = "created_by")
+    @Column(name = "create_by")
     private String createBy;
 
     @Column(name = "update_at")
@@ -54,14 +53,6 @@ public class User {
     @Column(name = "delete_by")
     private String deleteBy;
 
-    @Column(name = "system_id", nullable = false, updatable = false)
-    private Long systemId;
-
-    @ManyToMany
-    @JoinTable(name = "sub_system_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "system_id"))
-    private List<SubSystem> subSystems;
-
-
     public String getPasswordHash() {
         return passwordHash;
     }
@@ -74,11 +65,4 @@ public class User {
         this.email = email;
     }
 
-    public Long getSystemId() {
-        return systemId;
-    }
-
-    public void setSystemId(Long systemId) {
-        this.systemId = systemId;
-    }   
 }

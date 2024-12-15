@@ -8,17 +8,16 @@ import lombok.Setter;
 @Setter
 public class DeviceDTO {
     private Long deviceId;
-    private Long systemId;
     private String deviceName;
     private String deviceType;
     private String deviceStatus;
-    private Long subSystemId;
     private String version;
     private String createBy;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private String updateBy;
 
+    
     public String getVersion() {
         return version;
     }
@@ -26,14 +25,6 @@ public class DeviceDTO {
     public void setVersion(String version) {
         this.version = version;
     }   
-
-    public Long getSubSystemId() {
-        return subSystemId;
-    }
-
-    public void setSubSystemId(Long subSystemId) {
-        this.subSystemId = subSystemId;
-    }
 
     public String getCreateBy() {
         return createBy;
@@ -100,11 +91,4 @@ public class DeviceDTO {
         this.deviceStatus = deviceStatus;
     }   
 
-    public Long getSystemId() {
-        return systemId;
-    }
-
-    public void setSystemId(Long systemId) {
-        this.systemId = systemId;
-    }
 }

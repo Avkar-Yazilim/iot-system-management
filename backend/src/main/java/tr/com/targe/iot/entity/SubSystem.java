@@ -50,14 +50,6 @@ public class SubSystem {
     @Column(name = "version", nullable = false)
     private String version;
 
-    @ManyToMany(mappedBy = "subSystems")
-    private List<User> users;
-
-    @OneToMany(mappedBy = "subSystem", fetch = FetchType.LAZY)
-    private List<Device> devices = new ArrayList<>();
-    
-    // Getters and Setters
-
     public Long getSystemId() {
         return systemId;
     }
@@ -138,19 +130,4 @@ public class SubSystem {
         this.version = version;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-
-    public List<Device> getDevices() {
-        return devices;
-    }
-
-    public void setDevices(List<Device> devices) {
-        this.devices = devices;
-    }
 }
