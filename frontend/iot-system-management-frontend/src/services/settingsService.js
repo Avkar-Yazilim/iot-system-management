@@ -18,13 +18,26 @@ export const settingsService = {
 
   updateUser: async (userId, userData) => {
     try {
-      const response = await axios.put(`${API_URL}/users/${userId}`, userData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+      console.log('Güncelleme isteği gönderiliyor:', {
+        userId,
+        userData
       });
+      
+      const response = await axios.put(
+        `${API_URL}/users/${userId}`,
+        userData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json'
+          },
+        }
+      );
+      
+      console.log('Sunucu yanıtı:', response.data);
       return response.data;
     } catch (error) {
+      console.error('Güncelleme hatası:', error.response?.data || error.message);
       throw error;
     }
   },

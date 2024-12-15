@@ -37,6 +37,7 @@ public class UserService {
                 existingUser.setEmail(updatedUser.getEmail());
                 existingUser.setPasswordHash(updatedUser.getPasswordHash());
                 existingUser.setUserAuthorization(updatedUser.getUserAuthorization());
+                existingUser.setUsername(updatedUser.getUsername());
                 return userRepository.save(existingUser);
             })
             .orElse(null);  

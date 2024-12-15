@@ -22,18 +22,35 @@ export default function Settings() {
   };
 
   const handleEditUser = (user) => {
-    setEditingUser(user);
+    setEditingUser({
+      ...user
+    });
   };
 
   const handleUpdateUser = async (userId, updatedData) => {
     try {
-      await settingsService.updateUser(userId, updatedData);
+      console.log('Güncellenecek veriler:', updatedData);
+      
+      const currentUser = users.find(u => u.userId === userId);
+      
+      const dataToUpdate = {
+        ...currentUser,
+        username: updatedData.username,
+        email: updatedData.email,
+        firstName: updatedData.firstName,
+        lastName: updatedData.lastName,
+        userAuthorization: updatedData.userAuthorization
+      };
+
+      console.log('Gönderilecek güncel veriler:', dataToUpdate);
+      
+      await settingsService.updateUser(userId, dataToUpdate);
       setEditingUser(null);
-      loadUsers(); // Listeyi yenile
+      loadUsers();
       alert("Kullanıcı başarıyla güncellendi!");
     } catch (error) {
       console.error("Güncelleme sırasında hata oluştu:", error);
-      alert("Güncelleme sırasında bir hata oluştu!");
+      alert(`Güncelleme sırasında bir hata oluştu: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -129,13 +146,57 @@ export default function Settings() {
                           )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {user.firstName || "-"}
+                          {editingUser?.userId === user.userId ? (
+                            <input
+                              type="text"
+                              className="input"
+                              defaultValue={user.firstName}
+                              onChange={(e) =>
+                                setEditingUser({
+                                  ...editingUser,
+                                  firstName: e.target.value,
+                                })
+                              }
+                            />
+                          ) : (
+                            user.firstName || "-"
+                          )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {user.lastName || "-"}
+                          {editingUser?.userId === user.userId ? (
+                            <input
+                              type="text"
+                              className="input"
+                              defaultValue={user.lastName}
+                              onChange={(e) =>
+                                setEditingUser({
+                                  ...editingUser,
+                                  lastName: e.target.value,
+                                })
+                              }
+                            />
+                          ) : (
+                            user.lastName || "-"
+                          )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {user.userAuthorization}
+                          {editingUser?.userId === user.userId ? (
+                            <select
+                              className="input"
+                              value={editingUser.userAuthorization}
+                              onChange={(e) =>
+                                setEditingUser({
+                                  ...editingUser,
+                                  userAuthorization: e.target.value,
+                                })
+                              }
+                            >
+                              <option value="admin">admin</option>
+                              <option value="user">user</option>
+                            </select>
+                          ) : (
+                            user.userAuthorization
+                          )}
                         </td>
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                           {editingUser?.userId === user.userId ? (

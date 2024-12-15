@@ -48,6 +48,12 @@ public class User {
     @Column(name = "update_by")
     private String updateBy;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @Column(name = "deleted_by")
+    private String deletedBy;
+
     @ManyToMany
     @JoinTable(name = "sub_system_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "system_id"))
     private List<SubSystem> subSystems;
