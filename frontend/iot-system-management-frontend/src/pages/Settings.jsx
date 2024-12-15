@@ -15,6 +15,7 @@ export default function Settings() {
     userAuthorization: 'user', 
     systemId: 1
   });
+  const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(() => {
     loadUsers();
@@ -78,7 +79,48 @@ export default function Settings() {
     }
   };
 
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!newUser.username.trim()) {
+      errors.username = "Kullanıcı adı boş bırakılamaz";
+    }
+    
+    if (!newUser.email.trim()) {
+      errors.email = "E-posta adresi boş bırakılamaz";
+    } else if (!isValidEmail(newUser.email)) {
+      errors.email = "Geçerli bir e-posta adresi giriniz";
+    }
+    
+    if (!newUser.passwordHash.trim()) {
+      errors.passwordHash = "Şifre boş bırakılamaz";
+    } else if (newUser.passwordHash.length < 6) {
+      errors.passwordHash = "Şifre en az 6 karakter olmalıdır";
+    }
+    
+    if (!newUser.firstName.trim()) {
+      errors.firstName = "Ad boş bırakılamaz";
+    }
+    
+    if (!newUser.lastName.trim()) {
+      errors.lastName = "Soyad boş bırakılamaz";
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleAddUser = async () => {
+    if (!validateForm()) {
+      alert("Lütfen tüm alanları doğru şekilde doldurunuz!");
+      return;
+    }
+    
     try {
       await settingsService.createUser(newUser);
       setShowAddUserModal(false);
@@ -91,6 +133,7 @@ export default function Settings() {
         userAuthorization: 'user',
         systemId: 1
       });
+      setValidationErrors({});
       loadUsers();
       alert("Kullanıcı başarıyla eklendi!");
     } catch (error) {
@@ -127,47 +170,77 @@ export default function Settings() {
                   <label className="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className={`mt-1 block w-full border ${
+                      validationErrors.username ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md shadow-sm p-2`}
                     value={newUser.username}
                     onChange={(e) => setNewUser({...newUser, username: e.target.value})}
                   />
+                  {validationErrors.username && (
+                    <p className="mt-1 text-sm text-red-500">{validationErrors.username}</p>
+                  )}
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700">E-posta</label>
                   <input
                     type="email"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className={`mt-1 block w-full border ${
+                      validationErrors.email ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md shadow-sm p-2`}
                     value={newUser.email}
                     onChange={(e) => setNewUser({...newUser, email: e.target.value})}
                   />
+                  {validationErrors.email && (
+                    <p className="mt-1 text-sm text-red-500">{validationErrors.email}</p>
+                  )}
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Şifre</label>
                   <input
                     type="password"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className={`mt-1 block w-full border ${
+                      validationErrors.passwordHash ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md shadow-sm p-2`}
                     value={newUser.passwordHash}
                     onChange={(e) => setNewUser({...newUser, passwordHash: e.target.value})}
                   />
+                  {validationErrors.passwordHash && (
+                    <p className="mt-1 text-sm text-red-500">{validationErrors.passwordHash}</p>
+                  )}
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Ad</label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className={`mt-1 block w-full border ${
+                      validationErrors.firstName ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md shadow-sm p-2`}
                     value={newUser.firstName}
                     onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
                   />
+                  {validationErrors.firstName && (
+                    <p className="mt-1 text-sm text-red-500">{validationErrors.firstName}</p>
+                  )}
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Soyad</label>
                   <input
                     type="text"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    className={`mt-1 block w-full border ${
+                      validationErrors.lastName ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md shadow-sm p-2`}
                     value={newUser.lastName}
                     onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
                   />
+                  {validationErrors.lastName && (
+                    <p className="mt-1 text-sm text-red-500">{validationErrors.lastName}</p>
+                  )}
                 </div>
+                
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Yetki</label>
                   <select

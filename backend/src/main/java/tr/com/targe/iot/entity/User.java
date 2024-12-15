@@ -48,11 +48,11 @@ public class User {
     @Column(name = "update_by")
     private String updateBy;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    @Column(name = "delete_at")
+    private LocalDateTime deleteAt;
 
-    @Column(name = "deleted_by")
-    private String deletedBy;
+    @Column(name = "delete_by")
+    private String deleteBy;
 
     @Column(name = "system_id", nullable = false, updatable = false)
     private Long systemId;

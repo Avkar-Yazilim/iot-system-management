@@ -17,7 +17,7 @@ public class UserService {
     private final UserMapper userMapper;    
 
     public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toDTO).collect(Collectors.toList());
+        return userRepository.findAllActive().stream().map(userMapper::toDTO).collect(Collectors.toList());
     }
 
     public UserDTO getUserById(Long id) {
@@ -46,7 +46,11 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+         User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cihaz bulunamadı"));
+                user.setDeleteBy("admin");
+                user.setDeleteAt(LocalDateTime.now());
+        userRepository.save(user);
     }
 
 }
