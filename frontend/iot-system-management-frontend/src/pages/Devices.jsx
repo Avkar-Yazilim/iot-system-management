@@ -21,6 +21,8 @@ export default function Devices() {
   const [editingDeviceId, setEditingDeviceId] = useState(null);
   const [editName, setEditName] = useState("");
 
+  const [user, setUser] = useState(null);
+
   const fetchDevices = async () => {
     setLoading(true);
     setError(null);
@@ -47,6 +49,14 @@ export default function Devices() {
 
   useEffect(() => {
     fetchDevices();
+  }, []);
+
+  useEffect(() => {
+    // Component mount olduğunda localStorage'dan user bilgisini al
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      setUser(JSON.parse(userStr));
+    }
   }, []);
 
   const handleUpdateDevice = async (id, deviceData) => {
@@ -170,12 +180,15 @@ export default function Devices() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Cihazlar</h1>
-        <button
-          onClick={() => setShowNewDeviceModal(true)}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
-        >
-          + Yeni Cihaz Ekle
-        </button>
+        
+        {user?.userAuthorization === 'admin' && (
+          <button
+            onClick={() => setShowNewDeviceModal(true)}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
+          >
+            + Yeni Cihaz Ekle
+          </button>
+        )}
       </div>
 
       {error && (
@@ -262,18 +275,22 @@ export default function Devices() {
                     </button>
                   </div>
                   <div className="flex gap-3 mt-3">
-                    <button
-                      onClick={() => handleEdit(device)}
-                      className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors"
-                    >
-                      Düzenle
-                    </button>
-                    <button
-                      onClick={() => handleDeleteDevice(device.deviceId)}
-                      className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 px-4 rounded-lg transition-colors"
-                    >
-                      Sil
-                    </button>
+                    {user?.userAuthorization === 'admin' && (
+                      <button
+                        onClick={() => handleEdit(device)}
+                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors"
+                      >
+                        Düzenle
+                      </button>
+                    )}
+                    {user?.userAuthorization === 'admin' && (
+                      <button
+                        onClick={() => handleDeleteDevice(device.deviceId)}
+                        className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 px-4 rounded-lg transition-colors"
+                      >
+                        Sil
+                      </button>
+                    )}
                   </div>
                 </div>
 

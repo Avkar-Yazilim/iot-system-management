@@ -8,11 +8,11 @@ export default function Login({ onLogin }) {
 
   const onSubmit = async (data) => {
     try {
-      setLoginError('')
-      await loginService.login(data.email, data.password)
-      onLogin()
+      const user = await loginService.login(data.email, data.password);
+      localStorage.setItem('user', JSON.stringify(user));
+      onLogin();
     } catch (error) {
-      setLoginError(error.message)
+      setLoginError(error.message);
     }
   }
 

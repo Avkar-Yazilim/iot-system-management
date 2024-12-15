@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 const navigation = [
-  { name: "Ana Sayfa", to: "/", icon: "home" },
-  { name: "Cihazlar", to: "/devices", icon: "device" },
-  { name: "Program", to: "/schedule", icon: "calendar" },
-  { name: "Geçmiş", to: "/logs", icon: "clock" },
-  { name: "Kullanıcı Yönetim Paneli", to: "/settings", icon: "settings" },
+  { name: "Ana Sayfa", to: "/", icon: "home", adminOnly: false },
+  { name: "Cihazlar", to: "/devices", icon: "device", adminOnly: false },
+  { name: "Program", to: "/schedule", icon: "calendar", adminOnly: false },
+  { name: "Geçmiş", to: "/logs", icon: "clock", adminOnly: false },
+  { name: "Kullanıcı Yönetim Paneli", to: "/settings", icon: "settings", adminOnly: true },
 ];
 
 const icons = {
@@ -199,6 +199,20 @@ export default function Dashboard({ onLogout }) {
 }
 
 function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      setUser(JSON.parse(userStr));
+    }
+  }, []);
+
+  // Admin ve normal kullanıcı için farklı navigation
+  const filteredNavigation = navigation.filter(item => 
+    !item.adminOnly || (user?.userAuthorization === 'admin')
+  );
+
   return (
     <div className="flex-1 flex flex-col">
       <div className="flex flex-col items-center flex-shrink-0 px-4 pb-5 relative">
@@ -216,7 +230,7 @@ function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
         />
       </div>
       <nav className="mt-8 flex-1 px-2 space-y-1">
-        {navigation.map((item) => {
+        {filteredNavigation.map((item) => {
           const isActive =
             currentPath === item.to ||
             (item.to === "/" && currentPath === "") ||

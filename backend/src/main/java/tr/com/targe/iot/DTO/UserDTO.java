@@ -24,4 +24,8 @@ public class UserDTO {
     public void setUserAuthorization(String UserAuthorization) {
         this.UserAuthorization = UserAuthorization;
     }
+
+    public boolean isAdmin() {
+        return "admin".equalsIgnoreCase(this.UserAuthorization);
+    }
 }
