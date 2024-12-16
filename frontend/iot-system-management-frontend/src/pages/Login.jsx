@@ -1,6 +1,8 @@
 import { useForm } from 'react-hook-form'
 import loginService from '../services/loginService'
 import { useState } from 'react'
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../services/fireBase';
 
 export default function Login({ onLogin }) {
   const { register, handleSubmit: submitForm, formState: { errors } } = useForm()
@@ -16,6 +18,32 @@ export default function Login({ onLogin }) {
       setLoginError(error.message);
     }
   }
+
+  const handleGoogleLogin = async () => {
+    try {
+        console.log('Google login başlatılıyor...');
+        const result = await signInWithPopup(auth, googleProvider);
+        
+        // Backend'e sadece gerekli dataları gönder
+        const googleUserData = {
+            email: result.user.email,
+            displayName: result.user.displayName,
+            uid: result.user.uid
+        };
+        
+        console.log('Backend\'e gönderilecek data:', googleUserData);
+
+        const response = await loginService.googleLogin(googleUserData);
+        console.log('Backend\'den gelen yanıt:', response);
+
+        localStorage.setItem('user', JSON.stringify(response));
+        localStorage.setItem('isAuthenticated', 'true');
+        onLogin();
+    } catch (error) {
+        console.error('Google login hatası:', error);
+        setLoginError(error.message || 'Google ile giriş yapılırken bir hata oluştu');
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -88,7 +116,7 @@ export default function Login({ onLogin }) {
 
           <div className="mt-6">
             <button 
-              onClick={() => console.log('Google ile giriş')} 
+              onClick={handleGoogleLogin} 
               className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
               <img 

@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import tr.com.targe.iot.DTO.GoogleUserRequest;
 import tr.com.targe.iot.DTO.UserDTO;
 import tr.com.targe.iot.entity.User;
 import tr.com.targe.iot.mapper.UserMapper;
 import tr.com.targe.iot.repository.UserRepository;
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -66,6 +69,36 @@ public class UserService {
         }
         
         return userMapper.toDTO(user);
+    }
+
+    public UserDTO handleGoogleLogin(GoogleUserRequest googleUser) {
+        try {
+            log.info("Service katmanında Google login işlemi başladı");
+            
+            // Display name'i parçala
+            String[] nameParts = googleUser.getDisplayName().split(" ");
+            String firstName = nameParts[0];
+            String lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+            
+            User user = userRepository.findByEmail(googleUser.getEmail())
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setEmail(googleUser.getEmail());
+                    newUser.setUsername(googleUser.getDisplayName());
+                    newUser.setFirstName(firstName);
+                    newUser.setLastName(lastName);
+                    newUser.setUserAuthorization("user");
+                    newUser.setCreateAt(LocalDateTime.now());
+                    newUser.setCreateBy("GOOGLE_AUTH");
+                    newUser.setPasswordHash("google-auth");
+                    return userRepository.save(newUser);
+                });
+            
+            return userMapper.toDTO(user);
+        } catch (Exception e) {
+            log.error("Google login hatası: ", e);
+            throw new RuntimeException("Google login işlemi başarısız: " + e.getMessage());
+        }
     }
 
 }

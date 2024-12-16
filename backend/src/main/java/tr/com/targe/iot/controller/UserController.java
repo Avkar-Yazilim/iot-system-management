@@ -1,20 +1,31 @@
 package tr.com.targe.iot.controller;
 
-import tr.com.targe.iot.entity.User;
-import tr.com.targe.iot.service.UserService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import tr.com.targe.iot.DTO.UserDTO;
-import lombok.RequiredArgsConstructor;
-import tr.com.targe.iot.mapper.UserMapper;
-
-
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import tr.com.targe.iot.DTO.GoogleUserRequest;
+import tr.com.targe.iot.DTO.UserDTO;
+import tr.com.targe.iot.entity.User;
+import tr.com.targe.iot.mapper.UserMapper;
+import tr.com.targe.iot.service.UserService;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -65,5 +76,29 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/google-login")
+    public ResponseEntity<?> googleLogin(@RequestBody GoogleUserRequest googleUser) {
+        try {
+            log.info("Google login request received: {}", googleUser);
+            UserDTO response = userService.handleGoogleLogin(googleUser);
+            log.info("Google login successful for user: {}", response);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Google login failed: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Google login failed: " + e.getMessage()));
+        }
+    }
+}
+
+@Data
+class ErrorResponse {
+    private String message;
+    private LocalDateTime timestamp = LocalDateTime.now();
+
+    public ErrorResponse(String message) {
+        this.message = message;
     }
 }
