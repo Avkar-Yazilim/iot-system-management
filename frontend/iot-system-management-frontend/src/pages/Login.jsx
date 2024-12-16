@@ -10,6 +10,7 @@ export default function Login({ onLogin }) {
     try {
       const user = await loginService.login(data.email, data.password);
       localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('isAuthenticated', 'true');
       onLogin();
     } catch (error) {
       setLoginError(error.message);

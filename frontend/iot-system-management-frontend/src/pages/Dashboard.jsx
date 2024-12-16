@@ -143,6 +143,13 @@ export default function Dashboard({ onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
+  const handleLogout = () => {
+    // User ve authentication bilgilerini temizle
+    localStorage.removeItem('user');
+    localStorage.removeItem('isAuthenticated');
+    onLogout();
+  };
+
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
       {/* Mobile sidebar */}
@@ -156,7 +163,7 @@ export default function Dashboard({ onLogout }) {
         <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
           <SidebarContent
             currentPath={location.pathname}
-            onLogout={onLogout}
+            onLogout={handleLogout}
             setSidebarOpen={setSidebarOpen}
           />
         </div>
@@ -168,7 +175,7 @@ export default function Dashboard({ onLogout }) {
           <div className="flex flex-col flex-grow border-r border-gray-200 pt-5 pb-4 bg-white overflow-y-auto">
             <SidebarContent
               currentPath={location.pathname}
-              onLogout={onLogout}
+              onLogout={handleLogout}
               setSidebarOpen={setSidebarOpen}
             />
           </div>

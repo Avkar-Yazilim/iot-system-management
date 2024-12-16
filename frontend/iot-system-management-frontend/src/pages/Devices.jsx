@@ -59,15 +59,6 @@ export default function Devices() {
     }
   }, []);
 
-  const handleUpdateDevice = async (id, deviceData) => {
-    try {
-      const updatedDevice = await deviceService.updateDevice(id, deviceData);
-      setDevices(devices.map((d) => (d.deviceId === id ? updatedDevice : d)));
-    } catch (err) {
-      setError("Cihaz güncellenirken hata oluştu");
-    }
-  };
-
   const handleDeleteDevice = async (deviceId) => {
     try {
       const currentUser = localStorage.getItem("username");
