@@ -1,46 +1,40 @@
 package tr.com.targe.iot.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import tr.com.targe.iot.DTO.ScheduleDTO;
 import tr.com.targe.iot.entity.Schedule;
-import tr.com.targe.iot.entity.Schedule.Status;
 import tr.com.targe.iot.repository.ScheduleRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import tr.com.targe.iot.mapper.ScheduleMapper;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+
 public class ScheduleService {
-
-    
-    
     private final ScheduleRepository scheduleRepository;
-
-    //Constructor Injection
-    @Autowired
-    public ScheduleService(ScheduleRepository scheduleRepository) {
-        this.scheduleRepository = scheduleRepository;
-    }
-
+    private final ScheduleMapper scheduleMapper;
     // Create schedule
-    public Schedule createSchedule(Schedule schedule) {
-        schedule.setCreatedAt(LocalDateTime.now());
-        schedule.setCreatedBy(null);
-        return scheduleRepository.save(schedule);
-    }
-
-    //Get a schedule by ID
-    public Optional<Schedule> getScheduleById(Long id) {
-        return scheduleRepository.findById(id);
+    public ScheduleDTO createSchedule(ScheduleDTO scheduleDTO) {
+        Schedule schedule = scheduleMapper.toEntity(scheduleDTO);
+        schedule.setStatus("Active");
+        schedule.setCreateBy("admin");
+        schedule.setCreateAt(LocalDateTime.now());
+        return scheduleMapper.toDTO(scheduleRepository.save(schedule)); 
     }
 
     //Get all schedules
-    public List<Schedule> getAllSchedules() {
-        return scheduleRepository.findAll();
+    public List<ScheduleDTO> getAllSchedules() {
+        return scheduleRepository.findAll().stream()
+            .map(scheduleMapper::toDTO)
+            .collect(Collectors.toList());
     }
 
-    
+
     //update an existing schedule
     @Transactional
     public Schedule updateSchedule(Long scheduleId, Schedule updatedSchedule) {
@@ -53,8 +47,8 @@ public class ScheduleService {
         existingSchedule.setRequest(updatedSchedule.getRequest());
         existingSchedule.setEventTitle(updatedSchedule.getEventTitle());
         existingSchedule.setRecurrence(updatedSchedule.getRecurrence());
-        existingSchedule.setUpdatedAt(LocalDateTime.now());
-        existingSchedule.setUpdatedBy(updatedSchedule.getUpdatedBy());
+        existingSchedule.setUpdateAt(LocalDateTime.now());
+        existingSchedule.setUpdateBy(updatedSchedule.getUpdateBy());
         existingSchedule.setUntilDate(updatedSchedule.getUntilDate());
 
         return scheduleRepository.save(existingSchedule);
@@ -64,27 +58,22 @@ public class ScheduleService {
     @Transactional
     public void deleteSchedule(Long id, String deletedBy) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID"));
-        schedule.setStatus(Status.INACTIVE);
-        schedule.setDeletedAt(LocalDateTime.now());
-        schedule.setDeletedBy(deletedBy);
-        schedule.setUpdatedAt(LocalDateTime.now());
-        schedule.setUpdatedBy(deletedBy);
+        schedule.setStatus("Inactive");
+        schedule.setDeleteAt(LocalDateTime.now());
+        schedule.setDeleteBy(deletedBy);
+        schedule.setUpdateAt(LocalDateTime.now());
+        schedule.setUpdateBy(deletedBy);
         scheduleRepository.save(schedule);
     }
 
-    
-    //Find schedules by status
-    public List<Schedule> getSchedulesByStatus(Status status) {
-        return scheduleRepository.findByStatus(status);
-    }
 
     //Activate a schedule
     @Transactional
     public void activateSchedule(Long id, String activatedBy) {
         Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID"));
-        schedule.setStatus(Status.ACTIVE);
-        schedule.setUpdatedAt(LocalDateTime.now());
-        schedule.setUpdatedBy(activatedBy);
+        schedule.setStatus("Active");
+        schedule.setUpdateAt(LocalDateTime.now());
+        schedule.setUpdateBy(activatedBy);
         scheduleRepository.save(schedule);
     }
     // Complete a schedule
@@ -92,8 +81,8 @@ public class ScheduleService {
     public Schedule completeSchedule(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + scheduleId));
         
-        schedule.setStatus(Status.COMPLETED);
-        schedule.setUpdatedAt(LocalDateTime.now());
+        schedule.setStatus("Completed");
+        schedule.setUpdateAt(LocalDateTime.now());
         return scheduleRepository.save(schedule);
     }
 }

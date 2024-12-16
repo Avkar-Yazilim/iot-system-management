@@ -14,6 +14,7 @@ export default function Devices() {
   const [formData, setFormData] = useState({
     deviceName: "",
     deviceType: "",
+    systemId: 1,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -53,7 +54,7 @@ export default function Devices() {
 
   useEffect(() => {
     // Component mount olduğunda localStorage'dan user bilgisini al
-    const userStr = localStorage.getItem('user');
+    const userStr = localStorage.getItem("user");
     if (userStr) {
       setUser(JSON.parse(userStr));
     }
@@ -171,8 +172,8 @@ export default function Devices() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Cihazlar</h1>
-        
-        {user?.userAuthorization === 'admin' && (
+
+        {user?.userAuthorization === "admin" && (
           <button
             onClick={() => setShowNewDeviceModal(true)}
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
@@ -242,8 +243,12 @@ export default function Devices() {
                       <span>{device.createBy}</span>
                     </div>
                     <div className="flex">
-                      <span className="text-gray-600 w-32">Oluşturma Tarihi:</span>
-                      <span>{new Date(device.createAt).toLocaleDateString("tr-TR")}</span>
+                      <span className="text-gray-600 w-32">
+                        Oluşturma Tarihi:
+                      </span>
+                      <span>
+                        {new Date(device.createAt).toLocaleDateString("tr-TR")}
+                      </span>
                     </div>
                   </div>
 
@@ -266,7 +271,7 @@ export default function Devices() {
                     </button>
                   </div>
                   <div className="flex gap-3 mt-3">
-                    {user?.userAuthorization === 'admin' && (
+                    {user?.userAuthorization === "admin" && (
                       <button
                         onClick={() => handleEdit(device)}
                         className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors"
@@ -274,7 +279,7 @@ export default function Devices() {
                         Düzenle
                       </button>
                     )}
-                    {user?.userAuthorization === 'admin' && (
+                    {user?.userAuthorization === "admin" && (
                       <button
                         onClick={() => handleDeleteDevice(device.deviceId)}
                         className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 px-4 rounded-lg transition-colors"

@@ -46,6 +46,7 @@ public class DeviceService {
             device.setCreateAt(LocalDateTime.now());
             device.setCreateBy("admin");
             device.setVersion("1.0");
+            device.setSystemId(1L);
             
             Device savedDevice = deviceRepository.save(device);
             

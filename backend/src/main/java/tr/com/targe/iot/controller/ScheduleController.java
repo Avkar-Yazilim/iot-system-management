@@ -1,38 +1,33 @@
 package tr.com.targe.iot.controller;
 
+import tr.com.targe.iot.DTO.ScheduleDTO;
 import tr.com.targe.iot.entity.Schedule;
 import tr.com.targe.iot.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/schedules")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    
 
-    public ScheduleController(ScheduleService scheduleService) {
-        this.scheduleService = scheduleService;
-    }
 
     @GetMapping
-    public List<Schedule> getAllSchedules() {
+    public List<ScheduleDTO> getAllSchedules() {
         return scheduleService.getAllSchedules();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Schedule> getScheduleById(@PathVariable Long id) {
-        Optional<Schedule> schedule = scheduleService.getScheduleById(id);
-        return schedule.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @PostMapping
-    public ResponseEntity<Schedule> createSchedule(@RequestBody Schedule schedule) {
-        Schedule createdSchedule = scheduleService.createSchedule(schedule);
-        return ResponseEntity.status(201).body(createdSchedule); 
+    public ResponseEntity<ScheduleDTO> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+        ScheduleDTO schedule = scheduleService.createSchedule(scheduleDTO);
+        return ResponseEntity.status(201).body(schedule); 
     }
 
     @PutMapping("/{id}")

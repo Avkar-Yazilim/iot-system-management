@@ -1,38 +1,55 @@
 package tr.com.targe.iot.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "Schedules")
 public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "schedule_id")
-    private Integer scheduleId;
+    private Long scheduleId;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private DeviceGroup group_id;
+    private DeviceGroup group;
+
+    @Column(name = "group_id",insertable = false,updatable = false)
+    private Long groupId;    
 
     @ManyToOne
     @JoinColumn(name = "device_id")
-    private Device device_id;
+    private Device device;
+
+    @Column(name = "device_id",insertable = false,updatable = false)
+    private Long deviceId;
 
     @ManyToOne
-    @JoinColumn(name = "command_id", nullable = false)
-    private BatchCommands command_id;
+    @JoinColumn(name = "command_id")
+    private BatchCommands command;
+
+    @Column(name = "command_id",insertable = false,updatable = false)
+    private Long commandId;
 
     @ManyToOne
-    @JoinColumn(name = "request_id", nullable = false)
-    private RestRequest request_id;
+    @JoinColumn(name = "request_id")
+    private RestRequest request;
+
+    @Column(name = "request_id",insertable = false,updatable = false)
+    private Long requestId;
 
     @Column(name = "event_title", nullable = false)
     private String eventTitle;
 
     @Column(name = "recurrence")
-    @Enumerated(EnumType.STRING)
-    private Recurrence recurrence;
+    private String recurrence;
 
     @Column(name = "interval")
     private Integer interval;
@@ -43,195 +60,63 @@ public class Schedule {
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
+
     @Column(name = "until_date")
     private LocalDateTime untilDate;
 
     @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.ACTIVE;
+    private String status = "Active";
 
-    @Column(name = "create_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "create_at", nullable = false)
+    private LocalDateTime createAt = LocalDateTime.now();
 
     @Column(name = "create_by", nullable = false, length = 25)
-    private String createdBy;
+    private String createBy;
 
     @Column(name = "update_at")
-    private LocalDateTime updatedAt;
+    private LocalDateTime updateAt;
 
     @Column(name = "update_by", length = 25)
-    private String updatedBy;
+    private String updateBy;
 
     @Column(name = "delete_at")
-    private LocalDateTime deletedAt;
+    private LocalDateTime deleteAt;
 
     @Column(name = "delete_by", length = 25)
-    private String deletedBy;
+    private String deleteBy;
 
-    @Column(name = "version", nullable = false, length = 25)
-    private String version;
 
-    // Enum for Recurrence
-    public enum Recurrence {
-        DAILY, WEEKLY, MONTHLY, YEARLY
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
     }
 
-    // Enum for Status
-    public enum Status {
-        ACTIVE, INACTIVE, COMPLETED, CANCELLED
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
-    // Getters and Setters
-    public Integer getScheduleId() {
-        return scheduleId;
+    public void setCommandId(Long commandId) {
+        this.commandId = commandId;
     }
 
-    public void setScheduleId(Integer scheduleId) {
-        this.scheduleId = scheduleId;
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
     }
 
-    public DeviceGroup getGroup() {
-        return group_id;
+    public Long getDeviceId() {
+        return deviceId;
     }
 
-    public void setGroup(DeviceGroup group_id) {
-        this.group_id = group_id;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public Device getDevice() {
-        return device_id;
+    public Long getCommandId() {
+        return commandId;
     }
 
-    public void setDevice(Device device_id) {
-        this.device_id = device_id;
+    public Long getRequestId() {
+        return requestId;
     }
-
-    public BatchCommands getCommand() {
-        return command_id;
-    }
-
-    public void setCommand(BatchCommands command_id) {
-        this.command_id = command_id;
-    }
-
-    public RestRequest getRequest() {
-        return request_id;
-    }
-
-    public void setRequest(RestRequest request_id) {
-        this.request_id = request_id;
-    }
-
-    public String getEventTitle() {
-        return eventTitle;
-    }
-
-    public void setEventTitle(String eventTitle) {
-        this.eventTitle = eventTitle;
-    }
-
-    public Recurrence getRecurrence() {
-        return recurrence;
-    }
-
-    public void setRecurrence(Recurrence recurrence) {
-        this.recurrence = recurrence;
-    }
-
-    public Integer getInterval() {
-        return interval;
-    }
-
-    public void setInterval(Integer interval) {
-        this.interval = interval;
-    }
-
-    public String getScheduleDays() {
-        return scheduleDays;
-    }
-
-    public void setScheduleDays(String scheduleDays) {
-        this.scheduleDays = scheduleDays;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getUntilDate() {
-        return untilDate;
-    }
-
-    public void setUntilDate(LocalDateTime untilDate) {
-        this.untilDate = untilDate;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
-    }
-
-    public String getDeletedBy() {
-        return deletedBy;
-    }
-
-    public void setDeletedBy(String deletedBy) {
-        this.deletedBy = deletedBy;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-    
 }
