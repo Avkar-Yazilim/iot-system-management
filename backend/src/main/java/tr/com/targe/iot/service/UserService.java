@@ -68,6 +68,9 @@ public class UserService {
             throw new RuntimeException("Hatalı şifre");
         }
         
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+        
         return userMapper.toDTO(user);
     }
 
@@ -93,6 +96,9 @@ public class UserService {
                     newUser.setPasswordHash("google-auth");
                     return userRepository.save(newUser);
                 });
+            
+            user.setLastLogin(LocalDateTime.now());
+            user = userRepository.save(user);
             
             return userMapper.toDTO(user);
         } catch (Exception e) {
