@@ -52,7 +52,7 @@ public class Schedule {
     private String recurrence;
 
     @Column(name = "interval")
-    private Integer interval;
+    private Long interval;
 
     @Column(name = "schedule_days")
     private String scheduleDays;
@@ -87,6 +87,9 @@ public class Schedule {
     @Column(name = "delete_by", length = 25)
     private String deleteBy;
 
+    @Column(name = "version")
+    private Long version;
+
 
     public void setDeviceId(Long deviceId) {
         this.deviceId = deviceId;
@@ -118,5 +121,21 @@ public class Schedule {
 
     public Long getRequestId() {
         return requestId;
+    }
+
+    public void setInterval(Long interval) {
+        this.interval = interval;
+    }
+
+    public Long getInterval() {
+        return interval;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 }

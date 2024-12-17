@@ -8,11 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { ScheduleDateService } from "../services/ScheduleDateService";
 import deviceService from "../services/deviceService";
 import batchCommandService from "../services/batchCommandService";
+import { ScheduleService } from "../services/scheduleService";
+
 
 const RepeatPanel = ({ onClose, onSave }) => {
-  const [frequency, setFrequency] = useState(1);
+  const [, setFrequency] = useState(1);
   const [selectedDay, setSelectedDay] = useState(null);
   const [endDate, setEndDate] = useState("");
+  const [recurrence, setRecurrence] = useState("Daily");
 
   const days = [
     { short: "P", long: "Pazartesi" },
@@ -24,12 +27,26 @@ const RepeatPanel = ({ onClose, onSave }) => {
     { short: "P", long: "Pazar" },
   ];
 
+  const recurrenceOptions = [
+    { value: "Daily", label: "Günlük" },
+    { value: "Weekly", label: "Haftalık" },
+    { value: "Monthly", label: "Aylık" },
+    { value: "Yearly", label: "Yıllık" },
+  ];
+
+  const frequencyText = {
+    Daily: "günde bir",
+    Weekly: "haftada bir",
+    Monthly: "ayda bir",
+    Yearly: "yılda bir",
+  };
+
   const handleSave = () => {
     if (!endDate) {
       alert("Lütfen bitiş tarihi seçin");
       return;
     }
-    onSave({ frequency, selectedDay, endDate });
+    onSave({ frequency, selectedDay, endDate, recurrence });
   };
 
   return (
@@ -37,8 +54,26 @@ const RepeatPanel = ({ onClose, onSave }) => {
       <div className="bg-white rounded-lg p-6 w-96">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Yineleme</h2>
 
+        {/* Recurrence Seçenekleri */}
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Tekrar Sıklığı:
+          </label>
+          <select
+            value={recurrence}
+            onChange={(e) => setRecurrence(e.target.value)}
+            className="border rounded p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            {recurrenceOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Yineleme Sıklığı */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mt-4">
           <label className="text-sm font-medium text-gray-700">
             Yineleme Sıklığı:
           </label>
@@ -49,36 +84,40 @@ const RepeatPanel = ({ onClose, onSave }) => {
             onChange={(e) => setFrequency(parseInt(e.target.value))}
             className="border rounded p-2 w-16 text-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          <span className="text-sm font-medium text-gray-700">hafta</span>
+          <span className="text-sm font-medium text-gray-700">
+            {frequencyText[recurrence]}
+          </span>
         </div>
 
         {/* Gün Seçimi */}
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Gün Seçimi:
-          </label>
-          <div className="flex gap-2">
-            {days.map((day, index) => (
-              <button
-                key={index}
-                type="button"
-                title={day.long}
-                onClick={() => setSelectedDay(index)}
-                className={`
-                  border rounded-full w-8 h-8 text-center text-sm
-                  transition-colors duration-200
-                  ${
-                    selectedDay === index
-                      ? "bg-blue-500 text-white border-blue-500"
-                      : "hover:bg-blue-100 text-gray-700"
-                  }
-                `}
-              >
-                {day.short}
-              </button>
-            ))}
+        {recurrence === "Weekly" && (
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Gün Seçimi:
+            </label>
+            <div className="flex gap-2">
+              {days.map((day, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  title={day.long}
+                  onClick={() => setSelectedDay(index)}
+                  className={`
+                    border rounded-full w-8 h-8 text-center text-sm
+                    transition-colors duration-200
+                    ${
+                      selectedDay === index
+                        ? "bg-blue-500 text-white border-blue-500"
+                        : "hover:bg-blue-100 text-gray-700"
+                    }
+                  `}
+                >
+                  {day.short}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Bitiş Ayarları */}
         <div className="mt-4">
