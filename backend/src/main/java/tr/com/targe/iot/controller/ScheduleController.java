@@ -1,5 +1,6 @@
 package tr.com.targe.iot.controller;
 
+import tr.com.targe.iot.DTO.DeviceDTO;
 import tr.com.targe.iot.DTO.ScheduleDTO;
 import tr.com.targe.iot.entity.Schedule;
 import tr.com.targe.iot.service.ScheduleService;
@@ -20,14 +21,22 @@ public class ScheduleController {
 
 
     @GetMapping
-    public List<ScheduleDTO> getAllSchedules() {
-        return scheduleService.getAllSchedules();
+    public ResponseEntity<List<ScheduleDTO>> getAllSchedules() {
+        return ResponseEntity.ok(scheduleService.getAllSchedules());
     }
 
     @PostMapping
-    public ResponseEntity<ScheduleDTO> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        ScheduleDTO schedule = scheduleService.createSchedule(scheduleDTO);
-        return ResponseEntity.status(201).body(schedule); 
+    public ResponseEntity<?> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
+        try {
+            System.out.println("Received schedule creation request: " + scheduleDTO.toString());
+            ScheduleDTO schedule = scheduleService.createSchedule(scheduleDTO);
+            return ResponseEntity.status(201).body(schedule);
+        } catch (Exception e) {
+            System.err.println("Error creating schedule: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                .body("Error creating schedule: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")

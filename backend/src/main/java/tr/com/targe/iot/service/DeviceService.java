@@ -119,7 +119,7 @@ public class DeviceService {
         return deviceRepository.findAll(); 
     }
 
-    public void generateExcelReport(HttpServletResponse response) {
+    public void generateExcelReport(HttpServletResponse response) { 
         try {
             // Excel raporu oluşturma kodu buraya gelecek
             

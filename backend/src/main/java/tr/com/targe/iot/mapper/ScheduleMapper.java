@@ -16,9 +16,9 @@ public class ScheduleMapper {
         dto.setScheduleId(schedule.getScheduleId());
         dto.setDeviceId(schedule.getDeviceId());
         dto.setEventTitle(schedule.getEventTitle());
+        dto.setScheduleDays(schedule.getScheduleDays());
         dto.setRecurrence(schedule.getRecurrence());
         dto.setInterval(schedule.getInterval());
-        dto.setScheduleDays(schedule.getScheduleDays());
         dto.setStartTime(schedule.getStartTime());
         dto.setEndTime(schedule.getEndTime());
         dto.setUntilDate(schedule.getUntilDate());
@@ -35,14 +35,15 @@ public class ScheduleMapper {
         entity.setEventTitle(dto.getEventTitle());
         entity.setRecurrence(dto.getRecurrence());
         entity.setInterval(dto.getInterval());
-        entity.setScheduleDays(dto.getScheduleDays());
         entity.setStartTime(dto.getStartTime());
         entity.setEndTime(dto.getEndTime());
         entity.setUntilDate(dto.getUntilDate());
         entity.setStatus(dto.getStatus());
         entity.setCreateAt(dto.getCreateAt());
-        entity.setCreateBy("admin");
-        
+        entity.setCreateBy(dto.getCreateBy());
+        entity.setScheduleDays(dto.getScheduleDays());
+
         return entity;
     }
 }
+

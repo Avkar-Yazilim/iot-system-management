@@ -10,7 +10,6 @@ import deviceService from "../services/deviceService";
 import batchCommandService from "../services/batchCommandService";
 import { ScheduleService } from "../services/scheduleService";
 
-
 const RepeatPanel = ({ onClose, onSave }) => {
   const [, setFrequency] = useState(1);
   const [selectedDay, setSelectedDay] = useState(null);
@@ -168,13 +167,15 @@ export default function Schedule() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRepeatPanel, setShowRepeatPanel] = useState(false);
   const [newEvent, setNewEvent] = useState({
-    title: "",
     deviceId: "",
-    start: "",
-    end: "",
-    repeat: false,
-    repeatConfig: null,
-    commandId: "",
+    eventTitle: "",
+    recurrence: "Daily",
+    interval: 1,
+    startTime: "",
+    endTime: "",
+    untilDate: "",
+    createBy: "Admin",
+    version: "v1.0",
   });
   const [devices, setDevices] = useState([]);
   const [commands, setCommands] = useState([]);
@@ -216,82 +217,64 @@ export default function Schedule() {
   }, []);
 
   const handleDeviceChange = async (deviceId) => {
-    setNewEvent({ ...newEvent, deviceId });
-    try {
-      const fetchedCommands = await batchCommandService.getBatchCommands(deviceId);
-      setCommands(fetchedCommands);
-    } catch (error) {
-      console.error("Error fetching commands:", error);
+    const selectedDevice = devices.find(
+      (device) => device.deviceId === parseInt(deviceId)
+    );
+    if (selectedDevice) {
+      setNewEvent({ ...newEvent, deviceId: selectedDevice.deviceId });
     }
   };
 
-  const handleAddEvent = (e) => {
+  const handleAddEvent = async (e) => {
     e.preventDefault();
-    const selectedDevice = devices.find(
-      (d) => d.id === parseInt(newEvent.deviceId)
-    );
 
-    let newEvents = [];
-    const baseEvent = {
-      id: events.length + 1,
-      ...newEvent,
-      deviceId: parseInt(newEvent.deviceId),
-      title: `${selectedDevice.deviceName} - ${newEvent.title}`,
-      backgroundColor: "#22c55e",
-      start: new Date(newEvent.start).toISOString(),
-      end: new Date(newEvent.end).toISOString(),
-    };
+    try {
+      const scheduleData = {
+        deviceId: newEvent.deviceId,
+        eventTitle: newEvent.eventTitle,
+        recurrence: newEvent.recurrence,
+        interval: parseInt(newEvent.interval),
+        startTime: new Date(newEvent.startTime).toISOString(),
+        endTime: new Date(newEvent.endTime).toISOString(),
+        untilDate: new Date(newEvent.untilDate).toISOString(),
+        createBy: newEvent.createBy,
+        version: newEvent.version,
+      };
 
-    if (newEvent.repeat && newEvent.repeatConfig) {
-      const { frequency, selectedDay, endDate } = newEvent.repeatConfig;
-      const startDateTime = new Date(newEvent.start);
-      const endDateTime = new Date(newEvent.end);
-      const duration = endDateTime.getTime() - startDateTime.getTime(); // Etkinlik süresi (ms)
-      const endDateLimit = new Date(endDate);
-      endDateLimit.setHours(23, 59, 59, 999); // Bitiş gününün sonuna kadar
-      // İlk tarihi, seçilen güne ayarla
-      let currentDate = new Date(startDateTime);
-      while (currentDate.getDay() !== selectedDay) {
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
+      console.log("Sending schedule data:", scheduleData);
+      const response = await ScheduleService.createSchedule(scheduleData);
+      console.log("Response:", response);
 
-      // Seçilen günden başlayarak, bitiş tarihine kadar tekrarla
-      while (currentDate <= endDateLimit) {
-        const eventStart = new Date(currentDate);
-        eventStart.setHours(
-          startDateTime.getHours(),
-          startDateTime.getMinutes(),
-          startDateTime.getSeconds()
-        );
+      // Add the new event to the calendar
+      const calendarEvent = {
+        id: response.id,
+        title: newEvent.eventTitle,
+        start: newEvent.startTime,
+        end: newEvent.endTime,
+        backgroundColor: "#22c55e",
+      };
 
-        const eventEnd = new Date(eventStart.getTime() + duration);
+      setEvents([...events, calendarEvent]);
 
-        newEvents.push({
-          ...baseEvent,
-          id: events.length + 1 + newEvents.length,
-          start: eventStart.toISOString(),
-          end: eventEnd.toISOString(),
-        });
+      // Reset form
+      setNewEvent({
+        deviceId: "",
+        eventTitle: "",
+        recurrence: "Daily",
+        interval: 1,
+        startTime: "",
+        endTime: "",
+        untilDate: "",
+        createBy: "Admin",
+        version: "v1.0",
+      });
 
-        // Sonraki tekrar için tarihi güncelle (frequency * 7 gün)
-        currentDate.setDate(currentDate.getDate() + frequency * 7);
-      }
-    } else {
-      newEvents = [baseEvent];
+      setShowAddModal(false);
+      navigate("/schedule");
+    } catch (error) {
+      console.error("Error creating schedule:", error);
+      alert("Program oluşturulurken bir hata oluştu: " + error.message);
     }
-
-    setEvents([...events, ...newEvents]);
-    setNewEvent({
-      title: "",
-      deviceId: "",
-      start: "",
-      end: "",
-      repeat: false,
-      repeatConfig: null,
-      commandId: "",
-    });
-    setShowAddModal(false);
-    navigate("/schedule");
   };
 
   const handleRepeatSave = (config) => {
@@ -381,7 +364,7 @@ export default function Schedule() {
                       >
                         <option value="">Cihaz Seçin</option>
                         {devices.map((device) => (
-                          <option key={device.id} value={device.id}>
+                          <option key={device.deviceId} value={device.deviceId}>
                             {device.deviceName}
                           </option>
                         ))}
@@ -389,39 +372,20 @@ export default function Schedule() {
                     </div>
                     <div>
                       <label
-                        htmlFor="command"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Komut
-                      </label>
-                      <select
-                        id="command"
-                        value={newEvent.commandId}
-                        onChange={(e) => setNewEvent({ ...newEvent, commandId: e.target.value })}
-                        className="input mt-1"
-                        required
-                      >
-                        <option value="">Komut Seçin</option>
-                        {commands.map((command) => (
-                          <option key={command.commandId} value={command.commandId}>
-                            {command.command}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="title"
+                        htmlFor="eventTitle"
                         className="block text-sm font-medium text-gray-700"
                       >
                         Program Adı
                       </label>
                       <input
                         type="text"
-                        id="title"
-                        value={newEvent.title}
+                        id="eventTitle"
+                        value={newEvent.eventTitle}
                         onChange={(e) =>
-                          setNewEvent({ ...newEvent, title: e.target.value })
+                          setNewEvent({
+                            ...newEvent,
+                            eventTitle: e.target.value,
+                          })
                         }
                         className="input mt-1"
                         required
@@ -429,17 +393,20 @@ export default function Schedule() {
                     </div>
                     <div>
                       <label
-                        htmlFor="start"
+                        htmlFor="startTime"
                         className="block text-sm font-medium text-gray-700"
                       >
                         Başlangıç Zamanı
                       </label>
                       <input
                         type="datetime-local"
-                        id="start"
-                        value={newEvent.start}
+                        id="startTime"
+                        value={newEvent.startTime}
                         onChange={(e) =>
-                          setNewEvent({ ...newEvent, start: e.target.value })
+                          setNewEvent({
+                            ...newEvent,
+                            startTime: e.target.value,
+                          })
                         }
                         className="input mt-1"
                         required
@@ -447,46 +414,89 @@ export default function Schedule() {
                     </div>
                     <div>
                       <label
-                        htmlFor="end"
+                        htmlFor="endTime"
                         className="block text-sm font-medium text-gray-700"
                       >
                         Bitiş Zamanı
                       </label>
                       <input
                         type="datetime-local"
-                        id="end"
-                        value={newEvent.end}
+                        id="endTime"
+                        value={newEvent.endTime}
                         onChange={(e) =>
-                          setNewEvent({ ...newEvent, end: e.target.value })
+                          setNewEvent({ ...newEvent, endTime: e.target.value })
                         }
                         className="input mt-1"
                         required
                       />
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id="repeat"
-                          checked={newEvent.repeat}
-                          onChange={(e) => {
-                            setNewEvent({
-                              ...newEvent,
-                              repeat: e.target.checked,
-                            });
-                            if (e.target.checked) {
-                              setShowRepeatPanel(true);
-                            }
-                          }}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                        />
-                        <label
-                          htmlFor="repeat"
-                          className="ml-2 text-sm text-gray-700"
-                        >
-                          Tekrarla
-                        </label>
-                      </div>
+                    <div>
+                      <label
+                        htmlFor="untilDate"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Tekrar Bitiş Tarihi
+                      </label>
+                      <input
+                        type="datetime-local"
+                        id="untilDate"
+                        value={newEvent.untilDate}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            untilDate: e.target.value,
+                          })
+                        }
+                        className="input mt-1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="recurrence"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Tekrar Sıklığı
+                      </label>
+                      <select
+                        id="recurrence"
+                        value={newEvent.recurrence}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            recurrence: e.target.value,
+                          })
+                        }
+                        className="input mt-1"
+                        required
+                      >
+                        <option value="Daily">Günlük</option>
+                        <option value="Weekly">Haftalık</option>
+                        <option value="Monthly">Aylık</option>
+                        <option value="Yearly">Yıllık</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="interval"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Tekrar Aralığı
+                      </label>
+                      <input
+                        type="number"
+                        id="interval"
+                        min="1"
+                        value={newEvent.interval}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            interval: parseInt(e.target.value),
+                          })
+                        }
+                        className="input mt-1"
+                        required
+                      />
                     </div>
                   </div>
                 </div>
@@ -502,7 +512,7 @@ export default function Schedule() {
                     type="button"
                     onClick={() => {
                       setShowAddModal(false);
-                      navigate("/schedule");
+                      navigate("/schedules");
                     }}
                     className="mt-3 sm:mt-0 w-full sm:w-auto btn border border-gray-300"
                   >

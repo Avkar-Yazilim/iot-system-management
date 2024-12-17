@@ -20,11 +20,27 @@ public class ScheduleService {
     private final ScheduleMapper scheduleMapper;
     // Create schedule
     public ScheduleDTO createSchedule(ScheduleDTO scheduleDTO) {
+        if (scheduleDTO.getDeviceId() == null) {
+            throw new IllegalArgumentException("Device ID cannot be null");
+        }
+
         Schedule schedule = scheduleMapper.toEntity(scheduleDTO);
-        schedule.setStatus("Active");
-        schedule.setCreateBy("admin");
+        
+        // Varsayılan değerleri ayarla
         schedule.setCreateAt(LocalDateTime.now());
-        return scheduleMapper.toDTO(scheduleRepository.save(schedule)); 
+        schedule.setCreateBy(scheduleDTO.getCreateBy() != null ? scheduleDTO.getCreateBy() : "admin");
+        schedule.setStatus("Active");
+        
+        // Device ID'yi açıkça set et
+        schedule.setDeviceId(scheduleDTO.getDeviceId());
+        
+        // Eğer version belirtilmemişse varsayılan versiyon ata
+        if (schedule.getVersion() == null) {
+            schedule.setVersion("v1.0");
+        }
+        
+        Schedule savedSchedule = scheduleRepository.save(schedule);
+        return scheduleMapper.toDTO(savedSchedule);
     }
 
     //Get all schedules

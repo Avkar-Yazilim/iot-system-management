@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Schedules")
+@Table(name = "schedules")
 public class Schedule {
 
     @Id
@@ -88,7 +88,7 @@ public class Schedule {
     private String deleteBy;
 
     @Column(name = "version")
-    private Long version;
+    private String version;
 
 
     public void setDeviceId(Long deviceId) {
@@ -129,13 +129,5 @@ public class Schedule {
 
     public Long getInterval() {
         return interval;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    public Long getVersion() {
-        return version;
     }
 }
