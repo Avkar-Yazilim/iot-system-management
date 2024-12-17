@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { SearchIcon } from '@heroicons/react/outline'
+import { SearchIcon, DownloadIcon } from '@heroicons/react/outline'
 import userLogService from '../services/userLogService'
 
 export default function Logs() {
@@ -45,6 +45,35 @@ export default function Logs() {
 
   console.log('Filtered Logs:', filteredLogs); // Filtrelenmiş logları kontrol et
 
+  const downloadLogs = () => {
+    try {
+      // JSON dosyasını oluştur
+      const jsonContent = JSON.stringify(logs, null, 2);
+      
+      // Blob oluştur
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+      
+      // İndirme bağlantısı oluştur
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      
+      // Dosya adını ve tarihi ayarla
+      const date = new Date().toISOString().split('T')[0];
+      link.download = `kullanici-loglari-${date}.json`;
+      
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Temizlik
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Loglar indirilirken hata oluştu:', error);
+      alert('Loglar indirilirken bir hata oluştu!');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full p-8">
@@ -83,6 +112,15 @@ export default function Logs() {
           <p className="mt-2 text-sm text-gray-700">
             Sistemde kullanıcıların gerçekleştirdiği tüm işlemlerin kayıtları
           </p>
+        </div>
+        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          <button
+            onClick={downloadLogs}
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <DownloadIcon className="h-5 w-5 mr-2" />
+            Logları İndir
+          </button>
         </div>
       </div>
 

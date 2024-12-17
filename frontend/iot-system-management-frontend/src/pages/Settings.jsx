@@ -142,6 +142,29 @@ export default function Settings() {
     }
   };
 
+  const handleExportUsers = () => {
+    try {
+      // JSON dosyasını oluştur
+      const jsonStr = JSON.stringify(users, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      
+      // İndirme bağlantısı oluştur
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'kullanicilar.json';
+      document.body.appendChild(a);
+      a.click();
+      
+      // Temizlik
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("JSON dışa aktarma hatası:", error);
+      alert("Kullanıcı verileri dışa aktarılırken bir hata oluştu!");
+    }
+  };
+
   if (loading) {
     return <div>Yükleniyor...</div>;
   }
@@ -153,12 +176,20 @@ export default function Settings() {
           <h1 className="text-2xl font-semibold text-gray-900">
             Kullanıcı Yönetimi
           </h1>
-          <button
-            onClick={() => setShowAddUserModal(true)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-          >
-            Yeni Kullanıcı Ekle
-          </button>
+          <div className="space-x-3">
+            <button
+              onClick={handleExportUsers}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            >
+              JSON Olarak İndir
+            </button>
+            <button
+              onClick={() => setShowAddUserModal(true)}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+            >
+              Yeni Kullanıcı Ekle
+            </button>
+          </div>
         </div>
 
         {showAddUserModal && (
