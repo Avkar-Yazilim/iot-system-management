@@ -55,6 +55,18 @@ const batchCommandService = {
       throw error;
     }
   },
+
+  executeBatchCommand: async (commandId) => {
+    const response = await fetch(`/api/commands/execute/${commandId}`, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error("Komut çalıştırılamadı");
+    }
+
+    return response.json();
+  },
 };
 
 export default batchCommandService;

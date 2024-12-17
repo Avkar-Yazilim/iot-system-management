@@ -1,6 +1,8 @@
 package tr.com.targe.iot.controller;
 
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
 
 import lombok.RequiredArgsConstructor;
 import tr.com.targe.iot.DTO.DeviceDTO;
 import tr.com.targe.iot.service.DeviceService;
+
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 
 @RestController
 @RequestMapping("/api/devices")
@@ -87,5 +97,35 @@ public class DeviceController {
             @PathVariable Long id, 
             @RequestBody String status) {
             return ResponseEntity.ok(deviceService.updateDeviceStatus(id, status));
+    }
+
+    @GetMapping("/export/excel")
+    public void exportDevicesToExcel(HttpServletResponse response) throws IOException {
+            
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=devices_v2.xls");
+        deviceService.generateExcelReport(response);
+    }
+
+    @GetMapping("/export/csv")
+    public ResponseEntity<Void> exportCSV(HttpServletResponse response) throws IOException {
+        String fileName = "devices.csv";
+
+        response.setContentType("text/csv");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
+
+        StatefulBeanToCsv<DeviceDTO> csvWriter = new StatefulBeanToCsvBuilder<DeviceDTO>(response.getWriter())
+            .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
+            .withOrderedResults(false)
+            .build();
+
+        try {
+            csvWriter.write(deviceService.getAllDevices());
+        } catch (CsvRequiredFieldEmptyException | CsvDataTypeMismatchException e) {
+            e.printStackTrace(); // Hata mesajını konsola yazdırabilir veya uygun bir şekilde ele alabilirsiniz
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

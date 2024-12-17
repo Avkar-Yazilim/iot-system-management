@@ -57,4 +57,7 @@ public class BatchCommands {
         this.timestamp = Timestamp.valueOf(timestamp);
     }
 
+    public void setStatus(String status) {
+        this.commandStatus = status;
+    }
 }

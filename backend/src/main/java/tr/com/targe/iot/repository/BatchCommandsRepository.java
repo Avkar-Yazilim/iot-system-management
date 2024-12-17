@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.query.Procedure;
 
 @Repository
 public interface BatchCommandsRepository extends JpaRepository<BatchCommands, Long> {
@@ -20,4 +21,10 @@ public interface BatchCommandsRepository extends JpaRepository<BatchCommands, Lo
         @Param("deviceId") Long deviceId, 
         @Param("status") String status
     );
+
+    @Query("UPDATE BatchCommands SET commandStatus = :status WHERE commandId = :commandId")
+    void updateCommandStatus(@Param("commandId") Long commandId, @Param("status") String status);
+
+    @Procedure(name = "UpdateBatchCommandStatus")
+    void updateBatchCommandStatus(@Param("newStatus") String newStatus, @Param("commandType") String commandType);
 }

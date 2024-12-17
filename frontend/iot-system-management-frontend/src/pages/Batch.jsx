@@ -57,6 +57,26 @@ export default function Batch({ deviceId }) {
     }
   };
 
+  const handleExecuteCommand = async (commandId) => {
+    try {
+      const response = await batchCommandService.executeBatchCommand(commandId);
+      const updatedCommands = batchCommands.map((command) =>
+        command.commandId === commandId
+          ? { ...command, status: "Executed" }
+          : command
+      );
+      setBatchCommands(updatedCommands);
+    } catch (error) {
+      const updatedCommands = batchCommands.map((command) =>
+        command.commandId === commandId
+          ? { ...command, status: "Failed" }
+          : command
+      );
+      setBatchCommands(updatedCommands);
+    //setError("Komut çalıştırılırken bir hata oluştu");
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Executed":
@@ -140,6 +160,12 @@ export default function Batch({ deviceId }) {
                     Geri Bildirim: {command.feedback}
                   </span>
                 )}
+                <button
+                  onClick={() => handleExecuteCommand(command.commandId)}
+                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                >
+                  Çalıştır
+                </button>
               </div>
             </div>
           ))}

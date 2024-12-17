@@ -80,4 +80,11 @@ public class BatchCommandsService {
                 .collect(Collectors.toList());
     }
 
+    public BatchCommandsDTO updateBatchCommand(Long commandId, String status) {
+        BatchCommands batchCommands = batchCommandsRepository.findById(commandId)
+            .orElseThrow(() -> new RuntimeException("Batch command not found with id: " + commandId));
+        batchCommands.setStatus(status);
+        BatchCommands updatedCommand = batchCommandsRepository.save(batchCommands);
+        return batchCommandsMapper.toDTO(updatedCommand);
+    }
 }

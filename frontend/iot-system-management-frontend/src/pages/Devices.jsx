@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import deviceService from "../services/deviceService";
 import DeviceLogs from "./DeviceLogs";
 import Batch from "./Batch";
+import axios from 'axios';
 
 export default function Devices() {
   const [devices, setDevices] = useState([]);
@@ -168,19 +169,79 @@ export default function Devices() {
     setEditName("");
   };
 
+  const handleDownload = async () => {
+    try {
+      const response = await fetch('/api/devices/export/excel', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/vnd.ms-excel',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'devices.xls';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
+
+  const handleDownloadCSV = async () => {
+    try {
+      const response = await axios({
+        url: '/api/devices/export/csv', // Backend'deki CSV endpoint'i
+        method: 'GET',
+        responseType: 'blob', // Yanıt türü blob olmalı
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'devices.csv'); // İndirilecek dosya adı
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('CSV indirme hatası:', error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Cihazlar</h1>
 
-        {user?.userAuthorization === "admin" && (
+        <div className="flex gap-4">
+          {user?.userAuthorization === "admin" && (
+            <button
+              onClick={() => setShowNewDeviceModal(true)}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
+            >
+              + Yeni Cihaz Ekle
+            </button>
+          )}
           <button
-            onClick={() => setShowNewDeviceModal(true)}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
+            onClick={handleDownload}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
           >
-            + Yeni Cihaz Ekle
+            Excel Olarak İndir
           </button>
-        )}
+          <button
+            onClick={handleDownloadCSV}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
+          >
+            CSV Olarak İndir
+          </button>
+        </div>
       </div>
 
       {error && (
