@@ -73,5 +73,11 @@ public class BatchCommandsService {
         return batchCommandsMapper.toDTO(savedCommand);
     }
 
+    public List<BatchCommandsDTO> getCommandsByDeviceId(Long deviceId) {
+        List<BatchCommands> commands = batchCommandsRepository.findByDeviceId(deviceId);
+        return commands.stream()
+                .map(batchCommandsMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
 }

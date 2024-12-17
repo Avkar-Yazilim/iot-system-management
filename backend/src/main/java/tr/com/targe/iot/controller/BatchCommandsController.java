@@ -29,4 +29,10 @@ public class BatchCommandsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCommand);
     }
 
+    @GetMapping("/device/{deviceId}/commands")
+    public ResponseEntity<List<BatchCommandsDTO>> getCommandsByDeviceId(@PathVariable Long deviceId) {
+        List<BatchCommandsDTO> commands = batchCommandsService.getCommandsByDeviceId(deviceId);
+        return ResponseEntity.ok(commands);
+    }
+
 }

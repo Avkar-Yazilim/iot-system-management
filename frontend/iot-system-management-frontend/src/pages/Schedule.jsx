@@ -6,12 +6,8 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { PlusIcon } from "@heroicons/react/outline";
 import { useNavigate } from "react-router-dom";
 import { ScheduleDateService } from "../services/ScheduleDateService";
-
-const mockDevices = [
-  { id: 1, name: "Sulama Sistemi 1", type: "Sulama" },
-  { id: 2, name: "Sulama Sistemi 2", type: "Sulama" },
-  { id: 3, name: "Nem Sensörü 1", type: "Sensör" },
-];
+import deviceService from "../services/deviceService";
+import batchCommandService from "../services/batchCommandService";
 
 const RepeatPanel = ({ onClose, onSave }) => {
   const [frequency, setFrequency] = useState(1);
@@ -29,10 +25,6 @@ const RepeatPanel = ({ onClose, onSave }) => {
   ];
 
   const handleSave = () => {
-    if (!selectedDay) {
-      alert("Lütfen bir gün seçin");
-      return;
-    }
     if (!endDate) {
       alert("Lütfen bitiş tarihi seçin");
       return;
@@ -141,10 +133,12 @@ export default function Schedule() {
     deviceId: "",
     start: "",
     end: "",
-    notes: "",
     repeat: false,
     repeatConfig: null,
+    commandId: "",
   });
+  const [devices, setDevices] = useState([]);
+  const [commands, setCommands] = useState([]);
 
   useEffect(() => {
     const fetchScheduleDates = async () => {
@@ -169,9 +163,32 @@ export default function Schedule() {
     fetchScheduleDates();
   }, []);
 
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        const fetchedDevices = await deviceService.getAllDevices();
+        setDevices(fetchedDevices);
+      } catch (error) {
+        console.error("Error fetching devices:", error);
+      }
+    };
+
+    fetchDevices();
+  }, []);
+
+  const handleDeviceChange = async (deviceId) => {
+    setNewEvent({ ...newEvent, deviceId });
+    try {
+      const fetchedCommands = await batchCommandService.getBatchCommands(deviceId);
+      setCommands(fetchedCommands);
+    } catch (error) {
+      console.error("Error fetching commands:", error);
+    }
+  };
+
   const handleAddEvent = (e) => {
     e.preventDefault();
-    const selectedDevice = mockDevices.find(
+    const selectedDevice = devices.find(
       (d) => d.id === parseInt(newEvent.deviceId)
     );
 
@@ -180,8 +197,10 @@ export default function Schedule() {
       id: events.length + 1,
       ...newEvent,
       deviceId: parseInt(newEvent.deviceId),
-      title: `${selectedDevice.name} - ${newEvent.title}`,
+      title: `${selectedDevice.deviceName} - ${newEvent.title}`,
       backgroundColor: "#22c55e",
+      start: new Date(newEvent.start).toISOString(),
+      end: new Date(newEvent.end).toISOString(),
     };
 
     if (newEvent.repeat && newEvent.repeatConfig) {
@@ -228,9 +247,9 @@ export default function Schedule() {
       deviceId: "",
       start: "",
       end: "",
-      notes: "",
       repeat: false,
       repeatConfig: null,
+      commandId: "",
     });
     setShowAddModal(false);
     navigate("/schedule");
@@ -317,20 +336,38 @@ export default function Schedule() {
                       <select
                         id="device"
                         value={newEvent.deviceId}
-                        onChange={(e) =>
-                          setNewEvent({ ...newEvent, deviceId: e.target.value })
-                        }
+                        onChange={(e) => handleDeviceChange(e.target.value)}
                         className="input mt-1"
                         required
                       >
                         <option value="">Cihaz Seçin</option>
-                        {mockDevices
-                          .filter((d) => d.type === "Sulama")
-                          .map((device) => (
-                            <option key={device.id} value={device.id}>
-                              {device.name}
-                            </option>
-                          ))}
+                        {devices.map((device) => (
+                          <option key={device.id} value={device.id}>
+                            {device.deviceName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="command"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Komut
+                      </label>
+                      <select
+                        id="command"
+                        value={newEvent.commandId}
+                        onChange={(e) => setNewEvent({ ...newEvent, commandId: e.target.value })}
+                        className="input mt-1"
+                        required
+                      >
+                        <option value="">Komut Seçin</option>
+                        {commands.map((command) => (
+                          <option key={command.commandId} value={command.commandId}>
+                            {command.command}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div>
@@ -385,23 +422,6 @@ export default function Schedule() {
                         }
                         className="input mt-1"
                         required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="notes"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Notlar
-                      </label>
-                      <textarea
-                        id="notes"
-                        value={newEvent.notes}
-                        onChange={(e) =>
-                          setNewEvent({ ...newEvent, notes: e.target.value })
-                        }
-                        className="input mt-1"
-                        rows={3}
                       />
                     </div>
                     <div className="flex items-center space-x-4">
