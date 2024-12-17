@@ -2,6 +2,7 @@ package tr.com.targe.iot.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import tr.com.targe.iot.DTO.UserDTO;
 import tr.com.targe.iot.entity.User;
 import tr.com.targe.iot.mapper.UserMapper;
 import tr.com.targe.iot.repository.UserRepository;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -76,33 +78,36 @@ public class UserService {
 
     public UserDTO handleGoogleLogin(GoogleUserRequest googleUser) {
         try {
-            log.info("Service katmanında Google login işlemi başladı");
+            Optional<User> existingUser = userRepository.findByEmail(googleUser.getEmail());
             
-            // Display name'i parçala
+            if (existingUser.isPresent()) {
+                User user = existingUser.get();
+                user.setDeleteAt(null);
+                user.setDeleteBy(null);
+                user.setLastLogin(LocalDateTime.now());
+                userRepository.save(user);
+                return userMapper.toDTO(user);
+            }
+
             String[] nameParts = googleUser.getDisplayName().split(" ");
             String firstName = nameParts[0];
             String lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
             
-            User user = userRepository.findByEmail(googleUser.getEmail())
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setEmail(googleUser.getEmail());
-                    newUser.setUsername(googleUser.getDisplayName());
-                    newUser.setFirstName(firstName);
-                    newUser.setLastName(lastName);
-                    newUser.setUserAuthorization("user");
-                    newUser.setCreateAt(LocalDateTime.now());
-                    newUser.setCreateBy("GOOGLE_AUTH");
-                    newUser.setPasswordHash("google-auth");
-                    return userRepository.save(newUser);
-                });
+            User newUser = new User();
+            newUser.setEmail(googleUser.getEmail());
+            newUser.setUsername(googleUser.getDisplayName());
+            newUser.setFirstName(firstName);
+            newUser.setLastName(lastName);
+            newUser.setUserAuthorization("user");
+            newUser.setCreateAt(LocalDateTime.now());
+            newUser.setCreateBy("system");
+            newUser.setPasswordHash("GOOGLE_LOGIN");
+            newUser.setLastLogin(LocalDateTime.now());
             
-            user.setLastLogin(LocalDateTime.now());
-            user = userRepository.save(user);
+            User savedUser = userRepository.save(newUser);
+            return userMapper.toDTO(savedUser);
             
-            return userMapper.toDTO(user);
         } catch (Exception e) {
-            log.error("Google login hatası: ", e);
             throw new RuntimeException("Google login işlemi başarısız: " + e.getMessage());
         }
     }
