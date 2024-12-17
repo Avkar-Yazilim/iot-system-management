@@ -33,6 +33,7 @@ public class ScheduleService {
         
         // Device ID'yi açıkça set et
         schedule.setDeviceId(scheduleDTO.getDeviceId());
+        schedule.setCommandId(scheduleDTO.getCommandId());
         
         // Eğer version belirtilmemişse varsayılan versiyon ata
         if (schedule.getVersion() == null) {

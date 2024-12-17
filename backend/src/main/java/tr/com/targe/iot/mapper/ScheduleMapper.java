@@ -15,6 +15,7 @@ public class ScheduleMapper {
         ScheduleDTO dto = new ScheduleDTO();
         dto.setScheduleId(schedule.getScheduleId());
         dto.setDeviceId(schedule.getDeviceId());
+        dto.setCommandId(schedule.getCommandId());
         dto.setEventTitle(schedule.getEventTitle());
         dto.setScheduleDays(schedule.getScheduleDays());
         dto.setRecurrence(schedule.getRecurrence());
@@ -32,6 +33,7 @@ public class ScheduleMapper {
         if (dto == null) return null;
         Schedule entity = new Schedule();
         entity.setDeviceId(dto.getDeviceId());
+        entity.setCommandId(dto.getCommandId());
         entity.setEventTitle(dto.getEventTitle());
         entity.setRecurrence(dto.getRecurrence());
         entity.setInterval(dto.getInterval());

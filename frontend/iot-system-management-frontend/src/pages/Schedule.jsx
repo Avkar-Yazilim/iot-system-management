@@ -168,6 +168,7 @@ export default function Schedule() {
   const [showRepeatPanel, setShowRepeatPanel] = useState(false);
   const [newEvent, setNewEvent] = useState({
     deviceId: "",
+    commandId: "",
     eventTitle: "",
     recurrence: "Daily",
     interval: 1,
@@ -216,12 +217,30 @@ export default function Schedule() {
     fetchDevices();
   }, []);
 
+  useEffect(() => {
+    const fetchCommands = async () => {
+      try {
+        const fetchedCommands = await batchCommandService.getAllCommands();
+        setCommands(fetchedCommands);
+      } catch (error) {
+        console.error("Error fetching commands:", error);
+      }
+    };
+    fetchCommands();
+  }, []);
+
   const handleDeviceChange = async (deviceId) => {
     const selectedDevice = devices.find(
       (device) => device.deviceId === parseInt(deviceId)
     );
     if (selectedDevice) {
       setNewEvent({ ...newEvent, deviceId: selectedDevice.deviceId });
+      try {
+        const fetchedCommands = await batchCommandService.getBatchCommands(deviceId);
+        setCommands(fetchedCommands);
+      } catch (error) {
+        console.error("Error fetching commands for device:", error);
+      }
     }
   };
 
@@ -231,6 +250,7 @@ export default function Schedule() {
     try {
       const scheduleData = {
         deviceId: newEvent.deviceId,
+        commandId: newEvent.commandId,
         eventTitle: newEvent.eventTitle,
         recurrence: newEvent.recurrence,
         interval: parseInt(newEvent.interval),
@@ -259,6 +279,7 @@ export default function Schedule() {
       // Reset form
       setNewEvent({
         deviceId: "",
+        commandId: "",
         eventTitle: "",
         recurrence: "Daily",
         interval: 1,
@@ -366,6 +387,33 @@ export default function Schedule() {
                         {devices.map((device) => (
                           <option key={device.deviceId} value={device.deviceId}>
                             {device.deviceName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="command"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Komut
+                      </label>
+                      <select
+                        id="command"
+                        value={newEvent.commandId}
+                        onChange={(e) =>
+                          setNewEvent({
+                            ...newEvent,
+                            commandId: e.target.value,
+                          })
+                        }
+                        className="input mt-1"
+                        required
+                      >
+                        <option value="">Komut Seçin</option>
+                        {commands.map((command) => (
+                          <option key={command.commandId} value={command.commandId}>
+                            {command.command}
                           </option>
                         ))}
                       </select>
