@@ -50,9 +50,39 @@ const deviceService = {
 
   deleteDevice: async (deviceId, username) => {
     try {
-      const response = await axios.delete(`${BASE_URL}/devices/${deviceId}?username=${username}`);
+      const response = await axios.delete(
+        `${BASE_URL}/devices/${deviceId}?username=${username}`
+      );
       return response.data;
     } catch (error) {
+      throw error;
+    }
+  },
+
+  exportDevicesToJSON: async () => {
+    try {
+      // Mevcut getAllDevices fonksiyonunu kullan
+      const devices = await deviceService.getAllDevices();
+
+      // JSON string'i oluştur (pretty print ile)
+      const jsonStr = JSON.stringify(devices, null, 2);
+
+      // Blob oluştur
+      const blob = new Blob([jsonStr], { type: "application/json" });
+
+      // Download link oluştur
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "devices.json");
+
+      // Linki tıkla ve temizle
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("JSON indirme hatası:", error);
       throw error;
     }
   },

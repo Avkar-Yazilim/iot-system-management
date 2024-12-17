@@ -1,6 +1,5 @@
 package tr.com.targe.iot.controller;
 
-import tr.com.targe.iot.DTO.DeviceDTO;
 import tr.com.targe.iot.DTO.ScheduleDTO;
 import tr.com.targe.iot.entity.Schedule;
 import tr.com.targe.iot.service.ScheduleService;

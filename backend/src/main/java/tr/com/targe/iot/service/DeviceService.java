@@ -16,11 +16,7 @@ import tr.com.targe.iot.repository.DeviceLogRepository;
 import tr.com.targe.iot.repository.DeviceRepository;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletOutputStream;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 
 
@@ -35,11 +31,32 @@ public class DeviceService {
 
 
     public List<DeviceDTO> getAllDevices() {
-        List<Device> devices = deviceRepository.findAllActive();
-        System.out.println("Found devices: " + devices); // Debug için
-        return devices.stream()
-                .map(deviceMapper::toDTO)
-                .collect(Collectors.toList());
+        try {
+            List<Device> devices = deviceRepository.findAllActive();
+            System.out.println("Found devices count: " + devices.size()); // Debug log
+            
+            List<DeviceDTO> deviceDTOs = devices.stream()
+                    .map(device -> {
+                        try {
+                            DeviceDTO dto = deviceMapper.toDTO(device);
+                            System.out.println("Mapped device: " + dto); // Debug log
+                            return dto;
+                        } catch (Exception e) {
+                            System.err.println("Error mapping device: " + device.getDeviceId());
+                            e.printStackTrace();
+                            return null;
+                        }
+                    })
+                    .filter(dto -> dto != null)
+                    .collect(Collectors.toList());
+                    
+            System.out.println("Mapped DTOs count: " + deviceDTOs.size()); // Debug log
+            return deviceDTOs;
+        } catch (Exception e) {
+            System.err.println("Error in getAllDevices: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error fetching devices: " + e.getMessage());
+        }
     }
 
     public DeviceDTO getDeviceById(Long id) {
@@ -113,59 +130,23 @@ public class DeviceService {
     public Device findDeviceById(Long id) {
         return deviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
-    }
+    } 
 
-    public List<Device> findAll() {
-        return deviceRepository.findAll(); 
-    }
-
-    public void generateExcelReport(HttpServletResponse response) { 
+    public void generateJSONReport(HttpServletResponse response) {
         try {
-            // Excel raporu oluşturma kodu buraya gelecek
-            
+            // Veritabanından cihazları al
             List<Device> devices = deviceRepository.findAll();
-
-            HSSFWorkbook workbook = new HSSFWorkbook();
-            HSSFSheet sheet = workbook.createSheet("Devices");
-            HSSFRow row = sheet.createRow(0);
-
-            row.createCell(0).setCellValue("Device System Id");
-            row.createCell(1).setCellValue("Device ID");
-            row.createCell(2).setCellValue("Device Name");
-            row.createCell(3).setCellValue("Device Type");
-            row.createCell(4).setCellValue("Device Status");
-            row.createCell(5).setCellValue("Device Create At");
-            row.createCell(6).setCellValue("Device Update At");
-            row.createCell(7).setCellValue("Device Delete At");
-            row.createCell(8).setCellValue("Device Delete By");
-            row.createCell(9).setCellValue("Device Create By");
-            row.createCell(10).setCellValue("Device Version");
-
-            int dataRowIndex = 1;
-            for (Device device : devices) {
-                row = sheet.createRow(dataRowIndex++);
-                row.createCell(0).setCellValue(device.getSystemId());
-                row.createCell(1).setCellValue(device.getDeviceId());
-                row.createCell(2).setCellValue(device.getDeviceName());
-                row.createCell(3).setCellValue(device.getDeviceType());
-                row.createCell(4).setCellValue(device.getDeviceStatus());
-                row.createCell(5).setCellValue(device.getCreateAt().toString());
-                row.createCell(6).setCellValue(device.getUpdateAt().toString());
-                row.createCell(7).setCellValue(device.getDeleteAt().toString());
-                row.createCell(8).setCellValue(device.getDeleteBy());
-                row.createCell(9).setCellValue(device.getCreateBy());
-                row.createCell(10).setCellValue(device.getVersion());
-                dataRowIndex++;
-            }
-
-            ServletOutputStream outputStream = response.getOutputStream();
-            workbook.write(outputStream);
-            workbook.close();
-            outputStream.flush();
-            outputStream.close();
+            System.out.println("Devices fetched for JSON: " + devices); // Debug için log
+    
+            // JSON oluşturmak için ObjectMapper kullan
+            ObjectMapper objectMapper = new ObjectMapper();
+    
+            // JSON verisini response'un outputStream'ine yaz
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(response.getOutputStream(), devices);
+    
+            response.getOutputStream().flush();
         } catch (IOException e) {
-            e.printStackTrace(); // Hata mesajını konsola yazdırabilir veya uygun bir şekilde ele alabilirsiniz
+            throw new RuntimeException("JSON raporu oluşturulurken hata oluştu: " + e.getMessage());
         }
     }
-
 }
