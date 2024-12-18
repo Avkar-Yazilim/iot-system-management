@@ -34,7 +34,8 @@ public class UserService {
     public User createUser(UserDTO userDTO) {
         User user = userMapper.toEntity(userDTO);
         user.setCreateAt(LocalDateTime.now());
-        user.setCreateBy("admin");
+        user.setCreateBy(userDTO.getCreateBy() != null ? userDTO.getCreateBy() : "system");
+        user.setPasswordHash(userDTO.getPasswordHash());
         return userRepository.save(user);
     }
     
@@ -110,6 +111,10 @@ public class UserService {
         } catch (Exception e) {
             throw new RuntimeException("Google login işlemi başarısız: " + e.getMessage());
         }
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
 }

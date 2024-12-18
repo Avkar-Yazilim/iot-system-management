@@ -1,9 +1,10 @@
 package tr.com.targe.iot.DTO;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +18,15 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private LocalDateTime lastLogin;
+    private String createBy;
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 
     public String getUserAuthorization() {
         return UserAuthorization;
@@ -33,6 +42,21 @@ public class UserDTO {
 
     public LocalDateTime getLastLogin() {
         return lastLogin;
+    }
+
+    public String getCreateBy() {
+        return createBy;
+    }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
     }
     
     public void setLastLogin(LocalDateTime lastLogin) {

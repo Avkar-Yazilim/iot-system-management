@@ -122,7 +122,17 @@ export default function Settings() {
     }
     
     try {
-      await settingsService.createUser(newUser);
+      const userData = {
+        username: newUser.username,
+        email: newUser.email,
+        passwordHash: newUser.passwordHash,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        userAuthorization: newUser.userAuthorization,
+        systemId: newUser.systemId,
+        createBy: "admin",
+      };
+      await settingsService.createUser(userData);
       setShowAddUserModal(false);
       setNewUser({
         username: '',

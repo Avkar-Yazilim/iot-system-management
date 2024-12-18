@@ -91,6 +91,24 @@ public class UserController {
                 .body(new ErrorResponse("Google login failed: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+        try {
+            if (userService.existsByEmail(userDTO.getEmail())) {
+                return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Bu email adresi zaten kayıtlı");
+            }
+
+            User newUser = userService.createUser(userDTO);
+            return ResponseEntity.ok(userMapper.toDTO(newUser));
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Kayıt işlemi başarısız: " + e.getMessage());
+        }
+    }
 }
 
 @Data
