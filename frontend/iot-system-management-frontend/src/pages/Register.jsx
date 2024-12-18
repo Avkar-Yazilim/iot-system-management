@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { registerService } from '../services/registerService';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,31 +8,116 @@ export default function Register() {
   const [registerError, setRegisterError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [otpValue, setOtpValue] = useState('');
+  const [timer, setTimer] = useState(180);
+  const [tempUserData, setTempUserData] = useState(null);
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
-    if (data.password !== data.confirmPassword) {
-      setRegisterError('Şifreler eşleşmiyor');
-      return;
+  useEffect(() => {
+    let interval;
+    if (showOTPModal && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setShowOTPModal(false);
+      setRegisterError('OTP süresi doldu. Lütfen tekrar deneyin.');
     }
-    try {
-      const userData = {
-        username: data.username,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        createBy: "system",
-        passwordHash: data.password,
-        userAuthorization: "user"
-      };
+    return () => clearInterval(interval);
+  }, [showOTPModal, timer]);
 
-      await registerService.register(userData);
-      navigate('/login', { 
-        state: { registerSuccess: true }
-      });
+  const onSubmit = async (data) => {
+    try {
+      await registerService.sendOTP(data.email);
+      setTempUserData(data);
+      setShowOTPModal(true);
+      setTimer(180); 
     } catch (error) {
       setRegisterError(error.message);
     }
+  };
+
+  const handleOTPSubmit = async () => {
+    try {
+      await registerService.verifyOTP(tempUserData.email, otpValue);
+      
+      try {
+        const userData = {
+          username: tempUserData.username,
+          firstName: tempUserData.firstName,
+          lastName: tempUserData.lastName,
+          email: tempUserData.email,
+          createBy: "system",
+          passwordHash: tempUserData.password,
+          userAuthorization: "user"
+        };
+
+        await registerService.register(userData);
+        
+        setShowOTPModal(false);
+        navigate('/login', { 
+          state: { 
+            registerSuccess: true,
+            message: 'Kayıt başarılı! Giriş yapabilirsiniz.'
+          }
+        });
+
+      } catch (error) {
+        setRegisterError('Kayıt işlemi sırasında bir hata oluştu');
+        console.error('Registration error:', error);
+      }
+    } catch (error) {
+      setRegisterError('OTP doğrulaması başarısız');
+      console.error('OTP verification error:', error);
+    }
+  };
+
+  const OTPModal = () => {
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, []);
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg shadow-xl w-96">
+          <h3 className="text-lg font-semibold mb-4">Email Doğrulama</h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Email adresinize gönderilen 6 haneli kodu giriniz.
+            <br />
+            Kalan süre: {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+          </p>
+          <input
+            ref={inputRef}
+            type="text"
+            className="w-full p-2 border rounded mb-4"
+            placeholder="Doğrulama Kodu"
+            value={otpValue}
+            onChange={(e) => setOtpValue(e.target.value)}
+            maxLength={6}
+            autoFocus // Otomatik focus ekle
+          />
+          <div className="flex justify-end space-x-2">
+            <button
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              onClick={() => setShowOTPModal(false)}
+            >
+              İptal
+            </button>
+            <button
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              onClick={handleOTPSubmit}
+            >
+              Doğrula
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -175,6 +260,7 @@ export default function Register() {
           </form>
         </div>
       </div>
+      {showOTPModal && <OTPModal />}
     </div>
   );
 }

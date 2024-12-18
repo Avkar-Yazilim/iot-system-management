@@ -13,5 +13,23 @@ export const registerService = {
             }
             throw new Error(error.response?.data || 'Kayıt başarısız');
         }
+    },
+
+    sendOTP: async (email) => {
+        try {
+            const response = await axios.post(`${BASE_URL}/send-otp`, { email });
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data?.message || 'OTP gönderilemedi');
+        }
+    },
+
+    verifyOTP: async (email, otp) => {
+        try {
+            const response = await axios.post(`${BASE_URL}/verify-otp`, { email, otp });
+            return response.data;
+        } catch (error) {
+            throw new Error(error.response?.data?.message || 'OTP doğrulaması başarısız');
+        }
     }
 };
