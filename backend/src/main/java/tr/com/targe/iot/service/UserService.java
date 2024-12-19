@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +33,20 @@ public class UserService {
     }
 
     public User createUser(UserDTO userDTO) {
-        User user = userMapper.toEntity(userDTO);
-        user.setCreateAt(LocalDateTime.now());
-        user.setCreateBy(userDTO.getCreateBy() != null ? userDTO.getCreateBy() : "system");
-        user.setPasswordHash(userDTO.getPasswordHash());
-        return userRepository.save(user);
+        try{    
+            User user = userMapper.toEntity(userDTO);
+            user.setCreateAt(LocalDateTime.now());
+            user.setCreateBy(userDTO.getCreateBy() != null ? userDTO.getCreateBy() : "system");
+            user.setPasswordHash(userDTO.getPasswordHash());
+            User savedUser = userRepository.save(user);
+    
+            userRepository.saveEncryptedPassword(savedUser.getUserId(), "mysecretkey");
+            return savedUser;
+        } catch (Exception e) { 
+            log.error("User creation failed: {}", e.getMessage());
+            throw new RuntimeException("User creation failed", e);
+        }
+        
     }
     
     public User updateUser(Long id, User updatedUser) {
@@ -61,20 +71,29 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public UserDTO login(String email, String password) {
-        String cleanPassword = password.replace("\"", "");
-        
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
-        
-        if (!user.getPasswordHash().equals(cleanPassword)) {
-            throw new RuntimeException("Hatalı şifre");
+        try {
+            String cleanPassword = password.replace("\"", "");
+            
+            User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+            
+            String decryptedPassword = userRepository.decryptPassword(user.getUserId(), "mysecretkey");
+            
+            if (!cleanPassword.equals(decryptedPassword)) {
+                throw new RuntimeException("Hatalı şifre");
+            }
+            
+            user.setLastLogin(LocalDateTime.now());
+            userRepository.save(user);
+            
+            return userMapper.toDTO(user);
+            
+        } catch (Exception e) {
+            log.error("Login failed: {}", e.getMessage());
+            throw new RuntimeException("Giriş başarısız: " + e.getMessage());
         }
-        
-        user.setLastLogin(LocalDateTime.now());
-        userRepository.save(user);
-        
-        return userMapper.toDTO(user);
     }
 
     public UserDTO handleGoogleLogin(GoogleUserRequest googleUser) {
