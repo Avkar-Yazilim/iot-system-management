@@ -1,21 +1,44 @@
 import { useForm } from 'react-hook-form'
 import loginService from '../services/loginService'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../services/fireBase';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Login({ onLogin }) {
   const { register, handleSubmit: submitForm, formState: { errors } } = useForm()
   const [loginError, setLoginError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.registerSuccess) {
+      setSuccessMessage('Kayıt başarılı! Lütfen giriş yapın.');
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
+    }
+  }, [location]);
 
   const onSubmit = async (data) => {
     try {
-      const user = await loginService.login(data.email, data.password);
+      console.log('Login attempt with:', data);
+
+      const loginData = {
+        email: data.email,
+        passwordHash: data.password
+      };
+
+      const user = await loginService.login(loginData);
+      console.log('Login response:', user);
+
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('isAuthenticated', 'true');
       onLogin();
     } catch (error) {
-      setLoginError(error.message);
+      console.error('Login error:', error);
+      setLoginError(error.message || 'Giriş başarısız');
     }
   }
 
@@ -45,6 +68,10 @@ export default function Login({ onLogin }) {
     }
   };
 
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="w-full max-w-md">
@@ -53,6 +80,12 @@ export default function Login({ onLogin }) {
             Tarla App'e Hoş Geldiniz
           </h2>
           
+          {successMessage && (
+            <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">
+              {successMessage}
+            </div>
+          )}
+
           {loginError && (
             <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
               {loginError}
@@ -110,6 +143,16 @@ export default function Login({ onLogin }) {
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Giriş Yap
+              </button>
+            </div>
+
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={handleRegisterClick}
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                Kayıt Ol
               </button>
             </div>
           </form>

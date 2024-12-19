@@ -3,14 +3,14 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:8080/api/users';
 
 const loginService = {
-    login: async (email, password) => {
+    login: async (loginData) => {
         try {
-            const response = await axios.post(`${BASE_URL}/login`, {
-                email: email,
-                passwordHash: password  // backend'de passwordHash olarak saklanıyor
-            });
+            const response = await axios.post(`${BASE_URL}/login`, loginData);
             return response.data;
         } catch (error) {
+            if (error.response?.status === 401) {
+                throw new Error('Email veya şifre hatalı');
+            }
             throw new Error(error.response?.data || 'Giriş başarısız');
         }
     },

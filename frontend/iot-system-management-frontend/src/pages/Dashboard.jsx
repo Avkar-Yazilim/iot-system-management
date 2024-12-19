@@ -7,7 +7,12 @@ const navigation = [
   { name: "Cihazlar", to: "/devices", icon: "device", adminOnly: false },
   { name: "Program", to: "/schedule", icon: "calendar", adminOnly: false },
   { name: "Geçmiş", to: "/logs", icon: "clock", adminOnly: false },
-  { name: "Kullanıcı Yönetim Paneli", to: "/settings", icon: "settings", adminOnly: true },
+  {
+    name: "Kullanıcı Yönetim Paneli",
+    to: "/settings",
+    icon: "settings",
+    adminOnly: true,
+  },
 ];
 
 const icons = {
@@ -145,8 +150,8 @@ export default function Dashboard({ onLogout }) {
 
   const handleLogout = () => {
     // User ve authentication bilgilerini temizle
-    localStorage.removeItem('user');
-    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem("user");
+    localStorage.removeItem("isAuthenticated");
     onLogout();
   };
 
@@ -209,16 +214,21 @@ function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const userStr = localStorage.getItem('user');
+    const userStr = localStorage.getItem("user");
     if (userStr) {
       setUser(JSON.parse(userStr));
     }
   }, []);
 
   // Admin ve normal kullanıcı için farklı navigation
-  const filteredNavigation = navigation.filter(item => 
-    !item.adminOnly || (user?.userAuthorization === 'admin')
+  const filteredNavigation = navigation.filter(
+    (item) => !item.adminOnly || user?.userAuthorization === "admin"
   );
+
+  // Yeni fonksiyon: sidebar'ı kapat
+  const handleNavClick = () => {
+    setSidebarOpen(false); // Sidebar'ı kapat
+  };
 
   return (
     <div className="flex-1 flex flex-col">
@@ -247,25 +257,20 @@ function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
             <NavLink
               key={item.name}
               to={item.to}
-              className={`
-                group flex items-center px-2 py-2 text-sm font-medium rounded-md
-                ${
-                  isActive
-                    ? "bg-primary-100 text-primary-900"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }
-              `}
+              className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                isActive
+                  ? "bg-primary-100 text-primary-900"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`}
               end={item.to === "/"}
+              onClick={handleNavClick}
             >
               <span
-                className={`
-                mr-3 flex-shrink-0
-                ${
+                className={`mr-3 flex-shrink-0 ${
                   isActive
                     ? "text-primary-600"
                     : "text-gray-400 group-hover:text-gray-500"
-                }
-              `}
+                }`}
               >
                 {icons[item.icon]}
               </span>

@@ -2,7 +2,9 @@ package tr.com.targe.iot.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +23,8 @@ import tr.com.targe.iot.DTO.GoogleUserRequest;
 import tr.com.targe.iot.DTO.UserDTO;
 import tr.com.targe.iot.entity.User;
 import tr.com.targe.iot.mapper.UserMapper;
+import tr.com.targe.iot.response.SuccessResponse;
+import tr.com.targe.iot.service.OTPService;
 import tr.com.targe.iot.service.UserService;
 
 @Slf4j
@@ -31,6 +35,8 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    @Autowired
+    private OTPService otpService;
 
 
     @GetMapping
@@ -89,6 +95,65 @@ public class UserController {
             log.error("Google login failed: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse("Google login failed: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
+        try {
+            if (userService.existsByEmail(userDTO.getEmail())) {
+                return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Bu email adresi zaten kayıtlı");
+            }
+
+            User newUser = userService.createUser(userDTO);
+            return ResponseEntity.ok(userMapper.toDTO(newUser));
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Kayıt işlemi başarısız: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/send-otp")
+    public ResponseEntity<?> sendOTP(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            
+            if (userService.existsByEmail(email)) {
+                return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("Bu email adresi zaten kayıtlı"));
+            }
+            
+            otpService.createAndSendOTP(email);
+            return ResponseEntity.ok().body(new SuccessResponse("Doğrulama kodu gönderildi"));
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("OTP gönderilemedi: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOTP(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String otp = request.get("otp");
+            boolean isValid = otpService.verifyOTP(email, otp);
+            
+            if (isValid) {
+                return ResponseEntity.ok().body(new SuccessResponse("OTP doğrulandı"));
+            } else {
+                return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("Geçersiz doğrulama kodu"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse("Doğrulama hatası: " + e.getMessage()));
         }
     }
 }

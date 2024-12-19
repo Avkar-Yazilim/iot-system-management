@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import deviceService from "../services/deviceService";
 import DeviceLogs from "./DeviceLogs";
 import Batch from "./Batch";
-import axios from 'axios';
+import axios from "axios";
 
 export default function Devices() {
   const [devices, setDevices] = useState([]);
@@ -88,21 +88,6 @@ export default function Devices() {
     }
   };
 
-  const validateForm = () => {
-    const errors = {};
-
-    if (!formData.deviceName.trim()) {
-      errors.deviceName = "Cihaz adı boş bırakılamaz";
-    }
-
-    if (!formData.deviceType) {
-      errors.deviceType = "Cihaz tipi seçilmelidir";
-    }
-
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -118,6 +103,19 @@ export default function Devices() {
     } catch (error) {
       console.error("Gönderilen veri:", formData);
       console.error("Hata detayı:", error.response?.data);
+    }
+  };
+
+  const handleDownloadJSON = async () => {
+    try {
+      await deviceService.exportDevicesToJSON();
+    } catch (error) {
+      console.error("JSON indirme hatası:", error);
+      setError(
+        error.response?.data?.error ||
+          error.message ||
+          "JSON dosyası indirilirken bir hata oluştu"
+      );
     }
   };
 
@@ -169,52 +167,6 @@ export default function Devices() {
     setEditName("");
   };
 
-  const handleDownload = async () => {
-    try {
-      const response = await fetch('/api/devices/export/excel', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/vnd.ms-excel',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'devices.xls';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } catch (error) {
-      console.error('Download error:', error);
-    }
-  };
-
-  const handleDownloadCSV = async () => {
-    try {
-      const response = await axios({
-        url: '/api/devices/export/csv', // Backend'deki CSV endpoint'i
-        method: 'GET',
-        responseType: 'blob', // Yanıt türü blob olmalı
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'devices.csv'); // İndirilecek dosya adı
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error('CSV indirme hatası:', error);
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -230,16 +182,10 @@ export default function Devices() {
             </button>
           )}
           <button
-            onClick={handleDownload}
+            onClick={handleDownloadJSON}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
           >
-            Excel Olarak İndir
-          </button>
-          <button
-            onClick={handleDownloadCSV}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
-          >
-            CSV Olarak İndir
+            JSON Olarak İndir
           </button>
         </div>
       </div>
@@ -274,6 +220,7 @@ export default function Devices() {
                             border: "1px solid #c8e6c9", // Hafif yeşil border
                             padding: "5px",
                             borderRadius: "4px",
+                            width: "100%",
                           }}
                           autoFocus // Otomatik fokus
                         />
@@ -406,8 +353,11 @@ export default function Devices() {
                   className="w-full border rounded-md p-2"
                 >
                   <option value="">Seçiniz</option>
-                  <option value="sensor">Sensör</option>
-                  <option value="detector">Dedektör</option>
+                  <option value="Sulama Motoru">Sulama Motoru</option>
+                  <option value="Termometre">Termometre</option>
+                  <option value="Rüzgar Fanı">Rüzgar Fanı</option>
+                  <option value="Klima">Klima</option>
+                  <option value="Işık">Işık</option>
                 </select>
               </div>
 
