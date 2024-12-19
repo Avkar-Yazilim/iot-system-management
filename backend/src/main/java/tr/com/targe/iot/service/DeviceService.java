@@ -1,11 +1,17 @@
 package tr.com.targe.iot.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import tr.com.targe.iot.DTO.DeviceDTO;
@@ -15,12 +21,9 @@ import tr.com.targe.iot.mapper.DeviceMapper;
 import tr.com.targe.iot.repository.DeviceLogRepository;
 import tr.com.targe.iot.repository.DeviceRepository;
 
-import javax.servlet.http.HttpServletResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class DeviceService {
 
@@ -75,6 +78,7 @@ public class DeviceService {
             device.setSystemId(1L);
             
             Device savedDevice = deviceRepository.save(device);
+            deviceLogRepository.logDeviceCreation(savedDevice.getDeviceId());
             
             return deviceMapper.toDTO(savedDevice);
         } catch (Exception e) {
@@ -134,14 +138,11 @@ public class DeviceService {
 
     public void generateJSONReport(HttpServletResponse response) {
         try {
-            // Veritabanından cihazları al
             List<Device> devices = deviceRepository.findAll();
-            System.out.println("Devices fetched for JSON: " + devices); // Debug için log
+            System.out.println("Devices fetched for JSON: " + devices); 
     
-            // JSON oluşturmak için ObjectMapper kullan
             ObjectMapper objectMapper = new ObjectMapper();
     
-            // JSON verisini response'un outputStream'ine yaz
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(response.getOutputStream(), devices);
     
             response.getOutputStream().flush();
