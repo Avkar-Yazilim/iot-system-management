@@ -16,7 +16,7 @@ public class EmailService {
     
     public void sendOTPEmail(String to, String otp) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("your-email@gmail.com");
+        message.setFrom("Tarla APP <your-email@gmail.com>");
         message.setTo(to);
         message.setSubject("Email Doğrulama Kodu");
         message.setText("Doğrulama kodunuz: " + otp + "\nBu kod 3 dakika geçerlidir.");
