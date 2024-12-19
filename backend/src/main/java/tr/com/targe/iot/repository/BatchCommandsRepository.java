@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface BatchCommandsRepository extends JpaRepository<BatchCommands, Long> {
@@ -27,4 +29,29 @@ public interface BatchCommandsRepository extends JpaRepository<BatchCommands, Lo
 
     @Procedure(name = "UpdateBatchCommandStatus")
     void updateBatchCommandStatus(@Param("newStatus") String newStatus, @Param("commandType") String commandType);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE BatchCommands bc " +
+                   "SET bc.command_status = 'Executed' " +
+                   "WHERE bc.command_id IN (" +
+                   "    SELECT s.command_id " +
+                   "    FROM ScheduleDate sd " +
+                   "    JOIN Schedules s ON sd.schedule_id = s.schedule_id " +
+                   "    WHERE DATE_TRUNC('minute', sd.start_time) = DATE_TRUNC('minute', CURRENT_TIMESTAMP)" +
+                   ")", nativeQuery = true)
+    void executeScheduledCommands();
+    
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE BatchCommands bc " +
+                   "SET bc.command_status = 'Executed' " +
+                    "WHERE bc.command_id IN (" +
+                    "    SELECT s.command_id " +
+                    "    FROM ScheduleDate sd " +
+                    "    JOIN Schedules s ON sd.schedule_id = s.schedule_id " +
+                    "    WHERE DATE_TRUNC('minute', sd.end_time) = DATE_TRUNC('minute', CURRENT_TIMESTAMP)" +
+                    ")", nativeQuery = true)
+    void resetCommandStatusToPending();
+    
 }

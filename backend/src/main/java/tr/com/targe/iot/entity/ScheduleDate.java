@@ -17,6 +17,9 @@ public class ScheduleDate {
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
 
+    @Column(name = "schedule_id",insertable = false,updatable = false)
+    private Long scheduleId;
+
     @Column(name = "start_time")
     private LocalDateTime startTime; 
 

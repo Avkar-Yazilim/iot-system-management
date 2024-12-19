@@ -87,4 +87,12 @@ public class BatchCommandsService {
         BatchCommands updatedCommand = batchCommandsRepository.save(batchCommands);
         return batchCommandsMapper.toDTO(updatedCommand);
     }
+
+    public void executeScheduledCommands() {
+        batchCommandsRepository.executeScheduledCommands();
+    }
+
+    public void resetCommandStatusToPending() {
+        batchCommandsRepository.resetCommandStatusToPending();
+    }
 }
