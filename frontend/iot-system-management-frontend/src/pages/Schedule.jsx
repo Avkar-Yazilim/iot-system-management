@@ -10,157 +10,6 @@ import deviceService from "../services/deviceService";
 import batchCommandService from "../services/batchCommandService";
 import { ScheduleService } from "../services/scheduleService";
 
-const RepeatPanel = ({ onClose, onSave }) => {
-  const [, setFrequency] = useState(1);
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [endDate, setEndDate] = useState("");
-  const [recurrence, setRecurrence] = useState("Daily");
-
-  const days = [
-    { short: "P", long: "Pazartesi" },
-    { short: "S", long: "Salı" },
-    { short: "Ç", long: "Çarşamba" },
-    { short: "P", long: "Perşembe" },
-    { short: "C", long: "Cuma" },
-    { short: "C", long: "Cumartesi" },
-    { short: "P", long: "Pazar" },
-  ];
-
-  const recurrenceOptions = [
-    { value: "Daily", label: "Günlük" },
-    { value: "Weekly", label: "Haftalık" },
-    { value: "Monthly", label: "Aylık" },
-    { value: "Yearly", label: "Yıllık" },
-  ];
-
-  const frequencyText = {
-    Daily: "günde bir",
-    Weekly: "haftada bir",
-    Monthly: "ayda bir",
-    Yearly: "yılda bir",
-  };
-
-  const handleSave = () => {
-    if (!endDate) {
-      alert("Lütfen bitiş tarihi seçin");
-      return;
-    }
-    onSave({ frequency, selectedDay, endDate, recurrence });
-  };
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg p-6 w-96">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Yineleme</h2>
-
-        {/* Recurrence Seçenekleri */}
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tekrar Sıklığı:
-          </label>
-          <select
-            value={recurrence}
-            onChange={(e) => setRecurrence(e.target.value)}
-            className="border rounded p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            {recurrenceOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Yineleme Sıklığı */}
-        <div className="flex items-center gap-2 mt-4">
-          <label className="text-sm font-medium text-gray-700">
-            Yineleme Sıklığı:
-          </label>
-          <input
-            type="number"
-            min="1"
-            value={frequency}
-            onChange={(e) => setFrequency(parseInt(e.target.value))}
-            className="border rounded p-2 w-16 text-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-          <span className="text-sm font-medium text-gray-700">
-            {frequencyText[recurrence]}
-          </span>
-        </div>
-
-        {/* Gün Seçimi */}
-        {recurrence === "Weekly" && (
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Gün Seçimi:
-            </label>
-            <div className="flex gap-2">
-              {days.map((day, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  title={day.long}
-                  onClick={() => setSelectedDay(index)}
-                  className={`
-                    border rounded-full w-8 h-8 text-center text-sm
-                    transition-colors duration-200
-                    ${
-                      selectedDay === index
-                        ? "bg-blue-500 text-white border-blue-500"
-                        : "hover:bg-blue-100 text-gray-700"
-                    }
-                  `}
-                >
-                  {day.short}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Bitiş Ayarları */}
-        <div className="mt-4">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="endType"
-              defaultChecked
-              className="text-blue-500 focus:ring-blue-500"
-            />
-            <span className="text-sm font-medium text-gray-700">
-              Şu tarihte:
-            </span>
-          </label>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="border rounded p-2 mt-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
-        {/* Butonlar */}
-        <div className="flex justify-end gap-2 mt-6">
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 hover:underline px-4 py-2 text-sm font-medium"
-          >
-            İptal
-          </button>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm font-medium transition-colors duration-200"
-          >
-            Bitti
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function Schedule() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
@@ -236,7 +85,9 @@ export default function Schedule() {
     if (selectedDevice) {
       setNewEvent({ ...newEvent, deviceId: selectedDevice.deviceId });
       try {
-        const fetchedCommands = await batchCommandService.getBatchCommands(deviceId);
+        const fetchedCommands = await batchCommandService.getBatchCommands(
+          deviceId
+        );
         setCommands(fetchedCommands);
       } catch (error) {
         console.error("Error fetching commands for device:", error);
@@ -292,6 +143,7 @@ export default function Schedule() {
 
       setShowAddModal(false);
       navigate("/schedule");
+      window.location.reload();
     } catch (error) {
       console.error("Error creating schedule:", error);
       alert("Program oluşturulurken bir hata oluştu: " + error.message);
@@ -320,7 +172,7 @@ export default function Schedule() {
             type="button"
             onClick={() => {
               setShowAddModal(true);
-              navigate("/schedule/newschedule");
+              navigate("/schedule");
             }}
             className="btn btn-primary inline-flex items-center"
           >
@@ -412,7 +264,10 @@ export default function Schedule() {
                       >
                         <option value="">Komut Seçin</option>
                         {commands.map((command) => (
-                          <option key={command.commandId} value={command.commandId}>
+                          <option
+                            key={command.commandId}
+                            value={command.commandId}
+                          >
                             {command.command}
                           </option>
                         ))}
@@ -560,7 +415,7 @@ export default function Schedule() {
                     type="button"
                     onClick={() => {
                       setShowAddModal(false);
-                      navigate("/schedules");
+                      navigate("/schedule");
                     }}
                     className="mt-3 sm:mt-0 w-full sm:w-auto btn border border-gray-300"
                   >
