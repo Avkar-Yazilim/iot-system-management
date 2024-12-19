@@ -35,4 +35,16 @@ public class BatchCommandsController {
         return ResponseEntity.ok(commands);
     }
 
+    @PostMapping("/execute-scheduled")
+    public ResponseEntity<Void> executeScheduledCommands() {
+        batchCommandsService.executeScheduledCommands();
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/reset-pending")
+    public ResponseEntity<Void> resetCommandStatusToPending() {
+        batchCommandsService.resetCommandStatusToPending();
+        return ResponseEntity.noContent().build();
+    }
+
 }
