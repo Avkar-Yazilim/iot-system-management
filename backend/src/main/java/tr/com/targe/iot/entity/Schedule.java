@@ -28,15 +28,9 @@ public class Schedule {
     @JoinColumn(name = "device_id")
     private Device device;
 
-    @Column(name = "device_id",insertable = false,updatable = false)
-    private Long deviceId;
-
     @ManyToOne
     @JoinColumn(name = "command_id")
-    private BatchCommands command;
-
-    @Column(name = "command_id",insertable = false,updatable = false)
-    private Long commandId;
+    private BatchCommands batchCommands;
 
     @ManyToOne
     @JoinColumn(name = "request_id")
@@ -91,33 +85,50 @@ public class Schedule {
     private String version;
 
 
+    public Long getDeviceId() {
+        return device != null ? device.getDeviceId() : null; // deviceId'ye erişim
+    }
+
+    public Long getCommandId() {
+        return batchCommands != null ? batchCommands.getCommandId() : null; // commandId'ye erişim
+    }
+    
+    // Setter metodları
+    public void setDevice(Device device) {
+        this.device = device;
+    }
+
+    public void setBatchCommands(BatchCommands batchCommands) {
+        this.batchCommands = batchCommands;
+    }
+
+    // Eğer deviceId ve commandId'yi doğrudan ayarlamak isterseniz
     public void setDeviceId(Long deviceId) {
-        this.deviceId = deviceId;
+        if (this.device == null) {
+            this.device = new Device();
+        }
+        this.device.setDeviceId(deviceId);
+    }   
+
+    public void setCommandId(Long commandId) {
+        if (this.batchCommands == null) {
+            this.batchCommands = new BatchCommands();
+        }
+        this.batchCommands.setCommandId(commandId);
     }
 
     public void setGroupId(Long groupId) {
         this.groupId = groupId;
     }
 
-    public void setCommandId(Long commandId) {
-        this.commandId = commandId;
-    }
-
     public void setRequestId(Long requestId) {
         this.requestId = requestId;
-    }
-
-    public Long getDeviceId() {
-        return deviceId;
     }
 
     public Long getGroupId() {
         return groupId;
     }
 
-    public Long getCommandId() {
-        return commandId;
-    }
 
     public Long getRequestId() {
         return requestId;

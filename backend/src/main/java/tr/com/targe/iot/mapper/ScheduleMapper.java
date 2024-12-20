@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import tr.com.targe.iot.DTO.ScheduleDTO;
+import tr.com.targe.iot.entity.BatchCommands;
+import tr.com.targe.iot.entity.Device;
 import tr.com.targe.iot.entity.Schedule;
 
 @Component
@@ -14,8 +16,8 @@ public class ScheduleMapper {
         if (schedule == null) return null;
         ScheduleDTO dto = new ScheduleDTO();
         dto.setScheduleId(schedule.getScheduleId());
-        dto.setDeviceId(schedule.getDeviceId());
-        dto.setCommandId(schedule.getCommandId());
+        dto.setDeviceId(schedule.getDevice() != null ? schedule.getDevice().getDeviceId() : null);
+        dto.setCommandId(schedule.getBatchCommands() != null ? schedule.getBatchCommands().getCommandId() : null);
         dto.setEventTitle(schedule.getEventTitle());
         dto.setScheduleDays(schedule.getScheduleDays());
         dto.setRecurrence(schedule.getRecurrence());
@@ -32,8 +34,7 @@ public class ScheduleMapper {
     public Schedule toEntity(ScheduleDTO dto) {
         if (dto == null) return null;
         Schedule entity = new Schedule();
-        entity.setDeviceId(dto.getDeviceId());
-        entity.setCommandId(dto.getCommandId());
+
         entity.setEventTitle(dto.getEventTitle());
         entity.setRecurrence(dto.getRecurrence());
         entity.setInterval(dto.getInterval());
@@ -44,6 +45,14 @@ public class ScheduleMapper {
         entity.setCreateAt(dto.getCreateAt());
         entity.setCreateBy(dto.getCreateBy());
         entity.setScheduleDays(dto.getScheduleDays());
+
+            Device device = new Device();
+            device.setDeviceId(dto.getDeviceId());
+            entity.setDevice(device);
+
+            BatchCommands batchCommands = new BatchCommands();
+            batchCommands.setCommandId(dto.getCommandId());
+            entity.setBatchCommands(batchCommands);
 
         return entity;
     }

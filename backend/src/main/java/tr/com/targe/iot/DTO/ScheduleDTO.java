@@ -6,17 +6,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleDTO {
-    
+
+    // Yeni alanlar
+    private Long deviceId; // Cihaz ID'si
+    private Long commandId; // Komut ID'si
     private Long scheduleId;
-    private Long groupId;
-    private Long deviceId;
-    private Long commandId;
+    private Long groupId;         
     private Long requestId;
+
     private String eventTitle;
     private String scheduleDays;
     private String recurrence;

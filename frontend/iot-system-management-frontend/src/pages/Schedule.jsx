@@ -16,8 +16,8 @@ export default function Schedule() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRepeatPanel, setShowRepeatPanel] = useState(false);
   const [newEvent, setNewEvent] = useState({
-    deviceId: "",
-    commandId: "",
+    deviceId: null,
+    commandId: null,
     eventTitle: "",
     recurrence: "Daily",
     interval: 1,
@@ -79,32 +79,39 @@ export default function Schedule() {
   }, []);
 
   const handleDeviceChange = async (deviceId) => {
-    const selectedDevice = devices.find(
-      (device) => device.deviceId === parseInt(deviceId)
-    );
-    if (selectedDevice) {
-      setNewEvent({ ...newEvent, deviceId: selectedDevice.deviceId });
-      try {
-        const fetchedCommands = await batchCommandService.getBatchCommands(
-          deviceId
-        );
+    console.log("Fetching commands for device ID:", deviceId);
+
+    try {
+      // Seçilen device'ın komutlarını getir
+      const fetchedCommands = await batchCommandService.getBatchCommands(
+        deviceId
+      );
+      console.log("Fetched Commands:", fetchedCommands);
+
+      if (fetchedCommands && fetchedCommands.length > 0) {
         setCommands(fetchedCommands);
-      } catch (error) {
-        console.error("Error fetching commands for device:", error);
+      } else {
+        setCommands([]); // Komut yoksa boş array set et
+        console.log("No commands found for this device");
       }
+    } catch (error) {
+      console.error("Error fetching commands for device:", error);
+      setCommands([]); // Hata durumunda da boş array set et
     }
   };
 
   const handleAddEvent = async (e) => {
     e.preventDefault();
 
+    console.log("Form submission - Full newEvent state:", newEvent);
+
     try {
       const scheduleData = {
-        deviceId: newEvent.deviceId,
-        commandId: newEvent.commandId,
+        deviceId: Number(newEvent.deviceId),
+        commandId: Number(newEvent.commandId),
         eventTitle: newEvent.eventTitle,
         recurrence: newEvent.recurrence,
-        interval: parseInt(newEvent.interval),
+        interval: Number(newEvent.interval),
         startTime: new Date(newEvent.startTime).toISOString(),
         endTime: new Date(newEvent.endTime).toISOString(),
         untilDate: new Date(newEvent.untilDate).toISOString(),
@@ -112,9 +119,14 @@ export default function Schedule() {
         version: newEvent.version,
       };
 
+      if (!scheduleData.deviceId || !scheduleData.commandId) {
+        throw new Error("Cihaz ve komut seçimi zorunludur!");
+      }
+
       console.log("Sending schedule data:", scheduleData);
+
       const response = await ScheduleService.createSchedule(scheduleData);
-      console.log("Response:", response);
+      console.log("Backend response:", response);
 
       // Add the new event to the calendar
       const calendarEvent = {
@@ -129,8 +141,8 @@ export default function Schedule() {
 
       // Reset form
       setNewEvent({
-        deviceId: "",
-        commandId: "",
+        deviceId: 1,
+        commandId: 1,
         eventTitle: "",
         recurrence: "Daily",
         interval: 1,
@@ -145,8 +157,9 @@ export default function Schedule() {
       navigate("/schedule");
       window.location.reload();
     } catch (error) {
-      console.error("Error creating schedule:", error);
-      alert("Program oluşturulurken bir hata oluştu: " + error.message);
+      console.error("Detailed error:", error);
+      console.error("Error stack:", error.stack);
+      alert(`Program oluşturulurken bir hata oluştu: ${error.message}`);
     }
   };
 
@@ -229,9 +242,16 @@ export default function Schedule() {
                         Cihaz
                       </label>
                       <select
-                        id="device"
+                        id="deviceId"
                         value={newEvent.deviceId}
-                        onChange={(e) => handleDeviceChange(e.target.value)}
+                        onChange={(e) => {
+                          setNewEvent({
+                            ...newEvent,
+                            deviceId: e.target.value,
+                            commandId: "",
+                          });
+                          handleDeviceChange(e.target.value);
+                        }}
                         className="input mt-1"
                         required
                       >
@@ -251,7 +271,7 @@ export default function Schedule() {
                         Komut
                       </label>
                       <select
-                        id="command"
+                        id="commandId"
                         value={newEvent.commandId}
                         onChange={(e) =>
                           setNewEvent({

@@ -7,13 +7,12 @@ export default function Settings() {
   const [editingUser, setEditingUser] = useState(null);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [newUser, setNewUser] = useState({
-    username: '',
-    email: '',
-    passwordHash: '',
-    firstName: '',
-    lastName: '',
-    userAuthorization: 'user', 
-    systemId: 1
+    username: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    userAuthorization: "user",
+    systemId: 1,
   });
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -34,16 +33,16 @@ export default function Settings() {
 
   const handleEditUser = (user) => {
     setEditingUser({
-      ...user
+      ...user,
     });
   };
 
   const handleUpdateUser = async (userId, updatedData) => {
     try {
-      console.log('Güncellenecek veriler:', updatedData);
-      
-      const currentUser = users.find(u => u.userId === userId);
-      
+      console.log("Güncellenecek veriler:", updatedData);
+
+      const currentUser = users.find((u) => u.userId === userId);
+
       const dataToUpdate = {
         ...currentUser,
         username: updatedData.username,
@@ -51,18 +50,21 @@ export default function Settings() {
         firstName: updatedData.firstName,
         lastName: updatedData.lastName,
         userAuthorization: updatedData.userAuthorization,
-        ...(updatedData.passwordHash ? { passwordHash: updatedData.passwordHash } : {})
       };
 
-      console.log('Gönderilecek güncel veriler:', dataToUpdate);
-      
+      console.log("Gönderilecek güncel veriler:", dataToUpdate);
+
       await settingsService.updateUser(userId, dataToUpdate);
       setEditingUser(null);
       loadUsers();
       alert("Kullanıcı başarıyla güncellendi!");
     } catch (error) {
       console.error("Güncelleme sırasında hata oluştu:", error);
-      alert(`Güncelleme sırasında bir hata oluştu: ${error.response?.data?.message || error.message}`);
+      alert(
+        `Güncelleme sırasında bir hata oluştu: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     }
   };
 
@@ -86,31 +88,25 @@ export default function Settings() {
 
   const validateForm = () => {
     const errors = {};
-    
+
     if (!newUser.username.trim()) {
       errors.username = "Kullanıcı adı boş bırakılamaz";
     }
-    
+
     if (!newUser.email.trim()) {
       errors.email = "E-posta adresi boş bırakılamaz";
     } else if (!isValidEmail(newUser.email)) {
       errors.email = "Geçerli bir e-posta adresi giriniz";
     }
-    
-    if (!newUser.passwordHash.trim()) {
-      errors.passwordHash = "Şifre boş bırakılamaz";
-    } else if (newUser.passwordHash.length < 6) {
-      errors.passwordHash = "Şifre en az 6 karakter olmalıdır";
-    }
-    
+
     if (!newUser.firstName.trim()) {
       errors.firstName = "Ad boş bırakılamaz";
     }
-    
+
     if (!newUser.lastName.trim()) {
       errors.lastName = "Soyad boş bırakılamaz";
     }
-    
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -120,12 +116,11 @@ export default function Settings() {
       alert("Lütfen tüm alanları doğru şekilde doldurunuz!");
       return;
     }
-    
+
     try {
       const userData = {
         username: newUser.username,
         email: newUser.email,
-        passwordHash: newUser.passwordHash,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         userAuthorization: newUser.userAuthorization,
@@ -135,20 +130,23 @@ export default function Settings() {
       await settingsService.createUser(userData);
       setShowAddUserModal(false);
       setNewUser({
-        username: '',
-        email: '',
-        passwordHash: '',
-        firstName: '',
-        lastName: '',
-        userAuthorization: 'user',
-        systemId: 1
+        username: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+        userAuthorization: "user",
+        systemId: 1,
       });
       setValidationErrors({});
       loadUsers();
       alert("Kullanıcı başarıyla eklendi!");
     } catch (error) {
       console.error("Kullanıcı eklenirken hata oluştu:", error);
-      alert(`Kullanıcı eklenirken bir hata oluştu: ${error.response?.data?.message || error.message}`);
+      alert(
+        `Kullanıcı eklenirken bir hata oluştu: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     }
   };
 
@@ -156,16 +154,16 @@ export default function Settings() {
     try {
       // JSON dosyasını oluştur
       const jsonStr = JSON.stringify(users, null, 2);
-      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const blob = new Blob([jsonStr], { type: "application/json" });
       const url = window.URL.createObjectURL(blob);
-      
+
       // İndirme bağlantısı oluştur
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'kullanicilar.json';
+      a.download = "kullanicilar.json";
       document.body.appendChild(a);
       a.click();
-      
+
       // Temizlik
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
@@ -205,89 +203,115 @@ export default function Settings() {
         {showAddUserModal && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
             <div className="bg-white p-6 rounded-lg w-96">
-              <h2 className="text-lg font-semibold mb-4">Yeni Kullanıcı Ekle</h2>
+              <h2 className="text-lg font-semibold mb-4">
+                Yeni Kullanıcı Ekle
+              </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Kullanıcı Adı
+                  </label>
                   <input
                     type="text"
                     className={`mt-1 block w-full border ${
-                      validationErrors.username ? 'border-red-500' : 'border-gray-300'
+                      validationErrors.username
+                        ? "border-red-500"
+                        : "border-gray-300"
                     } rounded-md shadow-sm p-2`}
                     value={newUser.username}
-                    onChange={(e) => setNewUser({...newUser, username: e.target.value})}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, username: e.target.value })
+                    }
                   />
                   {validationErrors.username && (
-                    <p className="mt-1 text-sm text-red-500">{validationErrors.username}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {validationErrors.username}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">E-posta</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    E-posta
+                  </label>
                   <input
                     type="email"
                     className={`mt-1 block w-full border ${
-                      validationErrors.email ? 'border-red-500' : 'border-gray-300'
+                      validationErrors.email
+                        ? "border-red-500"
+                        : "border-gray-300"
                     } rounded-md shadow-sm p-2`}
                     value={newUser.email}
-                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, email: e.target.value })
+                    }
                   />
                   {validationErrors.email && (
-                    <p className="mt-1 text-sm text-red-500">{validationErrors.email}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {validationErrors.email}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Şifre</label>
-                  <input
-                    type="password"
-                    className={`mt-1 block w-full border ${
-                      validationErrors.passwordHash ? 'border-red-500' : 'border-gray-300'
-                    } rounded-md shadow-sm p-2`}
-                    value={newUser.passwordHash}
-                    onChange={(e) => setNewUser({...newUser, passwordHash: e.target.value})}
-                  />
-                  {validationErrors.passwordHash && (
-                    <p className="mt-1 text-sm text-red-500">{validationErrors.passwordHash}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Ad</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Ad
+                  </label>
                   <input
                     type="text"
                     className={`mt-1 block w-full border ${
-                      validationErrors.firstName ? 'border-red-500' : 'border-gray-300'
+                      validationErrors.firstName
+                        ? "border-red-500"
+                        : "border-gray-300"
                     } rounded-md shadow-sm p-2`}
                     value={newUser.firstName}
-                    onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, firstName: e.target.value })
+                    }
                   />
                   {validationErrors.firstName && (
-                    <p className="mt-1 text-sm text-red-500">{validationErrors.firstName}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {validationErrors.firstName}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Soyad</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Soyad
+                  </label>
                   <input
                     type="text"
                     className={`mt-1 block w-full border ${
-                      validationErrors.lastName ? 'border-red-500' : 'border-gray-300'
+                      validationErrors.lastName
+                        ? "border-red-500"
+                        : "border-gray-300"
                     } rounded-md shadow-sm p-2`}
                     value={newUser.lastName}
-                    onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, lastName: e.target.value })
+                    }
                   />
                   {validationErrors.lastName && (
-                    <p className="mt-1 text-sm text-red-500">{validationErrors.lastName}</p>
+                    <p className="mt-1 text-sm text-red-500">
+                      {validationErrors.lastName}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Yetki</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Yetki
+                  </label>
                   <select
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     value={newUser.userAuthorization}
-                    onChange={(e) => setNewUser({...newUser, userAuthorization: e.target.value})}
+                    onChange={(e) =>
+                      setNewUser({
+                        ...newUser,
+                        userAuthorization: e.target.value,
+                      })
+                    }
                   >
                     <option value="user">user</option>
                     <option value="admin">admin</option>
@@ -330,9 +354,6 @@ export default function Settings() {
                       </th>
                       <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Soyad
-                      </th>
-                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                        Şifre
                       </th>
                       <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                         Yetki
@@ -411,23 +432,6 @@ export default function Settings() {
                             />
                           ) : (
                             user.lastName || "-"
-                          )}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {editingUser?.userId === user.userId ? (
-                            <input
-                              type="password"
-                              className="input"
-                              placeholder="Yeni şifre"
-                              onChange={(e) =>
-                                setEditingUser({
-                                  ...editingUser,
-                                  passwordHash: e.target.value,
-                                })
-                              }
-                            />
-                          ) : (
-                            "••••••"
                           )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

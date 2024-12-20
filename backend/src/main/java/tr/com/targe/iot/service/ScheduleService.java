@@ -60,7 +60,7 @@ public class ScheduleService {
         
         existingSchedule.setGroup(updatedSchedule.getGroup());
         existingSchedule.setDevice(updatedSchedule.getDevice());
-        existingSchedule.setCommand(updatedSchedule.getCommand());
+        existingSchedule.setBatchCommands(updatedSchedule.getBatchCommands());
         existingSchedule.setRequest(updatedSchedule.getRequest());
         existingSchedule.setEventTitle(updatedSchedule.getEventTitle());
         existingSchedule.setRecurrence(updatedSchedule.getRecurrence());
