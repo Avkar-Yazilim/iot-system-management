@@ -3,6 +3,7 @@ import deviceService from "../services/deviceService";
 import DeviceLogs from "./DeviceLogs";
 import Batch from "./Batch";
 import axios from "axios";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Devices() {
   const [devices, setDevices] = useState([]);
@@ -24,6 +25,8 @@ export default function Devices() {
   const [editName, setEditName] = useState("");
 
   const [user, setUser] = useState(null);
+
+  const { darkMode } = useTheme();
 
   const fetchDevices = async () => {
     setLoading(true);
@@ -168,7 +171,7 @@ export default function Devices() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className={`container mx-auto px-4 py-8 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white'}`}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Cihazlar</h1>
 
@@ -206,7 +209,7 @@ export default function Devices() {
           {devices && devices.length > 0 ? (
             devices.map((device) => (
               <div key={device.deviceId} className="mb-6">
-                <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow`}>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold">
                       {editingDeviceId === device.deviceId ? (
@@ -282,7 +285,11 @@ export default function Devices() {
                     {user?.userAuthorization === "admin" && (
                       <button
                         onClick={() => handleEdit(device)}
-                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors"
+                        className={`flex-1 py-2.5 px-4 rounded-lg transition-colors ${
+                          darkMode 
+                            ? 'bg-white text-white hover:bg-gray-100 hover:text-black border-2 border-white' 
+                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                        }`}
                       >
                         Düzenle
                       </button>

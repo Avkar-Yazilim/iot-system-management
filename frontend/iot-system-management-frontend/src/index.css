@@ -2,6 +2,188 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-color: #0ea5e9;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #111827;
+  color: #fff;
+}
+
+/* Smooth transitions for theme changes - sadece arka plan ve border için geçiş efekti */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Text color transitions'ı kaldır */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark p,
+.dark span,
+.dark label,
+.dark div {
+  transition: none;
+}
+
+/* Dark mode specific styles */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: #e5e7eb !important;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark p,
+.dark span,
+.dark label,
+.dark div {
+  color: #e5e7eb;
+}
+
+.dark .bg-white,
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: #1f2937;
+}
+
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: #374151;
+}
+
+.dark .shadow-lg {
+  --tw-shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Table styles for dark mode */
+.dark table {
+  color: #e5e7eb;
+}
+
+.dark thead {
+  background-color: #111827;
+}
+
+.dark tbody tr {
+  border-color: #374151;
+}
+
+.dark tbody tr:hover {
+  background-color: #374151;
+}
+
+/* Input styles for dark mode */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #e5e7eb;
+}
+
+.dark input::placeholder {
+  color: #9ca3af;
+}
+
+/* Button styles for dark mode */
+.dark .btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.dark .btn-secondary {
+  background-color: #4b5563;
+  color: white;
+}
+
+/* Sidebar styles for dark mode */
+.dark .bg-gray-800 {
+  background-color: #1f2937;
+}
+
+.dark .bg-gray-900 {
+  background-color: #111827;
+}
+
+/* Navigation link styles for dark mode */
+.dark .group:hover {
+  background-color: #374151;
+}
+
+.dark .nav-link {
+  color: #e5e7eb;
+}
+
+.dark .nav-link:hover {
+  background-color: #374151;
+}
+
+.dark .active-nav-link {
+  background-color: #374151;
+  color: #e5e7eb;
+}
+
+/* Card styles for dark mode */
+.dark .card {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+/* Modal styles for dark mode */
+.dark .modal {
+  background-color: #1f2937;
+}
+
+.dark .modal-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Status indicators */
+.dark .status-active {
+  color: #10b981;
+}
+
+.dark .status-inactive {
+  color: #ef4444;
+}
+
+/* Chart and graph elements */
+.dark .recharts-text {
+  fill: #e5e7eb;
+}
+
+.dark .recharts-cartesian-grid line {
+  stroke: #374151;
+}
+
+.dark .recharts-tooltip-wrapper {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
 @layer base {
   body {
     @apply bg-gray-50;

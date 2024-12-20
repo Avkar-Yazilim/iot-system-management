@@ -7,6 +7,7 @@ export default function Logs() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [darkMode, setDarkMode] = useState(false)
 
   useEffect(() => {
     fetchLogs()
@@ -116,7 +117,7 @@ export default function Logs() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             onClick={downloadLogs}
-            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <DownloadIcon className="h-5 w-5 mr-2" />
             Logları İndir
@@ -144,9 +145,9 @@ export default function Logs() {
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
+            <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} shadow ring-1 ring-black ring-opacity-5 md:rounded-lg`}>
+              <table className={`min-w-full divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-300'}`}>
+                <thead className={`${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
                   <tr>
                     <th
                       scope="col"
@@ -168,7 +169,7 @@ export default function Logs() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
+                <tbody className={`${darkMode ? 'bg-gray-800 divide-gray-700' : 'bg-white divide-gray-200'}`}>
                   {filteredLogs.map((log) => (
                     <tr key={log.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">

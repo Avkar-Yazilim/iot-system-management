@@ -48,7 +48,7 @@ const chartData = last7Days.map((date, index) => ({
   "Işık (lux)": mockSensorData.light.history[index],
 }))
 
-const SensorCard = ({ title, data, icon }) => {
+const SensorCard = ({ title, data, icon, darkMode }) => {
   const getStatusColor = () => {
     if (data.current < data.min) return 'text-blue-600'
     if (data.current > data.max) return 'text-red-600'
@@ -56,7 +56,7 @@ const SensorCard = ({ title, data, icon }) => {
   }
 
   return (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
+    <div className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white'} overflow-hidden shadow rounded-lg`}>
       <div className="p-5">
         <div className="flex items-center">
           <div className="flex-shrink-0">
@@ -84,6 +84,7 @@ const SensorCard = ({ title, data, icon }) => {
 
 export default function Home() {
   const [sensorData, setSensorData] = useState(mockSensorData)
+  const [darkMode, setDarkMode] = useState(false)
 
   // Gerçek uygulamada burada sensör verilerini çekebilirsiniz
   useEffect(() => {
@@ -134,6 +135,7 @@ export default function Home() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
             </svg>
           }
+          darkMode={darkMode}
         />
         <SensorCard
           title="Nem"
@@ -143,6 +145,7 @@ export default function Home() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
             </svg>
           }
+          darkMode={darkMode}
         />
         <SensorCard
           title="Toprak Nemi"
@@ -154,6 +157,7 @@ export default function Home() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8" />
             </svg>
           }
+          darkMode={darkMode}
         />
         <SensorCard
           title="Işık"
@@ -163,12 +167,13 @@ export default function Home() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           }
+          darkMode={darkMode}
         />
       </div>
 
       {/* Sistem Durumu */}
       <div className="mt-8">
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-white'} shadow rounded-lg p-6`}>
           <h2 className="text-lg font-medium text-gray-900">Sistem Durumu</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div className="flex items-center">
@@ -204,7 +209,7 @@ export default function Home() {
 
       {/* Haftalık Veri Grafiği */}
       <div className="mt-8">
-        <div className="bg-white shadow rounded-lg p-6">
+        <div className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-white'} shadow rounded-lg p-6`}>
           <h2 className="text-lg font-medium text-gray-900 mb-6">Haftalık Sensör Verileri</h2>
           <div className="h-96">
             <ResponsiveContainer width="100%" height="100%">

@@ -8,6 +8,7 @@ import Devices from './pages/Devices'
 import Schedule from './pages/Schedule'
 import Settings from './pages/Settings'
 import Logs from './pages/Logs'
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -31,32 +32,34 @@ function App() {
   }
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login onLogin={handleLogin} />} />
-        <Route path="/register" element={<Register />} />
-        
-        {/* Protected routes */}
-        <Route
-          element={
-            isAuthenticated ? (
-              <Dashboard onLogout={handleLogout} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        >
-          <Route path="/home" element={<Home />} />
-          <Route path="/devices" element={<Devices />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/logs" element={<Logs />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/register" element={<Register />} />
+          
+          {/* Protected routes */}
+          <Route
+            element={
+              isAuthenticated ? (
+                <Dashboard onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          >
+            <Route path="/home" element={<Home />} />
+            <Route path="/devices" element={<Devices />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/logs" element={<Logs />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
 
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
-      </Routes>
-    </Router>
+          {/* Default redirect */}
+          <Route path="/" element={<Navigate to="/home" replace />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   )
 }
 
