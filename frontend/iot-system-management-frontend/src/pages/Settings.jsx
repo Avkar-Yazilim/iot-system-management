@@ -40,9 +40,7 @@ export default function Settings() {
   const handleUpdateUser = async (userId, updatedData) => {
     try {
       console.log("Güncellenecek veriler:", updatedData);
-
       const currentUser = users.find((u) => u.userId === userId);
-
       const dataToUpdate = {
         ...currentUser,
         username: updatedData.username,
@@ -53,7 +51,6 @@ export default function Settings() {
       };
 
       console.log("Gönderilecek güncel veriler:", dataToUpdate);
-
       await settingsService.updateUser(userId, dataToUpdate);
       setEditingUser(null);
       loadUsers();
@@ -88,25 +85,20 @@ export default function Settings() {
 
   const validateForm = () => {
     const errors = {};
-
     if (!newUser.username.trim()) {
       errors.username = "Kullanıcı adı boş bırakılamaz";
     }
-
     if (!newUser.email.trim()) {
       errors.email = "E-posta adresi boş bırakılamaz";
     } else if (!isValidEmail(newUser.email)) {
       errors.email = "Geçerli bir e-posta adresi giriniz";
     }
-
     if (!newUser.firstName.trim()) {
       errors.firstName = "Ad boş bırakılamaz";
     }
-
     if (!newUser.lastName.trim()) {
       errors.lastName = "Soyad boş bırakılamaz";
     }
-
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -116,7 +108,6 @@ export default function Settings() {
       alert("Lütfen tüm alanları doğru şekilde doldurunuz!");
       return;
     }
-
     try {
       const userData = {
         username: newUser.username,
@@ -156,14 +147,12 @@ export default function Settings() {
       const jsonStr = JSON.stringify(users, null, 2);
       const blob = new Blob([jsonStr], { type: "application/json" });
       const url = window.URL.createObjectURL(blob);
-
       // İndirme bağlantısı oluştur
       const a = document.createElement("a");
       a.href = url;
       a.download = "kullanicilar.json";
       document.body.appendChild(a);
       a.click();
-
       // Temizlik
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
@@ -193,7 +182,7 @@ export default function Settings() {
             </button>
             <button
               onClick={() => setShowAddUserModal(true)}
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               Yeni Kullanıcı Ekle
             </button>
@@ -229,7 +218,6 @@ export default function Settings() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     E-posta
@@ -252,7 +240,6 @@ export default function Settings() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Ad
@@ -275,7 +262,6 @@ export default function Settings() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Soyad
@@ -298,7 +284,6 @@ export default function Settings() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Yetki
@@ -460,7 +445,7 @@ export default function Settings() {
                                 onClick={() =>
                                   handleUpdateUser(user.userId, editingUser)
                                 }
-                                className="text-indigo-600 hover:text-indigo-900"
+                                className="text-green-700 hover:text-green-900"
                               >
                                 Kaydet
                               </button>
@@ -475,7 +460,7 @@ export default function Settings() {
                             <div className="space-x-2">
                               <button
                                 onClick={() => handleEditUser(user)}
-                                className="text-indigo-600 hover:text-indigo-900"
+                                className="text-green-700 hover:text-green-900"
                               >
                                 Düzenle
                               </button>

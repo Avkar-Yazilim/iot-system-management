@@ -171,7 +171,7 @@ export default function Devices() {
   };
 
   return (
-    <div className={`container mx-auto px-4 py-8 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white'}`}>
+    <div className={`container mx-auto px-4 py-8 ${darkMode ? 'bg-transparent text-white' : 'bg-transparent'}`}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Cihazlar</h1>
 
@@ -186,9 +186,9 @@ export default function Devices() {
           )}
           <button
             onClick={handleDownloadJSON}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
+            className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md transition-colors duration-300"
           >
-            JSON Olarak İndir
+            Cihazları İndir
           </button>
         </div>
       </div>
@@ -209,7 +209,7 @@ export default function Devices() {
           {devices && devices.length > 0 ? (
             devices.map((device) => (
               <div key={device.deviceId} className="mb-6">
-                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow`}>
+                <div className={`${darkMode ? 'bg-gray-800/80' : 'bg-white'} rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow`}>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold">
                       {editingDeviceId === device.deviceId ? (
@@ -266,7 +266,7 @@ export default function Devices() {
                   <div className="flex flex-wrap gap-3 mt-6">
                     <button
                       onClick={() => toggleDeviceLogs(device.deviceId)}
-                      className="flex-1 px-4 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                      className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                     >
                       {selectedDeviceId === device.deviceId
                         ? "Logları Gizle"
@@ -274,7 +274,7 @@ export default function Devices() {
                     </button>
                     <button
                       onClick={() => toggleCommands(device.deviceId)}
-                      className="flex-1 px-4 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                      className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                     >
                       {selectedCommandDeviceId === device.deviceId
                         ? "Komutları Gizle"
