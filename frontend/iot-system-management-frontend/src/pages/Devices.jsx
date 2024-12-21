@@ -119,6 +119,17 @@ export default function Devices() {
     } catch (error) {
       console.error("Gönderilen veri:", formData);
       console.error("Hata detayı:", error.response?.data);
+      
+      // Eğer hata 409 (Conflict) ise, bu ID'ye sahip cihaz zaten var demektir
+      if (error.response?.status === 409) {
+        setFormErrors(prev => ({
+          ...prev,
+          deviceId: "Bu ID'ye sahip bir cihaz zaten mevcut!"
+        }));
+      } else {
+        // Diğer hatalar için genel bir hata mesajı göster
+        alert("Cihaz eklenirken bir hata oluştu: Zaten olan bir id ile cihaz eklenemez");
+      }
     }
   };
   
