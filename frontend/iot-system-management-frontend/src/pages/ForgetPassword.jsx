@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import userService from '../services/userService';
+import { useTheme } from '../context/ThemeContext';
 
 export default function ForgotPassword() {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [resetError, setResetError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
+  const { darkMode } = useTheme();
 
   const onSubmit = async (data) => {
     try {
@@ -34,10 +36,14 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md">
-        <div className="bg-white px-8 py-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
+    <div className={`flex items-center justify-center min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
+      <div className="w-full max-w-md p-6">
+        <div className={`${
+          darkMode ? 'bg-gray-800' : 'bg-white'
+        } px-8 py-6 rounded-xl shadow-2xl border ${
+          darkMode ? 'border-gray-700' : 'border-gray-200'
+        } transform transition-all duration-200`}>
+          <h2 className={`text-2xl font-bold text-center mb-8 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
             Şifre Sıfırlama
           </h2>
 
@@ -55,7 +61,9 @@ export default function ForgotPassword() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className={`block text-sm font-medium ${
+                darkMode ? 'text-gray-200' : 'text-gray-700'
+              }`}>
                 E-posta
               </label>
               <input

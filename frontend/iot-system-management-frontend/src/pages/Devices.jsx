@@ -234,7 +234,7 @@ export default function Devices() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2 gap-8">
           {devices && devices.length > 0 ? (
             devices.map((device) => (
               <div key={device.deviceId} className="mb-6">
@@ -341,8 +341,8 @@ export default function Devices() {
                   </div>
                 )}
                 {selectedCommandDeviceId === device.deviceId && (
-                  <div className="mt-4 -mx-6">
-                    <div className="bg-gray-100 p-6">
+                  <div className="mt-4 col-span-full">
+                    <div className={`${darkMode ? 'bg-gray-800/80' : 'bg-gray-100'} p-6 rounded-lg shadow-lg mx-auto w-full max-w-[1200px]`}>
                       <Batch deviceId={device.deviceId} />
                     </div>
                   </div>
