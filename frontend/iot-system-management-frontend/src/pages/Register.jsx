@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useState, useEffect, useRef } from 'react';
 import { registerService } from '../services/registerService';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Register() {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -13,6 +14,7 @@ export default function Register() {
   const [timer, setTimer] = useState(180);
   const [tempUserData, setTempUserData] = useState(null);
   const navigate = useNavigate();
+  const { darkMode } = useTheme();
 
   useEffect(() => {
     let interval;
@@ -121,20 +123,26 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="w-full max-w-md">
-        <div className="bg-white px-8 py-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
-            Kayıt Ol
-          </h2>
+    <div className={`flex items-center justify-center min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
+      <div className="w-full max-w-md p-6">
+        <div className={`${
+          darkMode ? 'bg-gray-800' : 'bg-white'
+        } rounded-xl shadow-2xl border ${
+          darkMode ? 'border-gray-700' : 'border-gray-200'
+        } p-8 transform transition-all duration-200`}>
+          <div className="text-center mb-8">
+            <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+              Kayıt Ol
+            </h2>
+          </div>
 
           {registerError && (
-            <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
               {registerError}
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
               <input
@@ -258,6 +266,18 @@ export default function Register() {
               </button>
             </div>
           </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className={`text-sm ${
+                darkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-800'
+              }`}
+            >
+              Zaten hesabın var mı? Giriş yap
+            </button>
+          </div>
         </div>
       </div>
       {showOTPModal && <OTPModal />}
