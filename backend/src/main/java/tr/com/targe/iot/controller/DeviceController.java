@@ -1,9 +1,9 @@
 package tr.com.targe.iot.controller;
 
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import lombok.RequiredArgsConstructor;
 import tr.com.targe.iot.DTO.DeviceDTO;
 import tr.com.targe.iot.service.DeviceService;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @RestController
 @RequestMapping("/api/devices")
@@ -52,9 +51,9 @@ public class DeviceController {
         try {
             System.out.println("Received DTO: " + deviceDTO);
             
-            if (deviceDTO.getDeviceName() == null || deviceDTO.getDeviceType() == null) {
+            if (deviceDTO.getDeviceId() == null || deviceDTO.getDeviceName() == null || deviceDTO.getDeviceType() == null) {
                 return ResponseEntity.badRequest()
-                    .body("Device name and type are required");
+                    .body("Device ID, name and type are required");
             }
             
             DeviceDTO createdDevice = deviceService.createDevice(deviceDTO);
@@ -117,7 +116,6 @@ public class DeviceController {
             
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of(
                     "error", "JSON dışa aktarma hatası",

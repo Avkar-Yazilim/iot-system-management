@@ -67,10 +67,17 @@ public class DeviceService {
                 .orElseThrow(() -> new RuntimeException("Device not found"));
         return deviceMapper.toDTO(device);
     }
-
+    
     public DeviceDTO createDevice(DeviceDTO deviceDTO) {
+        
+        if (deviceRepository.existsById(deviceDTO.getDeviceId())) {
+            throw new IllegalArgumentException("Bu ID'ye sahip bir cihaz sistme kayıtlıdır!");
+        }
+        
         try {
             Device device = deviceMapper.toEntity(deviceDTO);
+            
+            device.setDeviceId(device.getDeviceId());
             device.setDeviceStatus("inactive");
             device.setCreateAt(LocalDateTime.now());
             device.setCreateBy("admin");

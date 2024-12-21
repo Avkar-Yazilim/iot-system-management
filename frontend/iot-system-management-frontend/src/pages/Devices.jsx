@@ -10,18 +10,19 @@ export default function Devices() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showNewDeviceModal, setShowNewDeviceModal] = useState(false);
-  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
-  const [selectedCommandDeviceId, setSelectedCommandDeviceId] = useState(null);
+  const [selecteddeviceId, setSelecteddeviceId] = useState(null);
+  const [selectedCommanddeviceId, setSelectedCommanddeviceId] = useState(null);
 
   const [formData, setFormData] = useState({
     deviceName: "",
     deviceType: "",
+    deviceId: "",
     systemId: 1,
   });
 
   const [formErrors, setFormErrors] = useState({});
 
-  const [editingDeviceId, setEditingDeviceId] = useState(null);
+  const [editingdeviceId, setEditingdeviceId] = useState(null);
   const [editName, setEditName] = useState("");
 
   const [user, setUser] = useState(null);
@@ -90,24 +91,37 @@ export default function Devices() {
       }));
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    const errors = {};
+    if (!formData.deviceId.trim()) errors.deviceId = "Cihaz ID boş bırakılamaz!";
+    if (!formData.deviceName.trim()) errors.deviceName = "Cihaz adı boş bırakılamaz!";
+    if (!formData.deviceType.trim()) errors.deviceType = "Cihaz tipi seçilmelidir!";
+  
+    setFormErrors(errors);
+  
+    if (Object.keys(errors).length > 0) {
+      return; 
+    }
+  
     try {
       const newDevice = await deviceService.createDevice({
+        deviceId: formData.deviceId,
         deviceName: formData.deviceName,
         deviceType: formData.deviceType,
       });
-
+  
       setShowNewDeviceModal(false);
-      setFormData({ deviceName: "", deviceType: "" });
+      setFormData({ deviceId: "", deviceName: "", deviceType: "" });
       fetchDevices();
     } catch (error) {
       console.error("Gönderilen veri:", formData);
       console.error("Hata detayı:", error.response?.data);
     }
   };
+  
 
   const handleDownloadJSON = async () => {
     try {
@@ -140,22 +154,22 @@ export default function Devices() {
 
   const toggleDeviceLogs = (deviceId) => {
     console.log("Toggling logs for device:", deviceId); // Debug için
-    setSelectedDeviceId(selectedDeviceId === deviceId ? null : deviceId);
+    setSelecteddeviceId(selecteddeviceId === deviceId ? null : deviceId);
   };
 
   const toggleCommands = (deviceId) => {
-    setSelectedCommandDeviceId(
-      selectedCommandDeviceId === deviceId ? null : deviceId
+    setSelectedCommanddeviceId(
+      selectedCommanddeviceId === deviceId ? null : deviceId
     );
   };
 
   const handleEdit = (device) => {
-    if (editingDeviceId === device.deviceId) {
+    if (editingdeviceId === device.deviceId) {
       // Zaten düzenleme modundaysa, kaydet
       handleSave(device);
     } else {
       // Düzenleme moduna geç
-      setEditingDeviceId(device.deviceId);
+      setEditingdeviceId(device.deviceId);
       setEditName(device.deviceName);
     }
   };
@@ -172,7 +186,7 @@ export default function Devices() {
         deviceName: editName,
       });
 
-      setEditingDeviceId(null);
+      setEditingdeviceId(null);
       setEditName("");
       fetchDevices();
     } catch (error) {
@@ -182,11 +196,12 @@ export default function Devices() {
   };
 
   const handleCancel = () => {
-    setEditingDeviceId(null);
+    setEditingdeviceId(null);
     setEditName("");
   };
 
   return (
+    
     <div
       className={`container mx-auto px-4 py-8 ${
         darkMode ? "bg-transparent text-white" : "bg-transparent"
@@ -245,7 +260,7 @@ export default function Devices() {
                 >
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold">
-                      {editingDeviceId === device.deviceId ? (
+                      {editingdeviceId === device.deviceId ? (
                         <input
                           type="text"
                           value={editName}
@@ -302,7 +317,7 @@ export default function Devices() {
                       onClick={() => toggleDeviceLogs(device.deviceId)}
                       className="flex-1 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                     >
-                      {selectedDeviceId === device.deviceId
+                      {selecteddeviceId === device.deviceId
                         ? "Logları Gizle"
                         : "Logları Göster"}
                     </button>
@@ -310,7 +325,7 @@ export default function Devices() {
                       onClick={() => toggleCommands(device.deviceId)}
                       className="flex-1 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                     >
-                      {selectedCommandDeviceId === device.deviceId
+                      {selectedCommanddeviceId === device.deviceId
                         ? "Komutları Gizle"
                         : "Komutları Göster"}
                     </button>
@@ -335,12 +350,12 @@ export default function Devices() {
                   </div>
                 </div>
 
-                {selectedDeviceId === device.deviceId && (
+                {selecteddeviceId === device.deviceId && (
                   <div className="mt-4">
                     <DeviceLogs deviceId={device.deviceId} />
                   </div>
                 )}
-                {selectedCommandDeviceId === device.deviceId && (
+                {selectedCommanddeviceId === device.deviceId && (
                   <div className="mt-4 col-span-full">
                     <div className={`${darkMode ? 'bg-gray-800/80' : 'bg-gray-100'} p-6 rounded-lg shadow-lg mx-auto w-full max-w-[1200px]`}>
                       <Batch deviceId={device.deviceId} />
@@ -358,13 +373,30 @@ export default function Devices() {
           )}
         </div>
       )}
-
       {/* Yeni Cihaz Ekleme Modal */}
       {showNewDeviceModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Yeni Cihaz Ekle</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+                <label className="block text-gray-700 mb-2">
+                  Cihaz ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="deviceId"
+                  value={formData.deviceId}
+                  onChange={handleInputChange}
+                  className={`w-full border rounded-md p-2 ${
+                    formErrors.deviceId ? "border-red-500" : ""
+                  }`}
+                  placeholder="Cihaz ID'sini giriniz"
+                />
+                {formErrors.deviceId && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceId}</p>
+                )}
+              </div>
               <div>
                 <label className="block text-gray-700 mb-2">
                   Cihaz Adı <span className="text-red-500">*</span>
@@ -374,11 +406,15 @@ export default function Devices() {
                   name="deviceName"
                   value={formData.deviceName}
                   onChange={handleInputChange}
-                  className="w-full border rounded-md p-2"
+                  className={`w-full border rounded-md p-2 ${
+                    formErrors.deviceName ? "border-red-500" : ""
+                  }`}
                   placeholder="Cihaz adını giriniz"
                 />
+                {formErrors.deviceName && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceName}</p>
+                )}
               </div>
-
               <div>
                 <label className="block text-gray-700 mb-2">
                   Cihaz Tipi <span className="text-red-500">*</span>
@@ -387,7 +423,9 @@ export default function Devices() {
                   name="deviceType"
                   value={formData.deviceType}
                   onChange={handleInputChange}
-                  className="w-full border rounded-md p-2"
+                  className={`w-full border rounded-md p-2 ${
+                    formErrors.deviceType ? "border-red-500" : ""
+                  }`}
                 >
                   <option value="">Seçiniz</option>
                   <option value="Sulama Motoru">Sulama Motoru</option>
@@ -396,6 +434,9 @@ export default function Devices() {
                   <option value="Klima">Klima</option>
                   <option value="Işık">Işık</option>
                 </select>
+                {formErrors.deviceType && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceType}</p>
+                )}
               </div>
 
               <div className="flex justify-end gap-2 mt-6">
@@ -404,6 +445,7 @@ export default function Devices() {
                   onClick={() => {
                     setShowNewDeviceModal(false);
                     setFormData({
+                      deviceId: "",
                       deviceName: "",
                       deviceType: "",
                     });
@@ -424,6 +466,7 @@ export default function Devices() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
