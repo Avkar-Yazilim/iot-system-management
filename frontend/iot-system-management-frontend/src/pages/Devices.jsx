@@ -122,6 +122,22 @@ export default function Devices() {
     }
   };
 
+  const handleFileImport = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      await deviceService.importDevicesFromJSON(file);
+      alert("Cihazlar başarıyla içe aktarıldı");
+      fetchDevices(); // Cihaz listesini yenile
+    } catch (error) {
+      console.error("Import hatası:", error);
+      setError("Cihazları içe aktarırken bir hata oluştu");
+    }
+    // Dosya input'unu temizle
+    event.target.value = "";
+  };
+
   const toggleDeviceLogs = (deviceId) => {
     console.log("Toggling logs for device:", deviceId); // Debug için
     setSelectedDeviceId(selectedDeviceId === deviceId ? null : deviceId);
@@ -171,7 +187,11 @@ export default function Devices() {
   };
 
   return (
-    <div className={`container mx-auto px-4 py-8 ${darkMode ? 'bg-transparent text-white' : 'bg-transparent'}`}>
+    <div
+      className={`container mx-auto px-4 py-8 ${
+        darkMode ? "bg-transparent text-white" : "bg-transparent"
+      }`}
+    >
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Cihazlar</h1>
 
@@ -190,6 +210,15 @@ export default function Devices() {
           >
             Cihazları İndir
           </button>
+          <label className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors cursor-pointer">
+            Cihazları İçe Aktar
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleFileImport}
+              className="hidden"
+            />
+          </label>
         </div>
       </div>
 
@@ -209,7 +238,11 @@ export default function Devices() {
           {devices && devices.length > 0 ? (
             devices.map((device) => (
               <div key={device.deviceId} className="mb-6">
-                <div className={`${darkMode ? 'bg-gray-800/80' : 'bg-white'} rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow`}>
+                <div
+                  className={`${
+                    darkMode ? "bg-gray-800/80" : "bg-white"
+                  } rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow`}
+                >
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold">
                       {editingDeviceId === device.deviceId ? (

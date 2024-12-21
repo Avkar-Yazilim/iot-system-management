@@ -16,6 +16,7 @@ public class DeviceDTO {
     private String version;
     private String createBy;
     
+    
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createAt;
     

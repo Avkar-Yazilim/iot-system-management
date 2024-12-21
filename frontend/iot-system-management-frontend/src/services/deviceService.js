@@ -86,6 +86,35 @@ const deviceService = {
       throw error;
     }
   },
+
+  importDevicesFromJSON: async (file) => {
+    try {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const devices = JSON.parse(e.target.result);
+            // Her cihaz için create isteği gönder
+            const promises = devices.map((device) =>
+              deviceService.createDevice({
+                deviceName: device.deviceName,
+                deviceType: device.deviceType,
+              })
+            );
+            await Promise.all(promises);
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = () => reject(new Error("Dosya okuma hatası"));
+        reader.readAsText(file);
+      });
+    } catch (error) {
+      console.error("JSON import hatası:", error);
+      throw error;
+    }
+  },
 };
 
 export default deviceService;
