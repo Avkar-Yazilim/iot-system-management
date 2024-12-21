@@ -13,6 +13,7 @@ export default function Settings() {
     lastName: "",
     userAuthorization: "user",
     systemId: 1,
+    passwordHash: "",
   });
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -99,6 +100,11 @@ export default function Settings() {
     if (!newUser.lastName.trim()) {
       errors.lastName = "Soyad boş bırakılamaz";
     }
+    if (!newUser.passwordHash.trim()) {
+      errors.passwordHash = "Şifre boş bırakılamaz";
+    } else if (newUser.passwordHash.length < 6) {
+      errors.passwordHash = "Şifre en az 6 karakter olmalıdır";
+    }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -117,6 +123,7 @@ export default function Settings() {
         userAuthorization: newUser.userAuthorization,
         systemId: newUser.systemId,
         createBy: "admin",
+        passwordHash: newUser.passwordHash,
       };
       await settingsService.createUser(userData);
       setShowAddUserModal(false);
@@ -127,6 +134,7 @@ export default function Settings() {
         lastName: "",
         userAuthorization: "user",
         systemId: 1,
+        passwordHash: "",
       });
       setValidationErrors({});
       loadUsers();
@@ -281,6 +289,26 @@ export default function Settings() {
                   {validationErrors.lastName && (
                     <p className="mt-1 text-sm text-red-500">
                       {validationErrors.lastName}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Şifre
+                  </label>
+                  <input
+                    type="password"
+                    className={`mt-1 block w-full border ${
+                      validationErrors.passwordHash ? "border-red-500" : "border-gray-300"
+                    } rounded-md shadow-sm p-2`}
+                    value={newUser.passwordHash}        
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, passwordHash: e.target.value })
+                    }
+                  />
+                  {validationErrors.passwordHash && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {validationErrors.passwordHash}
                     </p>
                   )}
                 </div>
