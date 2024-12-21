@@ -135,6 +135,15 @@ export default function Login({ onLogin }) {
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
               )}
+              <div className="text-right mt-1">
+                <button
+                  type="button"
+                  onClick={() => navigate('/forget-password')}
+                  className="text-sm text-indigo-600 hover:text-indigo-800"
+                >
+                  Şifreni mi unuttun?
+                </button>
+              </div>
             </div>
 
             <div>

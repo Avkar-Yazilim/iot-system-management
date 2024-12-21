@@ -176,13 +176,13 @@ export default function Settings() {
           <div className="space-x-3">
             <button
               onClick={handleExportUsers}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
             >
-              JSON Olarak İndir
+              Kullanıcıları İndir
             </button>
             <button
               onClick={() => setShowAddUserModal(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
             >
               Yeni Kullanıcı Ekle
             </button>
@@ -306,13 +306,13 @@ export default function Settings() {
               <div className="mt-6 flex justify-end space-x-3">
                 <button
                   onClick={() => setShowAddUserModal(false)}
-                  className="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300"
+                  className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 transition-colors"
                 >
                   İptal
                 </button>
                 <button
                   onClick={handleAddUser}
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                  className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                 >
                   Ekle
                 </button>

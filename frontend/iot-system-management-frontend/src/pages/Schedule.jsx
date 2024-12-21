@@ -427,7 +427,7 @@ export default function Schedule() {
                   <button
                     type="submit"
                     onClick={handleAddEvent}
-                    className="btn btn-primary w-full sm:w-auto sm:ml-3"
+                    className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                   >
                     Ekle
                   </button>
@@ -437,7 +437,7 @@ export default function Schedule() {
                       setShowAddModal(false);
                       navigate("/schedule");
                     }}
-                    className="mt-3 sm:mt-0 w-full sm:w-auto btn border border-gray-300"
+                    className="mt-3 sm:mt-0 w-full sm:w-auto px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 transition-colors mr-3"
                   >
                     İptal
                   </button>

@@ -179,14 +179,14 @@ export default function Devices() {
           {user?.userAuthorization === "admin" && (
             <button
               onClick={() => setShowNewDeviceModal(true)}
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
             >
               + Yeni Cihaz Ekle
             </button>
           )}
           <button
             onClick={handleDownloadJSON}
-            className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md transition-colors duration-300"
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
           >
             Cihazları İndir
           </button>
@@ -219,13 +219,14 @@ export default function Devices() {
                           onChange={(e) => setEditName(e.target.value)}
                           className="form-control"
                           style={{
-                            backgroundColor: "#e8f5e9", // Hafif açık yeşil
-                            border: "1px solid #c8e6c9", // Hafif yeşil border
+                            backgroundColor: "#e8f5e9",
+                            border: "1px solid #c8e6c9",
                             padding: "5px",
                             borderRadius: "4px",
                             width: "100%",
+                            color: "#000000",
                           }}
-                          autoFocus // Otomatik fokus
+                          autoFocus
                         />
                       ) : (
                         device.deviceName
@@ -266,7 +267,7 @@ export default function Devices() {
                   <div className="flex flex-wrap gap-3 mt-6">
                     <button
                       onClick={() => toggleDeviceLogs(device.deviceId)}
-                      className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                      className="flex-1 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                     >
                       {selectedDeviceId === device.deviceId
                         ? "Logları Gizle"
@@ -274,7 +275,7 @@ export default function Devices() {
                     </button>
                     <button
                       onClick={() => toggleCommands(device.deviceId)}
-                      className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                      className="flex-1 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                     >
                       {selectedCommandDeviceId === device.deviceId
                         ? "Komutları Gizle"
@@ -285,11 +286,7 @@ export default function Devices() {
                     {user?.userAuthorization === "admin" && (
                       <button
                         onClick={() => handleEdit(device)}
-                        className={`flex-1 py-2.5 px-4 rounded-lg transition-colors ${
-                          darkMode 
-                            ? 'bg-white text-white hover:bg-gray-100 hover:text-black border-2 border-white' 
-                            : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                        }`}
+                        className="flex-1 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                       >
                         Düzenle
                       </button>
@@ -297,7 +294,7 @@ export default function Devices() {
                     {user?.userAuthorization === "admin" && (
                       <button
                         onClick={() => handleDeleteDevice(device.deviceId)}
-                        className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 px-4 rounded-lg transition-colors"
+                        className="flex-1 px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
                       >
                         Sil
                       </button>
@@ -379,13 +376,13 @@ export default function Devices() {
                     });
                     setFormErrors({});
                   }}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors duration-300"
+                  className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 transition-colors"
                 >
                   İptal
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md transition-colors duration-300"
+                  className="px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors"
                 >
                   Ekle
                 </button>

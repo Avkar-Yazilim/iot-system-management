@@ -70,5 +70,5 @@ export const settingsService = {
     } catch (error) {
       throw error;
     }
-  },
+  }
 };

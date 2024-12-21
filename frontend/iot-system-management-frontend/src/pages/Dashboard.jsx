@@ -286,7 +286,7 @@ function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
               to={item.to}
               className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                 isActive
-                  ? "bg-primary-100 text-primary-900"
+                  ? "bg-green-100 text-primary-900"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
               end={item.to === "/"}
@@ -295,7 +295,7 @@ function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
               <span
                 className={`mr-3 flex-shrink-0 ${
                   isActive
-                    ? "text-primary-600"
+                    ? "text-green-600"
                     : "text-gray-400 group-hover:text-gray-500"
                 }`}
               >

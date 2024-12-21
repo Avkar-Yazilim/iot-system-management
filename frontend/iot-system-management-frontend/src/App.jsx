@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useState, useEffect } from 'react'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ForgetPassword from './pages/ForgetPassword'
 import Dashboard from './pages/Dashboard'
 import Home from './pages/Home'
 import Devices from './pages/Devices'
@@ -37,6 +38,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forget-password" element={<ForgetPassword />} />
           
           {/* Protected routes */}
           <Route
