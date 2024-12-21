@@ -77,8 +77,10 @@ export default function Login({ onLogin }) {
 
   return (
     <div className={`flex items-center justify-center min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-100'}`}>
-      <div className="w-full max-w-md">
-        <div className={`px-8 py-6 rounded-lg shadow-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
+      <div className="w-full max-w-md p-6">
+        <div className={`px-8 py-6 rounded-xl shadow-2xl border ${
+          darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+        } transform transition-all duration-200`}>
           <h2 className={`text-2xl font-bold text-center mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
             Tarla App'e Hoş Geldiniz
           </h2>
