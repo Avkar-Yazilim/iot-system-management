@@ -1,24 +1,35 @@
-import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import userService from '../services/userService';
 
 export default function ForgotPassword() {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const [resetError, setResetError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
-      console.log('Password reset request for:', data.email);
-      // Backend şifre sıfırlama isteği gönderilebilir
-      // await passwordResetService.sendResetEmail(data.email);
+      setResetError('');
+      setSuccessMessage('');
       
-      setSuccessMessage('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.');
-      setErrorMessage('');
+      // Email kontrolü ve şifre sıfırlama isteği
+      const response = await userService.resetPassword(data.email);
+      
+      if (response.data?.message) {
+        setSuccessMessage(response.data.message);
+        setTimeout(() => {
+          navigate('/login');
+        }, 3000);
+      }
     } catch (error) {
-      console.error('Password reset error:', error);
-      setErrorMessage('Şifre sıfırlama işlemi başarısız oldu. Lütfen tekrar deneyin.');
+      console.error('Reset password error:', error);
+      if (error.response?.status === 404) {
+        setResetError('Bu email adresi ile kayıtlı kullanıcı bulunamadı');
+      } else {
+        setResetError(error.response?.data?.message || 'Şifre sıfırlama işlemi başarısız oldu');
+      }
     }
   };
 
@@ -27,7 +38,7 @@ export default function ForgotPassword() {
       <div className="w-full max-w-md">
         <div className="bg-white px-8 py-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">
-            Şifrenizi mi Unuttunuz?
+            Şifre Sıfırlama
           </h2>
 
           {successMessage && (
@@ -36,9 +47,9 @@ export default function ForgotPassword() {
             </div>
           )}
 
-          {errorMessage && (
+          {resetError && (
             <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
-              {errorMessage}
+              {resetError}
             </div>
           )}
 
@@ -50,8 +61,8 @@ export default function ForgotPassword() {
               <input
                 id="email"
                 type="email"
-                {...register('email', { 
-                  required: 'E-posta adresi gereklidir',
+                {...register('email', {
+                  required: 'E-posta gereklidir',
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: 'Geçersiz e-posta adresi'
@@ -65,24 +76,21 @@ export default function ForgotPassword() {
               )}
             </div>
 
-            <div>
-              <button
-                type="submit"
-                className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Şifremi Yenile
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-4 text-center">
             <button
-              onClick={() => navigate('/login')}
-              className="text-sm text-indigo-600 hover:underline"
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              Giriş ekranına geri dön
+              Şifremi Sıfırla
             </button>
-          </div>
+
+            <button
+              type="button"
+              onClick={() => navigate('/login')}
+              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Giriş Sayfasına Dön
+            </button>
+          </form>
         </div>
       </div>
     </div>

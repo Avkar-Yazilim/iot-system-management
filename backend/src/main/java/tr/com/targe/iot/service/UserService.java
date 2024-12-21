@@ -136,4 +136,8 @@ public class UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 }

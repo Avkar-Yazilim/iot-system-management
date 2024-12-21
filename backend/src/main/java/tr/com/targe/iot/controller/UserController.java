@@ -3,6 +3,7 @@ package tr.com.targe.iot.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import tr.com.targe.iot.repository.UserRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,8 @@ import tr.com.targe.iot.mapper.UserMapper;
 import tr.com.targe.iot.response.SuccessResponse;
 import tr.com.targe.iot.service.OTPService;
 import tr.com.targe.iot.service.UserService;
+import tr.com.targe.iot.service.EmailService;
+
 
 @Slf4j
 @RestController
@@ -35,6 +40,8 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
     @Autowired
     private OTPService otpService;
 
@@ -154,6 +161,58 @@ public class UserController {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse("Doğrulama hatası: " + e.getMessage()));
+        }
+    }
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            log.info("Password reset requested for email: {}", email);
+            
+            // Email kontrolü
+            if (!userService.existsByEmail(email)) {
+                log.warn("Email not found: {}", email);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Bu email adresi ile kayıtlı kullanıcı bulunamadı"));
+            }
+            
+            // Random 6 haneli şifre oluştur
+            String newPassword = String.format("%06d", new Random().nextInt(999999));
+            log.debug("Generated new password: {}", newPassword);
+            
+            // Kullanıcıyı bul
+            User user = userService.getUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+            
+            try {
+                // Önce plain password'ü kaydet
+                user.setPasswordHash(newPassword);
+                userRepository.save(user);
+                log.debug("Plain password saved for user: {}", user.getUserId());
+                
+                // Sonra şifrele
+                userRepository.saveEncryptedPassword(user.getUserId(), "mysecretkey");
+                log.debug("Password encrypted for user: {}", user.getUserId());
+                
+                // Email gönder
+                emailService.sendPasswordResetEmail(email, newPassword);
+                log.info("Password reset email sent to: {}", email);
+                
+                return ResponseEntity.ok()
+                    .body(Map.of("message", "Yeni şifreniz email adresinize gönderildi"));
+                    
+            } catch (Exception e) {
+                log.error("Error during password reset process: ", e);
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "İşlem sırasında hata: " + e.getMessage()));
+            }
+            
+        } catch (Exception e) {
+            log.error("Unexpected error in reset password: ", e);
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("message", "Beklenmeyen hata: " + e.getMessage()));
         }
     }
 }

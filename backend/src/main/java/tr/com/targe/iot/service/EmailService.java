@@ -3,8 +3,11 @@ package tr.com.targe.iot.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -23,5 +26,19 @@ public class EmailService {
         
         mailSender.send(message);
         log.info("OTP email sent to: {}", to);
+    }
+    public void sendPasswordResetEmail(String email, String newPassword) {
+       try {
+           MimeMessage message = mailSender.createMimeMessage();
+           MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(email);
+           helper.setSubject("Şifre Sıfırlama Talebi");
+           helper.setText("Merhaba,\n\nYeni şifreniz: " + newPassword + "\n\nLütfen güvenliğiniz için giriş yaptıktan sonra şifrenizi değiştirin.\n\nİyi günler dileriz.", true);
+            mailSender.send(message);
+           System.out.println("Password reset email sent to: " + email);
+       } catch (MessagingException e) {
+           System.err.println("Error sending email: " + e.getMessage());
+           e.printStackTrace();
+       }
     }
 }
