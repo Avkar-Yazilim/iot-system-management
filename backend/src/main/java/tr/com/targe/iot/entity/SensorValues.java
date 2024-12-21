@@ -1,20 +1,26 @@
 package tr.com.targe.iot.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Data
 @Table(name = "Sensor_Values")
 public class SensorValues {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sensor_date_id")
+    @Column(name = "sensor_data_id")
     private Long sensorDataId;
 
     @ManyToOne
-    @JoinColumn(name = "sensor_id", nullable = false)
-    private Sensor sensor;
+    @JoinColumn(name = "device_id", nullable = false)
+    private Device device;
+
+    @Column(name = "sensor_type", nullable = false)
+    private String sensorType;
 
     @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
@@ -30,52 +36,18 @@ public class SensorValues {
 
     // Getters and Setters
 
-    public Long getSensorDataId() {
-        return sensorDataId;
+    public Long getDeviceId() {
+        return device != null ? device.getDeviceId() : null; // deviceId'ye erişim
     }
 
-    public void setSensorDataId(Long sensorDataId) {  // Fix method name
-        this.sensorDataId = sensorDataId;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
-    public Sensor getSensor() {
-        return sensor;
-    }
-
-    public void setSensor(Sensor sensor) {
-        this.sensor = sensor;
-    }
-
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    public String getDataKey() {
-        return dataKey;
-    }
-
-    public void setDataKey(String dataKey) {
-        this.dataKey = dataKey;
-    }
-
-    public String getDataValue() {
-        return dataValue;
-    }
-
-    public void setDataValue(String dataValue) {
-        this.dataValue = dataValue;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
+    public void setDeviceId(Long deviceId) {
+        if (this.device == null) {
+            this.device = new Device();
+        }
+        this.device.setDeviceId(deviceId);
+    }  
 }

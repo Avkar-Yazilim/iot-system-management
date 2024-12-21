@@ -1,53 +1,51 @@
 package tr.com.targe.iot.controller;
 
-import tr.com.targe.iot.entity.SensorValues;
 import tr.com.targe.iot.service.SensorValuesService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+import tr.com.targe.iot.DTO.SensorValuesDTO;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/sensor-values")
+@CrossOrigin(origins = "http://localhost:5173")
 public class SensorValuesController {
 
     private final SensorValuesService sensorValuesService;
 
-    public SensorValuesController(SensorValuesService sensorValuesService) {
-        this.sensorValuesService = sensorValuesService;
-    }
-
+    // Tüm sensör değerlerini getir
     @GetMapping
-    public List<SensorValues> getAllSensorValues() {
+    public List<SensorValuesDTO> getAllSensorValues() {
         return sensorValuesService.getAllSensorValues();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<SensorValues> getSensorValueById(@PathVariable Long id) {
-        Optional<SensorValues> sensorValue = sensorValuesService.getSensorValueById(id);
-        return sensorValue.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    // Belirli bir cihazın tüm sensör verilerini getir
+    @GetMapping("/device/{deviceId}")
+    public List<SensorValuesDTO> getSensorValuesByDeviceId(@PathVariable Long deviceId) {
+        return sensorValuesService.getSensorValuesByDeviceId(deviceId);
     }
 
-    @PostMapping
-    public ResponseEntity<SensorValues> createSensorValue(@RequestBody SensorValues sensorValues) {
-        SensorValues createdSensorValue = sensorValuesService.createSensorValue(sensorValues);
-        return ResponseEntity.status(201).body(createdSensorValue); 
+    // Her cihaz için en son sensör verilerini getir
+    @GetMapping("/latest")
+    public List<SensorValuesDTO> getLatestValuesForAllDevices() {
+        return sensorValuesService.getLatestValuesForAllDevices();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<SensorValues> updateSensorValue(@PathVariable Long id, @RequestBody SensorValues updatedSensorValue) {
-        SensorValues sensorValue = sensorValuesService.updateSensorValue(id, updatedSensorValue);
-        if (sensorValue != null) {
-            return ResponseEntity.ok(sensorValue);
-        }
-        return ResponseEntity.notFound().build(); 
+    // Belirli bir cihazın en son sensör verilerini getir
+    @GetMapping("/latest/device/{deviceId}")
+    public List<SensorValuesDTO> getLatestValuesForDevice(@PathVariable Long deviceId) {
+        return sensorValuesService.getLatestValuesForDevice(deviceId);
     }
 
-    // SensorValues kaydını sil
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSensorValue(@PathVariable Long id) {
-        sensorValuesService.deleteSensorValue(id);
-        return ResponseEntity.noContent().build();
+
+    // Son N kayıt için cihaz bazlı sensör verilerini getir
+    @GetMapping("/device/{deviceId}/last/{count}")
+    public List<SensorValuesDTO> getLastNValuesByDevice(
+        @PathVariable Long deviceId,
+        @PathVariable int count) {
+        return sensorValuesService.getLastNValuesByDevice(deviceId, count);
     }
 }
