@@ -47,4 +47,28 @@ public class BatchCommandsController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/execute/{commandId}")
+    public ResponseEntity<BatchCommandsDTO> executeBatchCommand(@PathVariable Long commandId) {
+        BatchCommandsDTO executedCommand = batchCommandsService.executeBatchCommand(commandId);
+        return ResponseEntity.ok(executedCommand);
+    }
+
+    @PostMapping("/stop/{commandId}")
+    public ResponseEntity<BatchCommandsDTO> stopBatchCommand(@PathVariable Long commandId) {
+        BatchCommandsDTO stoppedCommand = batchCommandsService.stopBatchCommand(commandId);
+        return ResponseEntity.ok(stoppedCommand);
+    }
+
+    @PatchMapping("/{commandId}")
+    public ResponseEntity<BatchCommandsDTO> updateCommandStatus(
+            @PathVariable Long commandId,
+            @RequestBody BatchCommandsDTO updateRequest) {
+        BatchCommandsDTO updatedCommand = batchCommandsService.updateBatchCommand(
+            commandId, 
+            updateRequest.getStatus(), 
+            updateRequest.getFeedback()
+        );
+        return ResponseEntity.ok(updatedCommand);
+    }
+
 }

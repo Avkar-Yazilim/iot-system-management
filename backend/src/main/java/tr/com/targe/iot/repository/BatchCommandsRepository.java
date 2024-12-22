@@ -38,8 +38,7 @@ public interface BatchCommandsRepository extends JpaRepository<BatchCommands, Lo
                    "    SELECT s.command_id " +
                    "    FROM Schedule_Date sd " +
                    "    JOIN Schedules s ON sd.schedule_id = s.schedule_id " +
-                   "    WHERE DATE_TRUNC('minute', sd.start_time) = DATE_TRUNC('minute', CURRENT_TIMESTAMP AT TIME ZONE 'UTC')" +
-                   "    AND sd.status = 'Active'" +
+                   "    WHERE DATE_TRUNC('minute', sd.start_time) = DATE_TRUNC('minute', CURRENT_TIMESTAMP AT TIME ZONE 'UTC-3')" +
                    ")", nativeQuery = true)
     void executeScheduledCommands();
     
@@ -51,8 +50,7 @@ public interface BatchCommandsRepository extends JpaRepository<BatchCommands, Lo
                     "    SELECT s.command_id " +
                     "    FROM Schedule_Date sd " +
                     "    JOIN Schedules s ON sd.schedule_id = s.schedule_id " +
-                    "    WHERE DATE_TRUNC('minute', sd.end_time) = DATE_TRUNC('minute', CURRENT_TIMESTAMP AT TIME ZONE 'UTC')" +
-                    "    AND sd.status = 'Active'" +
+                    "    WHERE DATE_TRUNC('minute', sd.end_time) = DATE_TRUNC('minute', CURRENT_TIMESTAMP AT TIME ZONE 'UTC-3')"+
                     ")", nativeQuery = true)
     void resetCommandStatusToPending();
     

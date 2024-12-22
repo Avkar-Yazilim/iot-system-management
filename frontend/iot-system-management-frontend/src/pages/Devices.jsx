@@ -452,11 +452,8 @@ export default function Devices() {
                   }`}
                 >
                   <option value="">Seçiniz</option>
-                  <option value="Sulama Motoru">Sulama Motoru</option>
-                  <option value="Termometre">Termometre</option>
-                  <option value="Rüzgar Fanı">Rüzgar Fanı</option>
-                  <option value="Klima">Klima</option>
-                  <option value="Işık">Işık</option>
+                  <option value="Sensör">Sensör</option>
+                  <option value="Cihaz">Cihaz</option>
                 </select>
                 {formErrors.deviceType && (
                   <p className="text-red-500 text-sm mt-1">

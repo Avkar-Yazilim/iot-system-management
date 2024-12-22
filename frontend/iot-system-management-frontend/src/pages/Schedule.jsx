@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { PlusIcon } from "@heroicons/react/outline";
+import { PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import { useNavigate } from "react-router-dom";
 import { ScheduleDateService } from "../services/ScheduleDateService";
 import deviceService from "../services/deviceService";
@@ -14,6 +14,8 @@ export default function Schedule() {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [showRepeatPanel, setShowRepeatPanel] = useState(false);
   const [newEvent, setNewEvent] = useState({
     deviceId: null,
@@ -36,6 +38,7 @@ export default function Schedule() {
         const scheduleDates = await ScheduleDateService.getAllScheduleDates();
         const calendarEvents = scheduleDates.map((scheduleDate) => ({
           id: scheduleDate.scheduleDateId,
+          scheduleId: scheduleDate.scheduleId,
           title: scheduleDate.eventTitle,
           start: scheduleDate.startTime,
           end: new Date(
@@ -43,6 +46,7 @@ export default function Schedule() {
           ),
           backgroundColor:
             scheduleDate.status === "Active" ? "#22c55e" : "#6b7280",
+          status: scheduleDate.status,
         }));
         setEvents(calendarEvents);
       } catch (error) {
@@ -180,6 +184,29 @@ export default function Schedule() {
     setShowRepeatPanel(false);
   };
 
+  const handleEventClick = (clickInfo) => {
+    setSelectedEvent(clickInfo.event);
+    setShowDetailsModal(true);
+  };
+
+  const handleDeleteSchedule = async () => {
+    if (!selectedEvent) return;
+
+    try {
+      await ScheduleService.deleteSchedule(
+        selectedEvent.extendedProps.scheduleId,
+        "Admin"
+      );
+      setEvents(events.filter((event) => event.id !== selectedEvent.id));
+      setShowDetailsModal(false);
+      setSelectedEvent(null);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting schedule:", error);
+      alert("Program silinirken bir hata oluştu!");
+    }
+  };
+
   return (
     <div>
       <div className="sm:flex sm:items-center">
@@ -228,6 +255,7 @@ export default function Schedule() {
           }}
           allDayText="Tüm Gün"
           height="auto"
+          eventClick={handleEventClick}
         />
       </div>
 
@@ -452,6 +480,66 @@ export default function Schedule() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Event Details Modal */}
+      {showDetailsModal && selectedEvent && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Program Detayları
+                </h3>
+                <div className="mt-2 space-y-3">
+                  <div>
+                    <span className="font-medium">Program Adı:</span>{" "}
+                    {selectedEvent.title}
+                  </div>
+                  <div>
+                    <span className="font-medium">Başlangıç:</span>{" "}
+                    {new Date(selectedEvent.start).toLocaleString("tr-TR")}
+                  </div>
+                  <div>
+                    <span className="font-medium">Durum:</span>{" "}
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        selectedEvent.extendedProps.status === "Active"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {selectedEvent.extendedProps.status === "Active"
+                        ? "Aktif"
+                        : "Pasif"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                <button
+                  type="button"
+                  onClick={handleDeleteSchedule}
+                  className="w-full inline-flex justify-center items-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:col-start-2 sm:text-sm"
+                >
+                  <TrashIcon className="h-5 w-5 mr-2" />
+                  Sil
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDetailsModal(false);
+                    setSelectedEvent(null);
+                  }}
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+                >
+                  Kapat
+                </button>
+              </div>
             </div>
           </div>
         </div>

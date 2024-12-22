@@ -57,15 +57,25 @@ const batchCommandService = {
   },
 
   executeBatchCommand: async (commandId) => {
-    const response = await fetch(`/api/commands/execute/${commandId}`, {
-      method: "POST",
-    });
-
-    if (!response.ok) {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/batch-commands/execute/${commandId}`
+      );
+      return response.data;
+    } catch (error) {
       throw new Error("Komut çalıştırılamadı");
     }
+  },
 
-    return response.json();
+  stopBatchCommand: async (commandId) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/batch-commands/stop/${commandId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error("Komut durdurulamadı");
+    }
   },
 };
 

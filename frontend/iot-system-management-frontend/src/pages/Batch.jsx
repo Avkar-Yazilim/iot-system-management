@@ -59,21 +59,29 @@ export default function Batch({ deviceId }) {
 
   const handleExecuteCommand = async (commandId) => {
     try {
-      const response = await batchCommandService.executeBatchCommand(commandId);
+      const updatedCommand = await batchCommandService.executeBatchCommand(
+        commandId
+      );
       const updatedCommands = batchCommands.map((command) =>
-        command.commandId === commandId
-          ? { ...command, status: "Executed" }
-          : command
+        command.commandId === commandId ? updatedCommand : command
       );
       setBatchCommands(updatedCommands);
     } catch (error) {
+      setError("Komut çalıştırılırken bir hata oluştu");
+    }
+  };
+
+  const handleStopCommand = async (commandId) => {
+    try {
+      const updatedCommand = await batchCommandService.stopBatchCommand(
+        commandId
+      );
       const updatedCommands = batchCommands.map((command) =>
-        command.commandId === commandId
-          ? { ...command, status: "Failed" }
-          : command
+        command.commandId === commandId ? updatedCommand : command
       );
       setBatchCommands(updatedCommands);
-    //setError("Komut çalıştırılırken bir hata oluştu");
+    } catch (error) {
+      setError("Komut durdurulurken bir hata oluştu");
     }
   };
 
@@ -85,6 +93,8 @@ export default function Batch({ deviceId }) {
         return "text-red-600";
       case "Pending":
         return "text-yellow-600";
+      case "Stopped":
+        return "text-orange-600";
       default:
         return "text-gray-600";
     }
@@ -160,12 +170,21 @@ export default function Batch({ deviceId }) {
                     Geri Bildirim: {command.feedback}
                   </span>
                 )}
-                <button
-                  onClick={() => handleExecuteCommand(command.commandId)}
-                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                >
-                  Çalıştır
-                </button>
+                {command.status === "Executed" ? (
+                  <button
+                    onClick={() => handleStopCommand(command.commandId)}
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                  >
+                    Durdur
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleExecuteCommand(command.commandId)}
+                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                  >
+                    Çalıştır
+                  </button>
+                )}
               </div>
             </div>
           ))}

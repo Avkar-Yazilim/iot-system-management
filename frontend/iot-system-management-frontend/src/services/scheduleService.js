@@ -47,4 +47,16 @@ export const ScheduleService = {
       throw error;
     }
   },
+
+  deleteSchedule: async (id, deletedBy) => {
+    try {
+      const response = await axios.delete(
+        `${API_URL}/${id}?deletedBy=${deletedBy}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting schedule:", error);
+      throw error;
+    }
+  },
 };

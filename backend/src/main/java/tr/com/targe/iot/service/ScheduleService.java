@@ -56,7 +56,8 @@ public class ScheduleService {
     @Transactional
     public Schedule updateSchedule(Long scheduleId, Schedule updatedSchedule) {
 
-        Schedule existingSchedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID")); 
+        Schedule existingSchedule = scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID")); 
         
         existingSchedule.setGroup(updatedSchedule.getGroup());
         existingSchedule.setDevice(updatedSchedule.getDevice());
@@ -71,23 +72,18 @@ public class ScheduleService {
         return scheduleRepository.save(existingSchedule);
     }
 
-    //Delete a schedule by marking it as INACTIVE
+    //Delete a schedule
     @Transactional
     public void deleteSchedule(Long id, String deletedBy) {
-        Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID"));
-        schedule.setStatus("Inactive");
-        schedule.setDeleteAt(LocalDateTime.now());
-        schedule.setDeleteBy(deletedBy);
-        schedule.setUpdateAt(LocalDateTime.now());
-        schedule.setUpdateBy(deletedBy);
-        scheduleRepository.save(schedule);
+        scheduleRepository.deleteById(id);
     }
 
 
     //Activate a schedule
     @Transactional
     public void activateSchedule(Long id, String activatedBy) {
-        Schedule schedule = scheduleRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID"));
+        Schedule schedule = scheduleRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Schedule ID"));
         schedule.setStatus("Active");
         schedule.setUpdateAt(LocalDateTime.now());
         schedule.setUpdateBy(activatedBy);
@@ -96,7 +92,8 @@ public class ScheduleService {
     // Complete a schedule
     @Transactional
     public Schedule completeSchedule(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + scheduleId));
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+            .orElseThrow(() -> new RuntimeException("Schedule not found with ID: " + scheduleId));
         
         schedule.setStatus("Completed");
         schedule.setUpdateAt(LocalDateTime.now());

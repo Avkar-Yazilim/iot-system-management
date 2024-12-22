@@ -80,10 +80,16 @@ public class BatchCommandsService {
                 .collect(Collectors.toList());
     }
 
-    public BatchCommandsDTO updateBatchCommand(Long commandId, String status) {
+    public BatchCommandsDTO updateBatchCommand(Long commandId, String status, String feedback) {
         BatchCommands batchCommands = batchCommandsRepository.findById(commandId)
             .orElseThrow(() -> new RuntimeException("Batch command not found with id: " + commandId));
-        batchCommands.setStatus(status);
+        
+        if (!"Executed".equals(status) && !"Pending".equals(status)) {
+            throw new RuntimeException("Invalid status: " + status);
+        }
+        
+        batchCommands.setCommandStatus(status);
+        batchCommands.setFeedback(feedback);
         BatchCommands updatedCommand = batchCommandsRepository.save(batchCommands);
         return batchCommandsMapper.toDTO(updatedCommand);
     }
@@ -94,5 +100,36 @@ public class BatchCommandsService {
 
     public void resetCommandStatusToPending() {
         batchCommandsRepository.resetCommandStatusToPending();
+    }
+
+    public BatchCommandsDTO executeBatchCommand(Long commandId) {
+        BatchCommands batchCommands = batchCommandsRepository.findById(commandId)
+            .orElseThrow(() -> new RuntimeException("Batch command not found with id: " + commandId));
+        
+        if ("Executed".equals(batchCommands.getCommandStatus())) {
+            throw new RuntimeException("Command is already executed");
+        }
+        
+        // Here you would add any actual command execution logic
+        
+        // Update the command status to executed
+        batchCommands.setCommandStatus("Executed");
+        batchCommands.setFeedback("Command executed successfully");
+        BatchCommands updatedCommand = batchCommandsRepository.save(batchCommands);
+        return batchCommandsMapper.toDTO(updatedCommand);
+    }
+
+    public BatchCommandsDTO stopBatchCommand(Long commandId) {
+        BatchCommands batchCommands = batchCommandsRepository.findById(commandId)
+            .orElseThrow(() -> new RuntimeException("Batch command not found with id: " + commandId));
+
+        if ("Pending".equals(batchCommands.getCommandStatus())) {
+            throw new RuntimeException("Command is already pending");
+        }
+
+        batchCommands.setCommandStatus("Pending");
+        batchCommands.setFeedback("Command stopped");
+        BatchCommands updatedCommand = batchCommandsRepository.save(batchCommands);
+        return batchCommandsMapper.toDTO(updatedCommand); 
     }
 }
