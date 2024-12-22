@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import logo from "../assets/logo.png";
 
 const navigation = [
-  { name: "Ana Sayfa", to: "/", icon: "home", adminOnly: false },
+  { name: "Ana Sayfa", to: "/home", icon: "home", adminOnly: false },
   { name: "Cihazlar", to: "/devices", icon: "device", adminOnly: false },
   { name: "Program", to: "/schedule", icon: "calendar", adminOnly: false },
   { name: "Geçmiş", to: "/logs", icon: "clock", adminOnly: true },
@@ -277,8 +277,8 @@ function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
         {filteredNavigation.map((item) => {
           const isActive =
             currentPath === item.to ||
-            (item.to === "/" && currentPath === "") ||
-            (item.to !== "/" && currentPath.startsWith(item.to));
+            (item.to === "/home" && currentPath === "/home") ||
+            (item.to !== "/home" && currentPath.startsWith(item.to));
 
           return (
             <NavLink
