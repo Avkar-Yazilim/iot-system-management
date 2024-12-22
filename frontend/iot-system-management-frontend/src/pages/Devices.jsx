@@ -91,48 +91,52 @@ export default function Devices() {
       }));
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const errors = {};
-    if (!formData.deviceId.trim()) errors.deviceId = "Cihaz ID boş bırakılamaz!";
-    if (!formData.deviceName.trim()) errors.deviceName = "Cihaz adı boş bırakılamaz!";
-    if (!formData.deviceType.trim()) errors.deviceType = "Cihaz tipi seçilmelidir!";
-  
+    if (!formData.deviceId.trim())
+      errors.deviceId = "Cihaz ID boş bırakılamaz!";
+    if (!formData.deviceName.trim())
+      errors.deviceName = "Cihaz adı boş bırakılamaz!";
+    if (!formData.deviceType.trim())
+      errors.deviceType = "Cihaz tipi seçilmelidir!";
+
     setFormErrors(errors);
-  
+
     if (Object.keys(errors).length > 0) {
-      return; 
+      return;
     }
-  
+
     try {
       const newDevice = await deviceService.createDevice({
         deviceId: formData.deviceId,
         deviceName: formData.deviceName,
         deviceType: formData.deviceType,
       });
-  
+
       setShowNewDeviceModal(false);
       setFormData({ deviceId: "", deviceName: "", deviceType: "" });
       fetchDevices();
     } catch (error) {
       console.error("Gönderilen veri:", formData);
       console.error("Hata detayı:", error.response?.data);
-      
+
       // Eğer hata 409 (Conflict) ise, bu ID'ye sahip cihaz zaten var demektir
       if (error.response?.status === 409) {
-        setFormErrors(prev => ({
+        setFormErrors((prev) => ({
           ...prev,
-          deviceId: "Bu ID'ye sahip bir cihaz zaten mevcut!"
+          deviceId: "Bu ID'ye sahip bir cihaz zaten mevcut!",
         }));
       } else {
         // Diğer hatalar için genel bir hata mesajı göster
-        alert("Cihaz eklenirken bir hata oluştu: Zaten olan bir id ile cihaz eklenemez");
+        alert(
+          "Cihaz eklenirken bir hata oluştu: Zaten olan bir id ile cihaz eklenemez"
+        );
       }
     }
   };
-  
 
   const handleDownloadJSON = async () => {
     try {
@@ -212,7 +216,6 @@ export default function Devices() {
   };
 
   return (
-    
     <div
       className={`container mx-auto px-4 py-8 ${
         darkMode ? "bg-transparent text-white" : "bg-transparent"
@@ -236,15 +239,17 @@ export default function Devices() {
           >
             Cihazları İndir
           </button>
-          <label className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors cursor-pointer">
-            Cihazları İçe Aktar
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleFileImport}
-              className="hidden"
-            />
-          </label>
+          {user?.userAuthorization === "admin" && (
+            <label className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors cursor-pointer">
+              Cihazları İçe Aktar
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleFileImport}
+                className="hidden"
+              />
+            </label>
+          )}
         </div>
       </div>
 
@@ -368,7 +373,11 @@ export default function Devices() {
                 )}
                 {selectedCommanddeviceId === device.deviceId && (
                   <div className="mt-4 col-span-full">
-                    <div className={`${darkMode ? 'bg-gray-800/80' : 'bg-gray-100'} p-6 rounded-lg shadow-lg mx-auto w-full max-w-[1200px]`}>
+                    <div
+                      className={`${
+                        darkMode ? "bg-gray-800/80" : "bg-gray-100"
+                      } p-6 rounded-lg shadow-lg mx-auto w-full max-w-[1200px]`}
+                    >
                       <Batch deviceId={device.deviceId} />
                     </div>
                   </div>
@@ -390,7 +399,7 @@ export default function Devices() {
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Yeni Cihaz Ekle</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+              <div>
                 <label className="block text-gray-700 mb-2">
                   Cihaz ID <span className="text-red-500">*</span>
                 </label>
@@ -405,7 +414,9 @@ export default function Devices() {
                   placeholder="Cihaz ID'sini giriniz"
                 />
                 {formErrors.deviceId && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceId}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.deviceId}
+                  </p>
                 )}
               </div>
               <div>
@@ -423,7 +434,9 @@ export default function Devices() {
                   placeholder="Cihaz adını giriniz"
                 />
                 {formErrors.deviceName && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceName}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.deviceName}
+                  </p>
                 )}
               </div>
               <div>
@@ -446,7 +459,9 @@ export default function Devices() {
                   <option value="Işık">Işık</option>
                 </select>
                 {formErrors.deviceType && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.deviceType}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.deviceType}
+                  </p>
                 )}
               </div>
 
@@ -477,7 +492,6 @@ export default function Devices() {
           </div>
         </div>
       )}
-
     </div>
   );
 }
