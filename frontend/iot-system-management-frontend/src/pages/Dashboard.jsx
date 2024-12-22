@@ -7,7 +7,7 @@ const navigation = [
   { name: "Ana Sayfa", to: "/", icon: "home", adminOnly: false },
   { name: "Cihazlar", to: "/devices", icon: "device", adminOnly: false },
   { name: "Program", to: "/schedule", icon: "calendar", adminOnly: false },
-  { name: "Geçmiş", to: "/logs", icon: "clock", adminOnly: false },
+  { name: "Geçmiş", to: "/logs", icon: "clock", adminOnly: true },
   {
     name: "Kullanıcı Yönetim Paneli",
     to: "/settings",
