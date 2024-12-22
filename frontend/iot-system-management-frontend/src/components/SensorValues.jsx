@@ -109,11 +109,12 @@ export default function SensorValues({ deviceId }) {
       setLoading(true);
       setError(null);
       try {
-        // En son sensör verilerini getir
-        const latestValues = await sensorValuesService.getLatestValuesForDevice(
-          deviceId
+        // Tüm sensör verilerini getir
+        const allValues = await sensorValuesService.getAllSensorValues();
+        const deviceValues = allValues.filter(
+          (sensor) => sensor.deviceId === deviceId
         );
-        setSensorValues(latestValues);
+        setSensorValues(deviceValues);
 
         // Sensör istatistiklerini getir
         const statistics =

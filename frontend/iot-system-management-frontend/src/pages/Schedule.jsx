@@ -112,9 +112,18 @@ export default function Schedule() {
         eventTitle: newEvent.eventTitle,
         recurrence: newEvent.recurrence,
         interval: Number(newEvent.interval),
-        startTime: new Date(newEvent.startTime).toISOString(),
-        endTime: new Date(newEvent.endTime).toISOString(),
-        untilDate: new Date(newEvent.untilDate).toISOString(),
+        startTime: new Date(
+          new Date(newEvent.startTime).getTime() -
+            new Date().getTimezoneOffset() * 60000
+        ).toISOString(),
+        endTime: new Date(
+          new Date(newEvent.endTime).getTime() -
+            new Date().getTimezoneOffset() * 60000
+        ).toISOString(),
+        untilDate: new Date(
+          new Date(newEvent.untilDate).getTime() -
+            new Date().getTimezoneOffset() * 60000
+        ).toISOString(),
         createBy: newEvent.createBy,
         version: newEvent.version,
       };

@@ -2,8 +2,10 @@ package tr.com.targe.iot.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "User_Logs")
 public class UserLog {
 
@@ -27,43 +29,14 @@ public class UserLog {
 
     // Getters and Setters
 
-    public Long getLogId() {
-        return logId;
+    public Long getUserId() {
+        return user != null ? user.getUserId() : null; // deviceId'ye erişim
     }
 
-    public void setLogId(Long logId) {
-        this.logId = logId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(Long userId) {
+        if (this.user == null) {
+            this.user = new User();
+        }
+        this.user.setUserId(userId);
     }
 }

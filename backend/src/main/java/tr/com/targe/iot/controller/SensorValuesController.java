@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import tr.com.targe.iot.DTO.SensorValuesDTO;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

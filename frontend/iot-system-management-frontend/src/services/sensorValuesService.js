@@ -14,6 +14,16 @@ const sensorValuesService = {
     }
   },
 
+  // Belirli bir cihazın tüm sensör değerlerini getir
+  getSensorValuesByDeviceId: async (deviceId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/device/${deviceId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching sensor values by device ID:", error);
+      throw error;
+    }
+  },
   // Belirli bir cihazın en son sensör değerlerini getir
   getLatestValuesForDevice: async (deviceId) => {
     try {
@@ -56,51 +66,6 @@ const sensorValuesService = {
       return response.data;
     } catch (error) {
       console.error("Error fetching last N values:", error);
-      throw error;
-    }
-  },
-
-  // Cihaz ve sensör tipine göre gruplandırılmış istatistikler
-  getAggregatedStatistics: async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/statistics/aggregated`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching aggregated statistics:", error);
-      throw error;
-    }
-  },
-
-  // Belirli bir tarih aralığında gruplandırılmış istatistikler
-  getAggregatedStatisticsByDateRange: async (startDate, endDate) => {
-    try {
-      const response = await axios.get(`${BASE_URL}/statistics/by-date-range`, {
-        params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching statistics by date range:", error);
-      throw error;
-    }
-  },
-
-  // Sensör tipine göre saatlik ortalama değerler
-  getHourlyAverages: async (startDate) => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/statistics/hourly-averages`,
-        {
-          params: {
-            startDate: startDate.toISOString(),
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching hourly averages:", error);
       throw error;
     }
   },

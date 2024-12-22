@@ -8,7 +8,6 @@ import tr.com.targe.iot.repository.SensorValuesRepository;
 import tr.com.targe.iot.entity.SensorValues;
 import tr.com.targe.iot.mapper.SensorValuesMapper;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import tr.com.targe.iot.DTO.SensorValuesDTO;
 

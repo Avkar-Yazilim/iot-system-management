@@ -97,6 +97,7 @@ const deviceService = {
             // Her cihaz için create isteği gönder
             const promises = devices.map((device) =>
               deviceService.createDevice({
+                deviceId: device.deviceId,
                 deviceName: device.deviceName,
                 deviceType: device.deviceType,
               })

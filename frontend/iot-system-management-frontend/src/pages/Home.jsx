@@ -196,6 +196,49 @@ const SensorCard = ({ title, value, unit, updateAt, darkMode }) => {
   );
 };
 
+// Add export function at the top level
+const formatSensorDataForExport = async (devices, selectedDeviceId) => {
+  const exportData = {};
+
+  for (const device of devices) {
+    if (selectedDeviceId && device.deviceId !== selectedDeviceId) continue;
+
+    try {
+      // Belirli bir cihazın tüm sensör değerlerini getir
+      const deviceSensors = await sensorValuesService.getSensorValuesByDeviceId(
+        device.deviceId
+      );
+
+      // Group by sensor type
+      const sensorsByType = deviceSensors.reduce((types, sensor) => {
+        if (!types[sensor.sensorType]) {
+          types[sensor.sensorType] = [];
+        }
+        types[sensor.sensorType].push({
+          value: sensor.dataValue,
+          unit: sensor.unit,
+          updateAt: sensor.updateAt,
+        });
+        return types;
+      }, {});
+
+      // Add device information along with sensor data
+      exportData[device.deviceName] = {
+        deviceId: device.deviceId,
+        deviceType: device.deviceType,
+        sensors: sensorsByType,
+      };
+    } catch (error) {
+      console.error(
+        `Error fetching sensor values for device ${device.deviceId}:`,
+        error
+      );
+    }
+  }
+
+  return exportData;
+};
+
 export default function Home() {
   const [devices, setDevices] = useState([]);
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
@@ -203,6 +246,29 @@ export default function Home() {
   const [sensorStats, setSensorStats] = useState([]);
   const [loading, setLoading] = useState(false);
   const { darkMode } = useTheme();
+
+  // Add export handler
+  const handleExportData = async () => {
+    try {
+      const exportData = await formatSensorDataForExport(
+        devices,
+        selectedDeviceId
+      );
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
+      const url = window.URL.createObjectURL(dataBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      link.download = `sensor_data_${timestamp}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error exporting data:", error);
+    }
+  };
 
   // Cihazları yükle
   useEffect(() => {
@@ -281,6 +347,28 @@ export default function Home() {
           >
             Sisteminizdeki sensörlerin anlık verileri
           </p>
+        </div>
+        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          <button
+            onClick={handleExportData}
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
+            </svg>
+            JSON Olarak İndir
+          </button>
         </div>
       </div>
 

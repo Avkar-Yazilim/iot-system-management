@@ -7,25 +7,24 @@ const userLogService = {
     try {
       const response = await axios.get(`${BASE_URL}/user-log`, {
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       });
-      
+
       if (!response.data) {
         return [];
       }
 
-      return response.data.map(log => ({
+      return response.data.map((log) => ({
         ...log,
-        username: log.username || 'Bilinmeyen Kullanıcı'
+        username: log.userName || "Bilinmeyen Kullanıcı",
       }));
-
     } catch (error) {
       console.error("Log kayıtları alınırken hata oluştu:", error);
-      throw new Error('Log kayıtları alınamadı');
+      throw new Error("Log kayıtları alınamadı");
     }
-  }
+  },
 };
 
 export default userLogService;
