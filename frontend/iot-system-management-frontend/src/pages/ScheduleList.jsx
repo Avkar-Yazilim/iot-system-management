@@ -17,6 +17,7 @@ export default function ScheduleList() {
         setSchedules(response);
       } catch (error) {
         console.error("Error fetching schedules:", error);
+        alert("Programlar alınırken bir hata oluştu!");
       }
     };
 

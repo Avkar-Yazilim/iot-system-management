@@ -10,7 +10,7 @@ const navigation = [
   {
     name: "Program Listesi",
     to: "/schedule-list",
-    icon: "clipboard-list",
+    icon: "list",
     adminOnly: false,
   },
   { name: "Geçmiş", to: "/logs", icon: "clock", adminOnly: true },
@@ -65,6 +65,21 @@ const icons = {
         strokeLinejoin="round"
         strokeWidth={2}
         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+      />
+    </svg>
+  ),
+  list: (
+    <svg
+      className="w-6 h-6"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4 6h16M4 10h16M4 14h16M4 18h16"
       />
     </svg>
   ),
@@ -310,7 +325,13 @@ function SidebarContent({ currentPath, onLogout, setSidebarOpen }) {
           const isActive =
             currentPath === item.to ||
             (item.to === "/home" && currentPath === "/home") ||
-            (item.to !== "/home" && currentPath.startsWith(item.to));
+            (item.to === "/schedule" && currentPath === "/schedule") ||
+            (item.to === "/schedule-list" &&
+              currentPath === "/schedule-list") ||
+            (item.to !== "/home" &&
+              item.to !== "/schedule" &&
+              item.to !== "/schedule-list" &&
+              currentPath.startsWith(item.to));
 
           return (
             <NavLink
