@@ -32,4 +32,14 @@ export const ScheduleDateService = {
       throw error;
     }
   },
+
+  deleteScheduleDate: async (id) => {
+    try {
+      const response = await axios.delete(`${API_URL}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting schedule date:", error);
+      throw error;
+    }
+  },
 };

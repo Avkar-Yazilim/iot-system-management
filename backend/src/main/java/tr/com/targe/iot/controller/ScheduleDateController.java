@@ -4,6 +4,7 @@ import tr.com.targe.iot.service.ScheduleDateService;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import tr.com.targe.iot.DTO.ScheduleDateDTO;
+import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @RestController
@@ -19,4 +20,9 @@ public class ScheduleDateController {
         return scheduleDateService.getAllScheduleDates();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteScheduleDate(@PathVariable Long id) {
+        scheduleDateService.deleteScheduleDate(id);
+        return ResponseEntity.noContent().build();
+    }
 }

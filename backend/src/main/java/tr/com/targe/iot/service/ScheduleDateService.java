@@ -2,6 +2,7 @@ package tr.com.targe.iot.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import tr.com.targe.iot.DTO.ScheduleDateDTO;
 import tr.com.targe.iot.repository.ScheduleDateRepository;
@@ -23,8 +24,14 @@ public class ScheduleDateService {
 
     // Tüm ScheduleDate'leri getirir
     public List<ScheduleDateDTO> getAllScheduleDates() {
-        return scheduleDateRepository.findAll().stream()
+        return scheduleDateRepository.findAllActive().stream()
             .map(scheduleDateMapper::toDTO)
             .collect(Collectors.toList());
+    }
+
+    // Belirli bir tarihi sil
+    @Transactional
+    public void deleteScheduleDate(Long scheduleDateId) {
+        scheduleDateRepository.deleteById(scheduleDateId);
     }
 }

@@ -24,6 +24,12 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.getAllSchedules());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ScheduleDTO> getScheduleById(@PathVariable Long id) {
+        ScheduleDTO schedule = scheduleService.getScheduleById(id);
+        return ResponseEntity.ok(schedule);
+    }
+
     @PostMapping
     public ResponseEntity<?> createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
         try {
@@ -39,17 +45,26 @@ public class ScheduleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Schedule> updateSchedule(@PathVariable Long id, @RequestBody Schedule updatedSchedule) {
-        Schedule schedule = scheduleService.updateSchedule(id, updatedSchedule);
-        if (schedule != null) {
-            return ResponseEntity.ok(schedule);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<ScheduleDTO> updateSchedule(@PathVariable Long id, @RequestBody ScheduleDTO scheduleDTO) {
+        ScheduleDTO updatedSchedule = scheduleService.updateSchedule(id, scheduleDTO);
+        return ResponseEntity.ok(updatedSchedule);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long id, @RequestParam String deletedBy) {
         scheduleService.deleteSchedule(id, deletedBy);
         return ResponseEntity.noContent().build(); 
+    }
+
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivateSchedule(@PathVariable Long id, @RequestParam String deletedBy) {
+        scheduleService.deactivateSchedule(id, deletedBy);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<Void> activateSchedule(@PathVariable Long id, @RequestParam String activatedBy) {
+        scheduleService.activateSchedule(id, activatedBy);
+        return ResponseEntity.noContent().build();
     }
 }

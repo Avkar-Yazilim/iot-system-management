@@ -130,6 +130,7 @@ export default function Schedule() {
         ).toISOString(),
         createBy: newEvent.createBy,
         version: newEvent.version,
+        createAt: newEvent.createAt, // Eğer düzenleme ise mevcut createAt'i kullan
       };
 
       if (!scheduleData.deviceId || !scheduleData.commandId) {
@@ -138,7 +139,18 @@ export default function Schedule() {
 
       console.log("Sending schedule data:", scheduleData);
 
-      const response = await ScheduleService.createSchedule(scheduleData);
+      let response;
+      if (newEvent.scheduleId) {
+        // Düzenleme işlemi
+        response = await ScheduleService.updateSchedule(
+          newEvent.scheduleId,
+          scheduleData
+        );
+      } else {
+        // Yeni oluşturma işlemi
+        response = await ScheduleService.createSchedule(scheduleData);
+      }
+
       console.log("Backend response:", response);
 
       // Add the new event to the calendar
@@ -154,8 +166,8 @@ export default function Schedule() {
 
       // Reset form
       setNewEvent({
-        deviceId: 1,
-        commandId: 1,
+        deviceId: null,
+        commandId: null,
         eventTitle: "",
         recurrence: "Daily",
         interval: 1,
@@ -193,18 +205,16 @@ export default function Schedule() {
     if (!selectedEvent) return;
 
     try {
-      await ScheduleService.deleteSchedule(
-        selectedEvent.extendedProps.scheduleId,
-        "Admin"
-      );
+      await ScheduleDateService.deleteScheduleDate(selectedEvent.id);
       setEvents(events.filter((event) => event.id !== selectedEvent.id));
       setShowDetailsModal(false);
       setSelectedEvent(null);
-      window.location.reload();
     } catch (error) {
-      console.error("Error deleting schedule:", error);
-      alert("Program silinirken bir hata oluştu!");
+      console.error("Error deleting schedule date:", error);
+      alert("Program tarihi silinirken bir hata oluştu!");
     }
+    //fetchScheduleDates();
+    window.location.reload();
   };
 
   return (
@@ -485,61 +495,38 @@ export default function Schedule() {
         </div>
       )}
 
-      {/* Event Details Modal */}
+      {/* Details Modal */}
       {showDetailsModal && selectedEvent && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Program Detayları
-                </h3>
-                <div className="mt-2 space-y-3">
-                  <div>
-                    <span className="font-medium">Program Adı:</span>{" "}
-                    {selectedEvent.title}
-                  </div>
-                  <div>
-                    <span className="font-medium">Başlangıç:</span>{" "}
-                    {new Date(selectedEvent.start).toLocaleString("tr-TR")}
-                  </div>
-                  <div>
-                    <span className="font-medium">Durum:</span>{" "}
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        selectedEvent.extendedProps.status === "Active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {selectedEvent.extendedProps.status === "Active"
-                        ? "Aktif"
-                        : "Pasif"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                <button
-                  type="button"
-                  onClick={handleDeleteSchedule}
-                  className="w-full inline-flex justify-center items-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:col-start-2 sm:text-sm"
-                >
-                  <TrashIcon className="h-5 w-5 mr-2" />
-                  Sil
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowDetailsModal(false);
-                    setSelectedEvent(null);
-                  }}
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                >
-                  Kapat
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4">Program Detayları</h2>
+            <div className="mb-4">
+              <p>
+                <strong>Başlık:</strong> {selectedEvent.title}
+              </p>
+              <p>
+                <strong>Başlangıç:</strong>{" "}
+                {new Date(selectedEvent.start).toLocaleString()}
+              </p>
+              <p>
+                <strong>Bitiş:</strong>{" "}
+                {new Date(selectedEvent.end).toLocaleString()}
+              </p>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => handleDeleteSchedule()}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center"
+              >
+                <TrashIcon className="h-5 w-5 mr-1" />
+                Sil
+              </button>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+              >
+                Kapat
+              </button>
             </div>
           </div>
         </div>

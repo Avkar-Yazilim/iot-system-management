@@ -3,6 +3,26 @@ import axios from "axios";
 const API_URL = "http://localhost:8080/api/schedules";
 
 export const ScheduleService = {
+  getAllSchedules: async () => {
+    try {
+      const response = await axios.get(API_URL);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching schedules:", error);
+      throw error;
+    }
+  },
+
+  getScheduleById: async (id) => {
+    try {
+      const response = await axios.get(`${API_URL}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching schedule:", error);
+      throw error;
+    }
+  },
+
   createSchedule: async (scheduleData) => {
     try {
       console.log("Service - Sending data:", scheduleData);
@@ -38,9 +58,9 @@ export const ScheduleService = {
     }
   },
 
-  updateSchedule: async (id, Schedule) => {
+  updateSchedule: async (id, scheduleData) => {
     try {
-      const response = await axios.put(`${API_URL}/${id}`, Schedule);
+      const response = await axios.put(`${API_URL}/${id}`, scheduleData);
       return response.data;
     } catch (error) {
       console.error("Error updating schedule:", error);
@@ -56,6 +76,30 @@ export const ScheduleService = {
       return response.data;
     } catch (error) {
       console.error("Error deleting schedule:", error);
+      throw error;
+    }
+  },
+
+  activateSchedule: async (id, activatedBy) => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/${id}/activate?activatedBy=${activatedBy}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error activating schedule:", error);
+      throw error;
+    }
+  },
+
+  deactivateSchedule: async (id, deletedBy) => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/${id}/deactivate?deletedBy=${deletedBy}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deactivating schedule:", error);
       throw error;
     }
   },
