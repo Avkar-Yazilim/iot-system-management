@@ -28,6 +28,7 @@ export default function Schedule() {
     untilDate: "",
     createBy: "Admin",
     version: "v1.0",
+    scheduleDays: null,
   });
   const [devices, setDevices] = useState([]);
   const [commands, setCommands] = useState([]);
@@ -116,6 +117,7 @@ export default function Schedule() {
         eventTitle: newEvent.eventTitle,
         recurrence: newEvent.recurrence,
         interval: Number(newEvent.interval),
+        scheduleDays: newEvent.scheduleDays,
         startTime: new Date(
           new Date(newEvent.startTime).getTime() -
             new Date().getTimezoneOffset() * 60000
@@ -176,6 +178,7 @@ export default function Schedule() {
         untilDate: "",
         createBy: "Admin",
         version: "v1.0",
+        scheduleDays: null,
       });
 
       setShowAddModal(false);
@@ -431,12 +434,14 @@ export default function Schedule() {
                       <select
                         id="recurrence"
                         value={newEvent.recurrence}
-                        onChange={(e) =>
+                        onChange={(e) => {
                           setNewEvent({
                             ...newEvent,
                             recurrence: e.target.value,
-                          })
-                        }
+                            scheduleDays:
+                              e.target.value === "Weekly" ? "Monday" : null,
+                          });
+                        }}
                         className="input mt-1"
                         required
                       >
@@ -446,6 +451,38 @@ export default function Schedule() {
                         <option value="Yearly">Yıllık</option>
                       </select>
                     </div>
+
+                    {newEvent.recurrence === "Weekly" && (
+                      <div>
+                        <label
+                          htmlFor="scheduleDays"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Haftanın Günü
+                        </label>
+                        <select
+                          id="scheduleDays"
+                          value={newEvent.scheduleDays || "Monday"}
+                          onChange={(e) =>
+                            setNewEvent({
+                              ...newEvent,
+                              scheduleDays: e.target.value,
+                            })
+                          }
+                          className="input mt-1"
+                          required
+                        >
+                          <option value="Monday">Pazartesi</option>
+                          <option value="Tuesday">Salı</option>
+                          <option value="Wednesday">Çarşamba</option>
+                          <option value="Thursday">Perşembe</option>
+                          <option value="Friday">Cuma</option>
+                          <option value="Saturday">Cumartesi</option>
+                          <option value="Sunday">Pazar</option>
+                        </select>
+                      </div>
+                    )}
+
                     <div>
                       <label
                         htmlFor="interval"

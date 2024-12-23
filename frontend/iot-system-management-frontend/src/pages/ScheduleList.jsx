@@ -189,6 +189,12 @@ export default function ScheduleList() {
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
+                      Tekrar Günü
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
                       Tekrar Aralığı
                     </th>
                     <th
@@ -231,6 +237,24 @@ export default function ScheduleList() {
                           : schedule.recurrence === "Monthly"
                           ? "Aylık"
                           : "Yıllık"}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {schedule.recurrence === "Weekly" &&
+                        schedule.scheduleDays
+                          ? schedule.scheduleDays === "Monday"
+                            ? "Pazartesi"
+                            : schedule.scheduleDays === "Tuesday"
+                            ? "Salı"
+                            : schedule.scheduleDays === "Wednesday"
+                            ? "Çarşamba"
+                            : schedule.scheduleDays === "Thursday"
+                            ? "Perşembe"
+                            : schedule.scheduleDays === "Friday"
+                            ? "Cuma"
+                            : schedule.scheduleDays === "Saturday"
+                            ? "Cumartesi"
+                            : "Pazar"
+                          : "-"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {schedule.interval}
@@ -393,6 +417,8 @@ export default function ScheduleList() {
                           setSelectedSchedule({
                             ...selectedSchedule,
                             recurrence: e.target.value,
+                            scheduleDays:
+                              e.target.value === "Weekly" ? "Monday" : null,
                           })
                         }
                         className="input mt-1"
@@ -404,6 +430,38 @@ export default function ScheduleList() {
                         <option value="Yearly">Yıllık</option>
                       </select>
                     </div>
+
+                    {selectedSchedule.recurrence === "Weekly" && (
+                      <div>
+                        <label
+                          htmlFor="scheduleDays"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Haftanın Günü
+                        </label>
+                        <select
+                          id="scheduleDays"
+                          value={selectedSchedule.scheduleDays || "Monday"}
+                          onChange={(e) =>
+                            setSelectedSchedule({
+                              ...selectedSchedule,
+                              scheduleDays: e.target.value,
+                            })
+                          }
+                          className="input mt-1"
+                          required
+                        >
+                          <option value="Monday">Pazartesi</option>
+                          <option value="Tuesday">Salı</option>
+                          <option value="Wednesday">Çarşamba</option>
+                          <option value="Thursday">Perşembe</option>
+                          <option value="Friday">Cuma</option>
+                          <option value="Saturday">Cumartesi</option>
+                          <option value="Sunday">Pazar</option>
+                        </select>
+                      </div>
+                    )}
+
                     <div>
                       <label
                         htmlFor="interval"
